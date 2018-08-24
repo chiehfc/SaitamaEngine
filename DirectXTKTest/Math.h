@@ -7,58 +7,58 @@ namespace Saitama
   class Vector3
   {
   public:
-    Vector3() : m_x(0), m_y(0), m_z(0) {}
-    Vector3(double x, double y, double z) : m_x(x), m_y(y), m_z(z) {}
+    Vector3() : x(0), y(0), z(0) {}
+    Vector3(double x, double y, double z) : x(x), y(y), z(z) {}
     ~Vector3() {};
 
     Vector3 operator+(const Vector3& v) const
     {
-      return Vector3(m_x + v.GetX(), m_y + v.GetY(), m_z + v.GetZ());
+      return Vector3(x + v.x, y + v.y, z + v.z);
     }
     void operator+=(const Vector3& v)
     {
-      m_x += v.GetX();
-      m_y += v.GetY();
-      m_z += v.GetZ();
+      x += v.x;
+      y += v.y;
+      z += v.z;
     }
     Vector3 operator-(const Vector3& v) const
     {
-      return Vector3(m_x - v.GetX(), m_y - v.GetY(), m_z - v.GetZ());
+      return Vector3(x - v.x, y - v.y, z - v.z);
     }
     void operator-=(const Vector3& v)
     {
-      m_x -= v.GetX();
-      m_y -= v.GetY();
-      m_z -= v.GetZ();
+      x -= v.x;
+      y -= v.y;
+      z -= v.z;
     }
     Vector3 operator*(const double value) const
     {
-      return Vector3(m_x * value, m_y * value, m_z * value);
+      return Vector3(x * value, y * value, z * value);
     }
     void operator*=(const double value)
     {
-      m_x *= value;
-      m_y *= value;
-      m_z *= value;
+      x *= value;
+      y *= value;
+      z *= value;
     }
     double DotProduct(const Vector3& v) const
     {
-      return m_x * v.GetX() + m_y * v.GetY() + m_z * v.GetZ();
+      return x * v.x + y * v.y + z * v.z;
     }
     Vector3 CrossProduct(const Vector3& v) const
     {
-      return Vector3(m_y*v.GetZ() - m_z*v.GetY(),
-        m_z*v.GetX() - m_x*v.GetZ(),
-        m_x*v.GetY() - m_y*v.GetX());
+      return Vector3(y*v.z - z*v.y,
+        z*v.x - x*v.z,
+        x*v.y - y*v.x);
     }
     double Magnitude() const
     {
-      return sqrt(m_x*m_x + m_y*m_y + m_z*m_z);
+      return sqrt(x*x + y*y + z*z);
     }
 
     double SquareMagnitude() const
     {
-      return m_x*m_x + m_y*m_y + m_z*m_z;
+      return x*x + y*y + z*z;
     }
 
     Vector3 Normalized() const
@@ -72,20 +72,11 @@ namespace Saitama
       return result;
     }
 
-    // Getter and setter function
-    double GetX() const { return m_x; }
-    double GetY() const { return m_y; }
-    double GetZ() const { return m_z; }
-    void SetX(const double x) { m_x = x; }
-    void SetY(const double y) { m_y = y; }
-    void SetZ(const double z) { m_z = z; }
+    void Print() { std::cout << x << ", " << y << ", " << z << std::endl; }
 
-    void Print() { std::cout << m_x << ", " << m_y << ", " << m_z << std::endl; }
-
-  private:
-    double m_x;
-    double m_y;
-    double m_z;
+    double x;
+    double y;
+    double z;
   };
 
   class Matrix3x3
@@ -100,6 +91,13 @@ namespace Saitama
       data[2][0] = data[2][1] = data[2][2] = 1;
     }
 
+    Matrix3x3(Vector3 v1, Vector3 v2, Vector3 v3)
+    {
+      data[0][0] = v1.x; data[0][1] = v1.y; data[0][2] = v1.z;
+      data[1][0] = v2.x; data[1][1] = v2.y; data[1][2] = v2.z;
+      data[2][0] = v3.x; data[2][1] = v3.y; data[2][2] = v3.z;
+    }
+
     Matrix3x3 operator*(const Matrix3x3& m) const
     {
       Matrix3x3 matrix;
@@ -112,8 +110,13 @@ namespace Saitama
       matrix.data[2][0] = matrix.data[2][0] * m.data[0][0] + matrix.data[2][1] * m.data[1][0] + matrix.data[2][2] * m.data[2][0];
       matrix.data[2][1] = matrix.data[2][0] * m.data[0][1] + matrix.data[2][1] * m.data[1][1] + matrix.data[2][2] * m.data[2][1];
       matrix.data[2][2] = matrix.data[2][0] * m.data[0][2] + matrix.data[2][1] * m.data[1][2] + matrix.data[2][2] * m.data[2][2];
-      return 
+      return matrix;
     }
-  }
+
+    Matrix3x3 transpose() const
+    {
+      
+    }
+  };
 
 }

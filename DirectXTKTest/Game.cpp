@@ -41,6 +41,11 @@ void Game::Initialize(HWND window, int width, int height)
     m_timer.SetFixedTimeStep(true);
     m_timer.SetTargetElapsedSeconds(1.0 / 60);
     */
+
+    camera = new Camera();
+
+    Saitama::Vector3 v1(1, 2, 3);
+    v1.Print();
 }
 
 // Executes the basic game loop.
@@ -63,9 +68,8 @@ void Game::Update(DX::StepTimer const& timer)
     elapsedTime;
 
 	float time = static_cast<float>(timer.GetTotalSeconds());
-	m_world = Matrix::CreateRotationZ(cosf(time) * 2.f);
+	//m_world = Matrix::CreateRotationZ(cosf(time) * 2.f);
 
-	
 }
 
 // Draws the scene.
@@ -80,7 +84,8 @@ void Game::Render()
     Clear();
 
     // TODO: Add your rendering code here.
-	m_shape->Draw(m_world, m_view, m_proj);
+    ;
+	  m_shape->Draw(m_world, camera->GetView(), camera->Proj());
 
     Present();
 }
@@ -323,11 +328,15 @@ void Game::CreateResources()
     DX::ThrowIfFailed(m_d3dDevice->CreateDepthStencilView(depthStencil.Get(), &depthStencilViewDesc, m_depthStencilView.ReleaseAndGetAddressOf()));
 
     // TODO: Initialize windows-size dependent objects here.
+
+    
 	
-	m_view = Matrix::CreateLookAt(SimpleMath::Vector3(2.f, 2.f, 2.f), SimpleMath::Vector3::Zero, SimpleMath::Vector3::UnitY);
-	m_proj = Matrix::CreatePerspectiveFieldOfView(XM_PI / 4.f, float(backBufferWidth) / float(backBufferHeight), 0.1f, 10.f);
+	//m_view = Matrix::CreateLookAt(SimpleMath::Vector3(2.f, 2.f, 2.f), SimpleMath::Vector3::Zero, SimpleMath::Vector3::UnitY);
+	//m_proj = Matrix::CreatePerspectiveFieldOfView(XM_PI / 4.f, float(backBufferWidth) / float(backBufferHeight), 0.1f, 10.f);
 }
 
+
+// TODO: My experimental stuffs
 DirectX::SimpleMath::Matrix Game::CreateLookAtFunc(const SimpleMath::Vector3& eye, const SimpleMath::Vector3& target, const SimpleMath::Vector3& up)
 {
   SimpleMath::Vector3 lookAtForward;

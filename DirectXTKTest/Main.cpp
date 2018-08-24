@@ -4,6 +4,8 @@
 
 #include "pch.h"
 #include "Game.h"
+#include "guicon.h"
+#include <iostream>
 
 using namespace DirectX;
 
@@ -26,6 +28,10 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 {
     UNREFERENCED_PARAMETER(hPrevInstance);
     UNREFERENCED_PARAMETER(lpCmdLine);
+
+    #ifdef _DEBUG
+      RedirectIOToConsole();
+    #endif
 
     if (!XMVerifyCPUSupport())
         return 1;
