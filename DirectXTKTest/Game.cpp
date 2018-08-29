@@ -31,6 +31,10 @@ void Game::Initialize(HWND window, int width, int height)
     m_outputWidth = std::max(width, 1);
     m_outputHeight = std::max(height, 1);
 
+    camera = new Camera();
+    //camera->SetAngle(XM_PI / 4.f);
+      //InitProjMatrix(camera->GetAngle(), m_outputWidth,m_outputHeight,1.0f,10.0f);
+
     CreateDevice();
 
     CreateResources();
@@ -42,7 +46,7 @@ void Game::Initialize(HWND window, int width, int height)
     m_timer.SetTargetElapsedSeconds(1.0 / 60);
     */
 
-    camera = new Camera();
+    
 
     Saitama::Vector3 v1(1, 2, 3);
     v1.Print();
@@ -70,6 +74,26 @@ void Game::Update(DX::StepTimer const& timer)
 	float time = static_cast<float>(timer.GetTotalSeconds());
 	//m_world = Matrix::CreateRotationZ(cosf(time) * 2.f);
 
+  if (GetAsyncKeyState('W') & 0x8000)
+  {
+    //camera->Move(DirectX::SimpleMath::Vector3::UnitZ * elapsedTime);
+    camera->Walk(10 * elapsedTime);
+  }
+  if (GetAsyncKeyState('S') & 0x8000)
+  {
+    //camera->Move(-DirectX::SimpleMath::Vector3::UnitZ * elapsedTime);
+    camera->Walk(-10 * elapsedTime);
+  }
+  if (GetAsyncKeyState('A') & 0x8000)
+  {
+    camera->Strafe(-10 * elapsedTime);
+  }
+  if (GetAsyncKeyState('D') & 0x8000)
+  {
+    camera->Strafe(10 * elapsedTime);
+  }
+
+
 }
 
 // Draws the scene.
@@ -82,10 +106,13 @@ void Game::Render()
     }
 
     Clear();
-
+    camera->UpdateViewMatrix();
+    
+    m_view = camera->GetView();
+    m_proj = camera->Proj();
     // TODO: Add your rendering code here.
     ;
-	  m_shape->Draw(m_world, camera->GetView(), camera->Proj());
+	  m_shape->Draw(m_world, m_view, m_proj);
 
     Present();
 }
@@ -328,7 +355,7 @@ void Game::CreateResources()
     DX::ThrowIfFailed(m_d3dDevice->CreateDepthStencilView(depthStencil.Get(), &depthStencilViewDesc, m_depthStencilView.ReleaseAndGetAddressOf()));
 
     // TODO: Initialize windows-size dependent objects here.
-
+    
     
 	
 	//m_view = Matrix::CreateLookAt(SimpleMath::Vector3(2.f, 2.f, 2.f), SimpleMath::Vector3::Zero, SimpleMath::Vector3::UnitY);

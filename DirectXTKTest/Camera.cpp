@@ -5,18 +5,20 @@
 using namespace DirectX::SimpleMath;
 
 Camera::Camera() {
-  m_position = Vector3(0.0f, 0.0f, -0.1f);
-  m_target = Vector3(0.0f, 0.0f, 0.0f);
-  m_up = m_position + Vector3(0.0f, 1.0f, 0.0f);
-  this->InitViewMatrix();
-  m_angle = 0.0f;
-  m_clientWidth = 0.0f;
-  m_clientHeight = 0.0f;
-  m_nearest = 0.0f;
-  m_farthest = 0.0f;
+  m_position = Vector3(0.0f, 0.0f, 0.0f);
+  m_right = Vector3(1.0f, 0.0f, 0.0f);
+  m_target = Vector3(0.0f, 0.0f, 1.0f);
+  m_up = Vector3::UnitY;
+  //this->InitViewMatrix();
+  m_angle = DirectX::XM_PI / 4.f;
+  m_clientWidth = 800.0f;
+  m_clientHeight = 600.0f;
+  m_nearest = 0.1f;
+  m_farthest = 10.0f;
   m_view = Matrix::Identity;
   m_proj = Matrix::Identity;
   m_ortho = Matrix::Identity;
+  InitProjMatrix(m_angle, m_clientWidth, m_clientHeight, m_nearest, m_farthest);
 }
 
 Camera::~Camera() {
@@ -29,6 +31,7 @@ Camera::Camera(const Camera& camera) {
 Camera& Camera::operator=(const Camera& camera)
 {
   m_position = camera.m_position;
+  m_right = camera.m_right;
   m_target = camera.m_target;
   m_up = camera.m_up;
   m_angle = camera.m_angle;
@@ -72,12 +75,31 @@ void Camera::OnResize(uint32_t new_width, uint32_t new_height)
   InitOrthoMatrix(static_cast<float>(new_width), static_cast<float>(new_height), 0.0f, m_farthest);
 }
 
+void Camera::Strafe(float d) {
+  //m_position = Vector3::Transform(m_position, Matrix::CreateTranslation(direction));
+  //m_target = Vector3::Transform(m_target, Matrix::CreateTranslation(direction));
+  //m_up = Vector3::Transform(m_up, Matrix::CreateTranslation(direction));
+  //this->InitViewMatrix();
+  m_position += m_right * d;
+}
+
 void Camera::Move(DirectX::SimpleMath::Vector3 direction) {
   m_position = Vector3::Transform(m_position, Matrix::CreateTranslation(direction));
   m_target = Vector3::Transform(m_target, Matrix::CreateTranslation(direction));
   m_up = Vector3::Transform(m_up, Matrix::CreateTranslation(direction));
   this->InitViewMatrix();
 }
+
+void Camera::Walk(float d)
+{
+  // mPosition += d*mLook
+  m_position += d * m_target;
+  //XMVECTOR s = XMVectorReplicate(d);
+  //XMVECTOR l = XMLoadFloat3(&mLook);
+  //XMVECTOR p = XMLoadFloat3(&mPosition);
+  //XMStoreFloat3(&mPosition, XMVectorMultiplyAdd(s, l, p));
+}
+
 
 void Camera::Rotate(DirectX::SimpleMath::Vector3 axis, float degrees) {
   if (axis==Vector3::Zero || degrees == 0.0f) return;
@@ -132,4 +154,47 @@ void Camera::SetFarthestPlane(float farthest)
 {
   m_farthest = farthest;
   OnResize(m_clientWidth, m_clientHeight);
+}
+
+void Camera::UpdateViewMatrix()
+{
+  Vector3 r = m_right;
+  Vector3 u = m_up;
+  Vector3 l = m_target;
+  Vector3 p = m_position;
+
+  l.Normalize(l);
+  u.Normalize(l.Cross(r));
+  r = u.Cross(l);
+  
+  float x = -p.Dot(r);
+  float y = -p.Dot(u);
+  float z = -p.Dot(l);
+
+  m_right = r;
+  m_up = u;
+  m_target = l;
+
+  Matrix m;
+  m._11 = m_right.x;
+  m._21 = m_right.y;
+  m._31 = m_right.z;
+  m._41 = x;
+
+  m._12 = m_up.x;
+  m._22 = m_up.y;
+  m._32 = m_up.z;
+  m._42 = y;
+
+  m._13 = m_target.x;
+  m._23 = m_target.y;
+  m._33 = m_target.z;
+  m._43 = z;
+
+  m._14 = 0.0f;
+  m._24 = 0.0f;
+  m._34 = 0.0f;
+  m._44 = 1.0f;
+
+  m_view = m;
 }

@@ -17,6 +17,10 @@ class Camera
 
     void Move(DirectX::SimpleMath::Vector3 direction);
 
+    void Walk(float d);
+
+    void Strafe(float d);
+
     void Rotate(DirectX::SimpleMath::Vector3 axis, float degrees);
 
     void SetPosition(DirectX::SimpleMath::Vector3& new_position);
@@ -38,9 +42,10 @@ class Camera
 
     // Get transposed camera view matrix
     const DirectX::SimpleMath::Matrix GetView() {
-      DirectX::SimpleMath::Matrix m;
-      m_view.Transpose(m);
-      return m;
+      //DirectX::SimpleMath::Matrix m;
+      //m_view.Transpose(m);
+      //return m;
+      return m_view;
     }
 
     void SetAngle(float angle);
@@ -52,9 +57,10 @@ class Camera
     void SetFarthestPlane(float farthest);
 
     const DirectX::SimpleMath::Matrix Proj() {
-      DirectX::SimpleMath::Matrix m;
-      m_proj.Transpose(m);
-      return m;
+      //DirectX::SimpleMath::Matrix m;
+      //m_proj.Transpose(m);
+      //return m;
+      return m_proj;
     }
 
     const DirectX::SimpleMath::Matrix Ortho() {
@@ -63,13 +69,17 @@ class Camera
       return m;
     }
 
+    void UpdateViewMatrix();
+
   private:
     void InitViewMatrix();
 
     // Camera parameters
     DirectX::SimpleMath::Vector3 m_position;
+    DirectX::SimpleMath::Vector3 m_right;
     DirectX::SimpleMath::Vector3 m_target;
     DirectX::SimpleMath::Vector3 m_up;
+    
 
     // Projection parameters
     float m_angle;

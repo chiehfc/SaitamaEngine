@@ -63,8 +63,8 @@ private:
     DX::StepTimer                                   m_timer;
 
 	DirectX::SimpleMath::Matrix m_world;
-	//DirectX::SimpleMath::Matrix m_view;
-	//DirectX::SimpleMath::Matrix m_proj;
+	DirectX::SimpleMath::Matrix m_view;
+	DirectX::SimpleMath::Matrix m_proj;
 	std::unique_ptr<DirectX::GeometricPrimitive> m_shape;
   Camera *camera;
 };
