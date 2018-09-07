@@ -15,6 +15,8 @@
     <ClInclude Include="Math.h" />
     <ClInclude Include="guicon.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="MovingEntity.h" />
+    <ClInclude Include="Bot.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -25,6 +27,8 @@
     <ClCompile Include="Math.cpp" />
     <ClCompile Include="guicon.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="MovingEntity.cpp" />
+    <ClCompile Include="Bot.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resource.rc" />
