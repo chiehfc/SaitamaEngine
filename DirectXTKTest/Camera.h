@@ -21,6 +21,10 @@ class Camera
 
     void Strafe(float d);
 
+    void Pitch(float angle);
+
+    void RotateY(float angle);
+
     void Rotate(DirectX::SimpleMath::Vector3 axis, float degrees);
 
     void SetPosition(DirectX::SimpleMath::Vector3& new_position);

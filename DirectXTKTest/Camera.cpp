@@ -5,7 +5,7 @@
 using namespace DirectX::SimpleMath;
 
 Camera::Camera() {
-  m_position = Vector3(0.0f, 0.0f, 0.0f);
+  m_position = Vector3(0.0f, 0.0f, -2.0f);
   m_right = Vector3(1.0f, 0.0f, 0.0f);
   m_target = Vector3(0.0f, 0.0f, 1.0f);
   m_up = Vector3::UnitY;
@@ -14,7 +14,7 @@ Camera::Camera() {
   m_clientWidth = 800.0f;
   m_clientHeight = 600.0f;
   m_nearest = 0.1f;
-  m_farthest = 10.0f;
+  m_farthest = 1000.0f;
   m_view = Matrix::Identity;
   m_proj = Matrix::Identity;
   m_ortho = Matrix::Identity;
@@ -57,6 +57,7 @@ void Camera::InitProjMatrix(const float angle, const float client_width, const f
   m_clientHeight = client_height;
   m_nearest = nearest;
   m_farthest = farthest;
+
   m_proj = Matrix::CreatePerspectiveFieldOfView(angle, client_width / client_height, nearest, farthest);
 }
 void Camera::InitOrthoMatrix(const float client_width, const float client_height, const float near_plane, const float far_plane)
@@ -197,4 +198,19 @@ void Camera::UpdateViewMatrix()
   m._44 = 1.0f;
 
   m_view = m;
+}
+
+void Camera::Pitch(float angle)
+{
+  Matrix r = Matrix::CreateFromAxisAngle(m_right, angle);
+  m_up = Vector3::TransformNormal(m_up, r);
+  m_target = Vector3::TransformNormal(m_target, r);
+}
+
+void Camera::RotateY(float angle)
+{
+  Matrix r = Matrix::CreateRotationY(angle);
+  m_up = Vector3::TransformNormal(m_up, r);
+  m_right = Vector3::TransformNormal(m_right, r);
+  m_target = Vector3::TransformNormal(m_target, r);
 }

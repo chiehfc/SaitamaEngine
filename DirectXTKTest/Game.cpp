@@ -16,6 +16,11 @@ using namespace Saitama;
 
 using Microsoft::WRL::ComPtr;
 
+static const XMVECTORF32 START_POSITION = { 0.f, -1.5f, 0.f, 0.f };
+static const XMVECTORF32 ROOM_BOUNDS = { 8.f, 6.f, 12.f, 0.f };
+static const float ROTATION_GAIN = 0.004f;
+static const float MOVEMENT_GAIN = 0.07f;
+
 Game::Game() :
     m_window(nullptr),
     m_outputWidth(800),
@@ -46,7 +51,9 @@ void Game::Initialize(HWND window, int width, int height)
     m_timer.SetTargetElapsedSeconds(1.0 / 60);
     */
 
-    
+    m_keyboard = std::make_unique<Keyboard>();
+    m_mouse = std::make_unique<Mouse>();
+    m_mouse->SetWindow(window);
 
     Saitama::Vector3 v1(1, 2, 3);
     v1.Print();
@@ -74,26 +81,34 @@ void Game::Update(DX::StepTimer const& timer)
 	float time = static_cast<float>(timer.GetTotalSeconds());
 	//m_world = Matrix::CreateRotationZ(cosf(time) * 2.f);
 
-  if (GetAsyncKeyState('W') & 0x8000)
-  {
-    //camera->Move(DirectX::SimpleMath::Vector3::UnitZ * elapsedTime);
-    camera->Walk(10 * elapsedTime);
-  }
-  if (GetAsyncKeyState('S') & 0x8000)
-  {
-    //camera->Move(-DirectX::SimpleMath::Vector3::UnitZ * elapsedTime);
+
+  // Keyboard input.
+  auto kb = m_keyboard->GetState();
+  if (kb.Escape)
+    PostQuitMessage(0);
+  if (kb.W)
     camera->Walk(-10 * elapsedTime);
-  }
-  if (GetAsyncKeyState('A') & 0x8000)
-  {
+  if (kb.S)
+    camera->Walk(10 * elapsedTime);
+  if (kb.A)
     camera->Strafe(-10 * elapsedTime);
-  }
-  if (GetAsyncKeyState('D') & 0x8000)
-  {
+  if (kb.D)
     camera->Strafe(10 * elapsedTime);
+
+
+  // Mouse input.
+  auto mouse = m_mouse->GetState();
+  if (mouse.positionMode == Mouse::MODE_RELATIVE)
+  {
+    DirectX::SimpleMath::Vector3 delta = DirectX::SimpleMath::Vector3(float(mouse.x), float(mouse.y), 0.f)
+      * ROTATION_GAIN;
+    std::cout << delta.y << std::endl;
+    camera->Pitch(-delta.y);
+    camera->RotateY(-delta.x);
+
+    
   }
-
-
+  m_mouse->SetMode(mouse.leftButton ? Mouse::MODE_RELATIVE : Mouse::MODE_ABSOLUTE);
 }
 
 // Draws the scene.
@@ -111,7 +126,13 @@ void Game::Render()
     m_view = camera->GetView();
     m_proj = camera->Proj();
     // TODO: Add your rendering code here.
-    ;
+    
+    float y = sinf(m_pitch);
+    float r = cosf(m_pitch);
+    float z = r*cosf(m_yaw);
+    float x = r*sinf(m_yaw);
+    m_room->Draw(m_world, m_view, m_proj, Colors::White, m_roomTex.Get());
+
 	  m_shape->Draw(m_world, m_view, m_proj);
 
     Present();
@@ -258,6 +279,12 @@ void Game::CreateDevice()
     // TODO: Initialize device dependent objects here (independent of window size).
 
 	m_shape = GeometricPrimitive::CreateCube(m_d3dContext.Get());
+  m_room = GeometricPrimitive::CreateBox(m_d3dContext.Get(), XMFLOAT3(ROOM_BOUNDS[0], ROOM_BOUNDS[1], ROOM_BOUNDS[2]), false, true);
+
+  DX::ThrowIfFailed(
+    CreateDDSTextureFromFile(m_d3dDevice.Get(), L"roomtexture.dds",
+      nullptr, m_roomTex.ReleaseAndGetAddressOf()));
+
 	m_world = Matrix::Identity;
 }
 
@@ -356,10 +383,6 @@ void Game::CreateResources()
 
     // TODO: Initialize windows-size dependent objects here.
     
-    
-	
-	//m_view = Matrix::CreateLookAt(SimpleMath::Vector3(2.f, 2.f, 2.f), SimpleMath::Vector3::Zero, SimpleMath::Vector3::UnitY);
-	//m_proj = Matrix::CreatePerspectiveFieldOfView(XM_PI / 4.f, float(backBufferWidth) / float(backBufferHeight), 0.1f, 10.f);
 }
 
 
@@ -376,6 +399,8 @@ void Game::OnDeviceLost()
 {
     // TODO: Add Direct3D resource cleanup here.
 	m_shape.reset();
+  m_room.reset();
+  m_roomTex.Reset();
 
     m_depthStencilView.Reset();
     m_renderTargetView.Reset();

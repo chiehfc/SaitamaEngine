@@ -67,4 +67,12 @@ private:
 	DirectX::SimpleMath::Matrix m_proj;
 	std::unique_ptr<DirectX::GeometricPrimitive> m_shape;
   Camera *camera;
+
+  std::unique_ptr<DirectX::Keyboard> m_keyboard;
+  std::unique_ptr<DirectX::Mouse> m_mouse;
+
+  std::unique_ptr<DirectX::GeometricPrimitive> m_room;
+  Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_roomTex;
+  float m_pitch;
+  float m_yaw;
 };
