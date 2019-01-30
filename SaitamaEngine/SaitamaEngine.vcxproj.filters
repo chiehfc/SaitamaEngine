@@ -5,6 +5,9 @@
       <UniqueIdentifier>801378ad-192a-4f78-a323-6fe7b1871a19</UniqueIdentifier>
       <Extensions>ico;cur;bmp;dds;dlg;fbx;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tga;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Keyboard">
+      <UniqueIdentifier>{93ef020d-7b82-4d7e-9799-c8717a112fb6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -17,6 +20,12 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="MovingEntity.h" />
     <ClInclude Include="Bot.h" />
+    <ClInclude Include="Keyboard\KeyboardClass.h">
+      <Filter>Keyboard</Filter>
+    </ClInclude>
+    <ClInclude Include="Keyboard\KeyboardEvent.h">
+      <Filter>Keyboard</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -29,6 +38,12 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="MovingEntity.cpp" />
     <ClCompile Include="Bot.cpp" />
+    <ClCompile Include="Keyboard\KeyboardClass.cpp">
+      <Filter>Keyboard</Filter>
+    </ClCompile>
+    <ClCompile Include="Keyboard\KeyboardEvent.cpp">
+      <Filter>Keyboard</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resource.rc" />

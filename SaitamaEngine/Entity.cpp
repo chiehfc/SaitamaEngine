@@ -6,3 +6,8 @@ Entity::Entity()
 {
 }
 
+void Entity::Update()
+{
+
+
+}

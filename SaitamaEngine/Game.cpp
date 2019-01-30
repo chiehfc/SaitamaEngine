@@ -281,6 +281,7 @@ void Game::CreateDevice()
 	m_shape = GeometricPrimitive::CreateCube(m_d3dContext.Get());
   m_room = GeometricPrimitive::CreateBox(m_d3dContext.Get(), XMFLOAT3(ROOM_BOUNDS[0], ROOM_BOUNDS[1], ROOM_BOUNDS[2]), false, true);
 
+  // Create room texture
   DX::ThrowIfFailed(
     CreateDDSTextureFromFile(m_d3dDevice.Get(), L"roomtexture.dds",
       nullptr, m_roomTex.ReleaseAndGetAddressOf()));

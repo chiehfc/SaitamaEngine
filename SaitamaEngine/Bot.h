@@ -5,7 +5,7 @@ class Bot : public MovingEntity
 {
 public:
   Bot();
-  virtual ~Bot();
+  virtual ~Bot() {}
 
   void Render();
   
