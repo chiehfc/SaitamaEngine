@@ -36,6 +36,11 @@ void Game::Initialize(HWND window, int width, int height)
     m_outputWidth = std::max(width, 1);
     m_outputHeight = std::max(height, 1);
 
+    if (!gfx.Initialize(window, width, height))
+    {
+        return;
+    }
+
     camera = new Camera();
     //camera->SetAngle(XM_PI / 4.f);
       //InitProjMatrix(camera->GetAngle(), m_outputWidth,m_outputHeight,1.0f,10.0f);
@@ -326,17 +331,6 @@ void Game::CreateResources()
     }
     else
     {
-        // First, retrieve the underlying DXGI Device from the D3D Device.
-        ComPtr<IDXGIDevice1> dxgiDevice;
-        DX::ThrowIfFailed(m_d3dDevice.As(&dxgiDevice));
-
-        // Identify the physical adapter (GPU or card) this device is running on.
-        ComPtr<IDXGIAdapter> dxgiAdapter;
-        DX::ThrowIfFailed(dxgiDevice->GetAdapter(dxgiAdapter.GetAddressOf()));
-
-        // And obtain the factory object that created it.
-        ComPtr<IDXGIFactory2> dxgiFactory;
-        DX::ThrowIfFailed(dxgiAdapter->GetParent(IID_PPV_ARGS(dxgiFactory.GetAddressOf())));
 
         // Create a descriptor for the swap chain.
         DXGI_SWAP_CHAIN_DESC1 swapChainDesc = {};

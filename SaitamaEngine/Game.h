@@ -6,6 +6,7 @@
 
 #include "StepTimer.h"
 #include "Camera.h"
+#include "Graphics/Graphics.h"
 
 // A basic game implementation that creates a D3D11 device and
 // provides a game loop.
@@ -51,13 +52,8 @@ private:
     int                                             m_outputWidth;
     int                                             m_outputHeight;
 
-    D3D_FEATURE_LEVEL                               m_featureLevel;
-    Microsoft::WRL::ComPtr<ID3D11Device1>           m_d3dDevice;
-    Microsoft::WRL::ComPtr<ID3D11DeviceContext1>    m_d3dContext;
-
-    Microsoft::WRL::ComPtr<IDXGISwapChain1>         m_swapChain;
-    Microsoft::WRL::ComPtr<ID3D11RenderTargetView>  m_renderTargetView;
-    Microsoft::WRL::ComPtr<ID3D11DepthStencilView>  m_depthStencilView;
+    Graphics gfx;
+    
 
     // Rendering loop timer.
     DX::StepTimer                                   m_timer;
