@@ -27,6 +27,8 @@
       <Filter>Keyboard</Filter>
     </ClInclude>
     <ClInclude Include="Graphics\Graphics.h" />
+    <ClInclude Include="Vertex.h" />
+    <ClInclude Include="Shaders.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -46,6 +48,8 @@
       <Filter>Keyboard</Filter>
     </ClCompile>
     <ClCompile Include="Graphics\Graphics.cpp" />
+    <ClCompile Include="Vertex.cpp" />
+    <ClCompile Include="Shaders.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resource.rc" />
@@ -66,5 +70,8 @@
   <ItemGroup>
     <None Include="packages.config" />
     <None Include="ClassDiagram.cd" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="vertexshader.hlsl" />
   </ItemGroup>
 </Project>

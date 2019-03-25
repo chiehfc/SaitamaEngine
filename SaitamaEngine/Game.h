@@ -52,6 +52,7 @@ private:
     int                                             m_outputWidth;
     int                                             m_outputHeight;
 
+   
     Graphics gfx;
     
 
