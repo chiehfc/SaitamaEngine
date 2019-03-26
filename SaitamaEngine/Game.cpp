@@ -250,7 +250,7 @@ void Game::CreateDevice()
 
     // TODO: Initialize device dependent objects here (independent of window size).
 
-	//m_shape = GeometricPrimitive::CreateCube(m_d3dContext.Get());
+  //m_shape = GeometricPrimitive::CreateCube(m_d3dContext.Get());
   //m_room = GeometricPrimitive::CreateBox(m_d3dContext.Get(), XMFLOAT3(ROOM_BOUNDS[0], ROOM_BOUNDS[1], ROOM_BOUNDS[2]), false, true);
 
   // Create room texture

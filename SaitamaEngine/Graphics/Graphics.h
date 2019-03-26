@@ -1,6 +1,7 @@
 #pragma once
 
 #include "..\\Shaders.h"
+#include "..\\Vertex.h"
 
 class Graphics
 {
@@ -12,7 +13,7 @@ public:
 private:
     bool InitializeDirectX(HWND hwnd, int width, int height);
     bool InitializeShaders();
-
+    bool InitializeScene();
 
     void CreateDevice();
 
@@ -26,7 +27,10 @@ private:
     Microsoft::WRL::ComPtr<ID3D11RenderTargetView>  m_renderTargetView;
     Microsoft::WRL::ComPtr<ID3D11DepthStencilView>  m_depthStencilView;
 
-    Microsoft::WRL::ComPtr<ID3D11InputLayout> m_inputLayout;
+    
     VertexShader m_vertexShader;    
+    PixelShader m_pixelShader;
+
+    Microsoft::WRL::ComPtr<ID3D11Buffer> m_vertexBuffer;
 };
 
