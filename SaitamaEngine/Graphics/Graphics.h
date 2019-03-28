@@ -5,6 +5,7 @@
 #include <SpriteBatch.h>
 #include <SpriteFont.h>
 #include <WICTextureLoader.h>
+#include "..\\VertexBuffer.h"
 
 class Graphics
 {
@@ -35,8 +36,8 @@ private:
     
     VertexShader m_vertexShader;    
     PixelShader m_pixelShader;
-
-    Microsoft::WRL::ComPtr<ID3D11Buffer> m_vertexBuffer;
+        
+    VertexBuffer<Vertex> m_vertexBuffer;
     Microsoft::WRL::ComPtr<ID3D11Buffer> m_indexBuffer;
 
     Microsoft::WRL::ComPtr<ID3D11RasterizerState> m_rasterizerState;
