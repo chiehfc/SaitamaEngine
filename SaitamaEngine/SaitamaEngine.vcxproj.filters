@@ -30,6 +30,9 @@
     <ClInclude Include="Vertex.h" />
     <ClInclude Include="Shaders.h" />
     <ClInclude Include="VertexBuffer.h" />
+    <ClInclude Include="IndexBuffer.h" />
+    <ClInclude Include="ConstantBufferTypes.h" />
+    <ClInclude Include="ConstantBuffer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />

@@ -5,7 +5,7 @@ class Camera
 {
   public:
     Camera::Camera();
-
+    
     Camera::~Camera();
     Camera(const Camera& camera);
 

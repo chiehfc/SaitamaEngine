@@ -6,6 +6,9 @@
 #include <SpriteFont.h>
 #include <WICTextureLoader.h>
 #include "..\\VertexBuffer.h"
+#include "..\\IndexBuffer.h"
+#include "..\\ConstantBuffer.h"
+#include "..\\Camera.h"
 
 class Graphics
 {
@@ -14,8 +17,10 @@ public:
     void RenderFrame();
     void Clear();
 
+    Camera *GetCamera();
+
 private:
-    bool InitializeDirectX(HWND hwnd, int width, int height);
+    bool InitializeDirectX(HWND hwnd);
     bool InitializeShaders();
     bool InitializeScene();
 
@@ -36,9 +41,10 @@ private:
     
     VertexShader m_vertexShader;    
     PixelShader m_pixelShader;
+    ConstantBuffer<CB_VS_vertexshader> m_constantBuffer;
         
     VertexBuffer<Vertex> m_vertexBuffer;
-    Microsoft::WRL::ComPtr<ID3D11Buffer> m_indexBuffer;
+    IndexBuffer m_indexBuffer;
 
     Microsoft::WRL::ComPtr<ID3D11RasterizerState> m_rasterizerState;
 
@@ -47,5 +53,10 @@ private:
 
     Microsoft::WRL::ComPtr<ID3D11SamplerState> m_samplerState;
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_myTexture;
+
+    int m_windowWidth = 0;
+    int m_windowHeight = 0;
+
+    Camera m_camera;
 };
 

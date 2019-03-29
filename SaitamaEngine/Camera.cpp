@@ -9,7 +9,6 @@ Camera::Camera() {
   m_right = Vector3(1.0f, 0.0f, 0.0f);
   m_target = Vector3(0.0f, 0.0f, 1.0f);
   m_up = Vector3::UnitY;
-  //this->InitViewMatrix();
   m_angle = DirectX::XM_PI / 4.f;
   m_clientWidth = 800.0f;
   m_clientHeight = 600.0f;
@@ -58,7 +57,9 @@ void Camera::InitProjMatrix(const float angle, const float client_width, const f
   m_nearest = nearest;
   m_farthest = farthest;
 
-  m_proj = Matrix::CreatePerspectiveFieldOfView(angle, client_width / client_height, nearest, farthest);
+  m_proj = DirectX::XMMatrixPerspectiveFovLH(angle, m_clientWidth / client_height, nearest, farthest);
+
+  //m_proj = Matrix::CreatePerspectiveFieldOfView(angle, client_width / client_height, nearest, farthest);
 }
 void Camera::InitOrthoMatrix(const float client_width, const float client_height, const float near_plane, const float far_plane)
 {

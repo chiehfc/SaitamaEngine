@@ -40,7 +40,7 @@ void Game::Initialize(HWND window, int width, int height)
         return;
     }
 
-    camera = new Camera();
+    //camera = new Camera();
     //camera->SetAngle(XM_PI / 4.f);
       //InitProjMatrix(camera->GetAngle(), m_outputWidth,m_outputHeight,1.0f,10.0f);
 
@@ -89,15 +89,15 @@ void Game::Update(DX::StepTimer const& timer)
   // Keyboard input.
   auto kb = m_keyboard->GetState();
   if (kb.Escape)
-    PostQuitMessage(0);
+      PostQuitMessage(0);
   if (kb.W)
-    camera->Walk(-10 * elapsedTime);
+      gfx.GetCamera()->Walk(-10 * elapsedTime);
   if (kb.S)
-    camera->Walk(10 * elapsedTime);
+      gfx.GetCamera()->Walk(10 * elapsedTime);
   if (kb.A)
-    camera->Strafe(-10 * elapsedTime);
+      gfx.GetCamera()->Strafe(-10 * elapsedTime);
   if (kb.D)
-    camera->Strafe(10 * elapsedTime);
+      gfx.GetCamera()->Strafe(10 * elapsedTime);
 
 
   // Mouse input.
@@ -107,8 +107,8 @@ void Game::Update(DX::StepTimer const& timer)
     DirectX::SimpleMath::Vector3 delta = DirectX::SimpleMath::Vector3(float(mouse.x), float(mouse.y), 0.f)
       * ROTATION_GAIN;
     std::cout << delta.y << std::endl;
-    camera->Pitch(-delta.y);
-    camera->RotateY(-delta.x);
+    gfx.GetCamera()->Pitch(-delta.y);
+    gfx.GetCamera()->RotateY(-delta.x);
 
     
   }

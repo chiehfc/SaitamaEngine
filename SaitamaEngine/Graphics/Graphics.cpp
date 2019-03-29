@@ -6,7 +6,10 @@ using Microsoft::WRL::ComPtr;
 
 bool Graphics::Initialize(HWND hwnd, int width, int height)
 {
-    if (!InitializeDirectX(hwnd, width, height)) 
+    m_windowWidth = width;
+    m_windowHeight = height;
+
+    if (!InitializeDirectX(hwnd)) 
     {
         return false;
     }
@@ -40,11 +43,25 @@ void Graphics::RenderFrame()
     m_d3dContext->PSSetShader(m_pixelShader.GetShader(), NULL, 0);
 
     UINT offset = 0;
+
+    m_camera.UpdateViewMatrix();
+
+    // Update Constant Buffer        
+    DirectX::XMMATRIX worldMatrix = DirectX::XMMatrixIdentity();
+
+    m_constantBuffer.data.mat = worldMatrix * DirectX::XMMATRIX(m_camera.GetView()) * DirectX::XMMATRIX(m_camera.Proj());
+    // from row major(DirectXMath library) to column major(HLSL)
+    m_constantBuffer.data.mat = DirectX::XMMatrixTranspose(m_constantBuffer.data.mat);
+    if (!m_constantBuffer.ApplyChanges())
+    {
+        return;
+    }
+    m_d3dContext->VSSetConstantBuffers(0, 1, m_constantBuffer.GetAddressOf());
     
     m_d3dContext->PSSetShaderResources(0, 1, m_myTexture.GetAddressOf());
     m_d3dContext->IASetVertexBuffers(0, 1, m_vertexBuffer.GetAddressOf(), m_vertexBuffer.StridePtr(), &offset);
     m_d3dContext->IASetIndexBuffer(m_indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
-    m_d3dContext->DrawIndexed(6, 0, 0);
+    m_d3dContext->DrawIndexed(m_indexBuffer.BufferSize(), 0, 0);
 
     // Draw Text
     m_spriteBatch->Begin();
@@ -61,7 +78,7 @@ void Graphics::Clear()
     //m_d3dContext->ClearDepthStencilView(m_depthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 }
 
-bool Graphics::InitializeDirectX(HWND hwnd, int width, int height)
+bool Graphics::InitializeDirectX(HWND hwnd)
 {
     CreateDevice();
 
@@ -80,8 +97,8 @@ bool Graphics::InitializeDirectX(HWND hwnd, int width, int height)
 
     // Create a descriptor for the swap chain.
     DXGI_SWAP_CHAIN_DESC1 swapChainDesc = {};
-    swapChainDesc.Width = width;
-    swapChainDesc.Height = height;
+    swapChainDesc.Width = m_windowWidth;
+    swapChainDesc.Height = m_windowHeight;
     swapChainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
     swapChainDesc.SampleDesc.Count = 1;
     swapChainDesc.SampleDesc.Quality = 0;
@@ -113,8 +130,8 @@ bool Graphics::InitializeDirectX(HWND hwnd, int width, int height)
     // Allocate a 2-D surface as the depth/stencil buffer and
     // create a DepthStencil view on this surface to use on bind.
     D3D11_TEXTURE2D_DESC depthStencilDesc;
-    depthStencilDesc.Width = width;
-    depthStencilDesc.Height = height;
+    depthStencilDesc.Width = m_windowWidth;
+    depthStencilDesc.Height = m_windowHeight;
     depthStencilDesc.MipLevels = 1;
     depthStencilDesc.ArraySize = 1;
     depthStencilDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
@@ -142,7 +159,7 @@ bool Graphics::InitializeDirectX(HWND hwnd, int width, int height)
     DX::ThrowIfFailed(m_d3dDevice->CreateDepthStencilState(&depthStencilStateDesc, m_depthStencilState.GetAddressOf()));
 
     // Set the viewport. - Rasterizer
-    CD3D11_VIEWPORT viewport(0.0f, 0.0f, static_cast<float>(width), static_cast<float>(height), 0.0f, 1.0f);
+    CD3D11_VIEWPORT viewport(0.0f, 0.0f, static_cast<float>(m_windowWidth), static_cast<float>(m_windowHeight), 0.0f, 1.0f);
     m_d3dContext->RSSetViewports(1, &viewport);
 
     D3D11_RASTERIZER_DESC rasterizerDesc;
@@ -196,43 +213,37 @@ bool Graphics::InitializeShaders()
 
 bool Graphics::InitializeScene()
 {
+    // Vertex Buffer
     Vertex v[] = 
     {
-        Vertex(-0.5f, -0.5f, 1.0f, 0.0f, 1.0f),
-        Vertex(-0.5f,  0.5f, 1.0f, 0.0f, 0.0f),
-        Vertex( 0.5f,  0.5f, 1.0f, 1.0f, 0.0f),        
-        Vertex( 0.5f, -0.5f, 1.0f, 1.0f, 1.0f)
-    };
-
-    DWORD indices[] = 
-    {
-        0, 1, 2,
-        0, 2, 3
+        Vertex(-0.5f, -0.5f, 0.0f, 0.0f, 1.0f),
+        Vertex(-0.5f,  0.5f, 0.0f, 0.0f, 0.0f),
+        Vertex( 0.5f,  0.5f, 0.0f, 1.0f, 0.0f),        
+        Vertex( 0.5f, -0.5f, 0.0f, 1.0f, 1.0f)
     };
 
     HRESULT hr = m_vertexBuffer.Initialize(m_d3dDevice.Get(), v, ARRAYSIZE(v));
     DX::ThrowIfFailed(hr);
 
+
     // Index Buffer
-    D3D11_BUFFER_DESC indexBufferDesc;
-    ZeroMemory(&indexBufferDesc, sizeof(indexBufferDesc));
-    indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-    indexBufferDesc.ByteWidth = sizeof(DWORD) * ARRAYSIZE(indices);
-    indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-    indexBufferDesc.CPUAccessFlags = 0;
-    indexBufferDesc.MiscFlags = 0;
+    DWORD indices[] = 
+    {
+        0, 1, 2,
+        0, 2, 3
+    };    
 
-    D3D11_SUBRESOURCE_DATA indexBufferData;
-    ZeroMemory(&indexBufferData, sizeof(indexBufferData));
-    indexBufferData.pSysMem = indices;
-
-    hr = m_d3dDevice->CreateBuffer(&indexBufferDesc, &indexBufferData, m_indexBuffer.GetAddressOf());
+    hr = m_indexBuffer.Initialize(m_d3dDevice.Get(), indices, ARRAYSIZE(indices));
     DX::ThrowIfFailed(hr);
 
-    // Texture
-    
+    // Texture    
     hr = DirectX::CreateWICTextureFromFile(m_d3dDevice.Get(), L"Data\\Textures\\pikachu.jfif", nullptr, m_myTexture.GetAddressOf());
     DX::ThrowIfFailed(hr);
+
+    // Constant Buffer
+    hr = m_constantBuffer.Initialize(m_d3dDevice.Get(), m_d3dContext.Get());
+    DX::ThrowIfFailed(hr);
+
 
     return true;
 }
@@ -278,4 +289,10 @@ void Graphics::CreateDevice()
 
     DX::ThrowIfFailed(device.As(&m_d3dDevice));
     DX::ThrowIfFailed(context.As(&m_d3dContext));
+}
+
+
+Camera *Graphics::GetCamera()
+{
+    return &m_camera;
 }
