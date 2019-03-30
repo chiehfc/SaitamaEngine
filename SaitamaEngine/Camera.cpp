@@ -102,6 +102,11 @@ void Camera::Walk(float d)
   //XMStoreFloat3(&mPosition, XMVectorMultiplyAdd(s, l, p));
 }
 
+void Camera::Lift(float d)
+{
+    m_position += d * m_up;
+}
+
 
 void Camera::Rotate(DirectX::SimpleMath::Vector3 axis, float degrees) {
   if (axis==Vector3::Zero || degrees == 0.0f) return;
@@ -116,10 +121,11 @@ void Camera::Rotate(DirectX::SimpleMath::Vector3 axis, float degrees) {
 }
 
 void Camera::SetPosition(DirectX::SimpleMath::Vector3& new_position) {
-  Vector3 move_vector = new_position - m_position;
+  /*Vector3 move_vector = new_position - m_position;
   Vector3 target = m_target;
   this->Move(move_vector);
-  this->SetTarget(target);
+  this->SetTarget(target);*/
+    m_position = new_position;
 }
 
 void Camera::SetTarget(DirectX::SimpleMath::Vector3 new_target) {

@@ -166,7 +166,16 @@
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="Graphics\Graphics.h" />
     <ClInclude Include="guicon.h" />
+    <ClInclude Include="Imgui\imconfig.h" />
+    <ClInclude Include="Imgui\imgui.h" />
+    <ClInclude Include="Imgui\imgui_impl_dx11.h" />
+    <ClInclude Include="Imgui\imgui_impl_win32.h" />
+    <ClInclude Include="Imgui\imgui_internal.h" />
+    <ClInclude Include="Imgui\imstb_rectpack.h" />
+    <ClInclude Include="Imgui\imstb_textedit.h" />
+    <ClInclude Include="Imgui\imstb_truetype.h" />
     <ClInclude Include="IndexBuffer.h" />
+    <ClInclude Include="Timer.h" />
     <ClInclude Include="VertexBuffer.h" />
     <ClInclude Include="Keyboard\KeyboardClass.h" />
     <ClInclude Include="Keyboard\KeyboardEvent.h" />
@@ -185,6 +194,11 @@
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="Graphics\Graphics.cpp" />
     <ClCompile Include="guicon.cpp" />
+    <ClCompile Include="Imgui\imgui.cpp" />
+    <ClCompile Include="Imgui\imgui_draw.cpp" />
+    <ClCompile Include="Imgui\imgui_impl_dx11.cpp" />
+    <ClCompile Include="Imgui\imgui_impl_win32.cpp" />
+    <ClCompile Include="Imgui\imgui_widgets.cpp" />
     <ClCompile Include="Keyboard\KeyboardClass.cpp" />
     <ClCompile Include="Keyboard\KeyboardEvent.cpp" />
     <ClCompile Include="Main.cpp" />
@@ -197,6 +211,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Shaders.cpp" />
+    <ClCompile Include="Timer.cpp" />
     <ClCompile Include="Vertex.cpp" />
   </ItemGroup>
   <ItemGroup>

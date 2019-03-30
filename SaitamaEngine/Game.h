@@ -7,6 +7,7 @@
 #include "StepTimer.h"
 #include "Camera.h"
 #include "Graphics/Graphics.h"
+#include "Timer.h"
 
 // A basic game implementation that creates a D3D11 device and
 // provides a game loop.
@@ -58,6 +59,8 @@ private:
 
     // Rendering loop timer.
     DX::StepTimer                                   m_timer;
+
+    Timer m_fpsTimer;
 
 	DirectX::SimpleMath::Matrix m_world;
 	DirectX::SimpleMath::Matrix m_view;

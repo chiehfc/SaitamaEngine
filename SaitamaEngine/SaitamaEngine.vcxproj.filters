@@ -8,6 +8,9 @@
     <Filter Include="Keyboard">
       <UniqueIdentifier>{93ef020d-7b82-4d7e-9799-c8717a112fb6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Imgui">
+      <UniqueIdentifier>{1be67480-a7a6-47e9-b210-b0474df2a890}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -33,6 +36,31 @@
     <ClInclude Include="IndexBuffer.h" />
     <ClInclude Include="ConstantBufferTypes.h" />
     <ClInclude Include="ConstantBuffer.h" />
+    <ClInclude Include="Timer.h" />
+    <ClInclude Include="Imgui\imgui_impl_dx11.h">
+      <Filter>Imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Imgui\imgui_impl_win32.h">
+      <Filter>Imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Imgui\imgui_internal.h">
+      <Filter>Imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Imgui\imstb_rectpack.h">
+      <Filter>Imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Imgui\imstb_textedit.h">
+      <Filter>Imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Imgui\imstb_truetype.h">
+      <Filter>Imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Imgui\imconfig.h">
+      <Filter>Imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="Imgui\imgui.h">
+      <Filter>Imgui</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -54,6 +82,22 @@
     <ClCompile Include="Graphics\Graphics.cpp" />
     <ClCompile Include="Vertex.cpp" />
     <ClCompile Include="Shaders.cpp" />
+    <ClCompile Include="Timer.cpp" />
+    <ClCompile Include="Imgui\imgui_draw.cpp">
+      <Filter>Imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Imgui\imgui_impl_dx11.cpp">
+      <Filter>Imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Imgui\imgui_impl_win32.cpp">
+      <Filter>Imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Imgui\imgui_widgets.cpp">
+      <Filter>Imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="Imgui\imgui.cpp">
+      <Filter>Imgui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resource.rc" />

@@ -21,6 +21,8 @@ class Camera
 
     void Strafe(float d);
 
+    void Lift(float d);
+
     void Pitch(float angle);
 
     void RotateY(float angle);

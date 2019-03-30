@@ -9,6 +9,10 @@
 #include "..\\IndexBuffer.h"
 #include "..\\ConstantBuffer.h"
 #include "..\\Camera.h"
+#include "..\\Timer.h"
+#include "..\\Imgui\\imgui.h"
+#include "..\\Imgui\\imgui_impl_win32.h"
+#include "..\\Imgui\\imgui_impl_dx11.h"
 
 class Graphics
 {
@@ -42,21 +46,25 @@ private:
     VertexShader m_vertexShader;    
     PixelShader m_pixelShader;
     ConstantBuffer<CB_VS_vertexshader> m_constantBuffer;
+    ConstantBuffer<CB_PS_pixelshader> m_cb_ps_pixelshader;
         
     VertexBuffer<Vertex> m_vertexBuffer;
     IndexBuffer m_indexBuffer;
 
     Microsoft::WRL::ComPtr<ID3D11RasterizerState> m_rasterizerState;
+    Microsoft::WRL::ComPtr<ID3D11BlendState> m_blendState;
 
     std::unique_ptr<DirectX::SpriteBatch> m_spriteBatch;
     std::unique_ptr<DirectX::SpriteFont> m_spriteFont;
 
     Microsoft::WRL::ComPtr<ID3D11SamplerState> m_samplerState;
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_myTexture;
+    Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_pikachuTexture;
 
     int m_windowWidth = 0;
     int m_windowHeight = 0;
 
     Camera m_camera;
+    Timer m_fpsTimer;
 };
 

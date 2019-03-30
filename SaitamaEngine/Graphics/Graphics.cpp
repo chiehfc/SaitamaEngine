@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "Graphics.h"
+#include <string>
 
 
 using Microsoft::WRL::ComPtr;
@@ -8,6 +9,8 @@ bool Graphics::Initialize(HWND hwnd, int width, int height)
 {
     m_windowWidth = width;
     m_windowHeight = height;
+
+    m_fpsTimer.Start();
 
     if (!InitializeDirectX(hwnd)) 
     {
@@ -24,6 +27,13 @@ bool Graphics::Initialize(HWND hwnd, int width, int height)
         return false;
     }
 
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO();
+    ImGui_ImplWin32_Init(hwnd);
+    ImGui_ImplDX11_Init(m_d3dDevice.Get(), m_d3dContext.Get());
+    ImGui::StyleColorsDark();
+
     return true;
 }
 
@@ -35,8 +45,9 @@ void Graphics::RenderFrame()
 
     m_d3dContext->IASetInputLayout(m_vertexShader.GetInputLayout());
     m_d3dContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-    m_d3dContext->RSSetState(m_rasterizerState.Get());
+    m_d3dContext->RSSetState(m_rasterizerState.Get());    
     m_d3dContext->OMSetDepthStencilState(m_depthStencilState.Get(), 0);
+    m_d3dContext->OMSetBlendState(m_blendState.Get(), NULL, 0xFFFFFFFF);
     m_d3dContext->PSSetSamplers(0, 1, m_samplerState.GetAddressOf());
 
     m_d3dContext->VSSetShader(m_vertexShader.GetShader(), NULL, 0);
@@ -45,28 +56,61 @@ void Graphics::RenderFrame()
     UINT offset = 0;
 
     m_camera.UpdateViewMatrix();
-
-    // Update Constant Buffer        
-    DirectX::XMMATRIX worldMatrix = DirectX::XMMatrixIdentity();
-
-    m_constantBuffer.data.mat = worldMatrix * DirectX::XMMATRIX(m_camera.GetView()) * DirectX::XMMATRIX(m_camera.Proj());
-    // from row major(DirectXMath library) to column major(HLSL)
-    m_constantBuffer.data.mat = DirectX::XMMatrixTranspose(m_constantBuffer.data.mat);
-    if (!m_constantBuffer.ApplyChanges())
+    static float alpha = 0.5f;
+    // Update Constant Buffer            
     {
-        return;
+        DirectX::XMMATRIX worldMatrix = DirectX::XMMatrixTranslation(0.0f, 0.0f, 0.0f);
+        m_constantBuffer.data.mat = worldMatrix * DirectX::XMMATRIX(m_camera.GetView()) * DirectX::XMMATRIX(m_camera.Proj());
+        // from row major(DirectXMath library) to column major(HLSL)
+        m_constantBuffer.data.mat = DirectX::XMMatrixTranspose(m_constantBuffer.data.mat);
+        if (!m_constantBuffer.ApplyChanges())
+        {
+            return;
+        }
+        m_d3dContext->VSSetConstantBuffers(0, 1, m_constantBuffer.GetAddressOf());
+
+        m_cb_ps_pixelshader.data.alpha = alpha;
+        if (!m_cb_ps_pixelshader.ApplyChanges())
+        {
+            return;
+        }
+        m_d3dContext->PSSetConstantBuffers(0, 1, m_cb_ps_pixelshader.GetAddressOf());
+
+        m_d3dContext->PSSetShaderResources(0, 1, m_myTexture.GetAddressOf());
+        m_d3dContext->IASetVertexBuffers(0, 1, m_vertexBuffer.GetAddressOf(), m_vertexBuffer.StridePtr(), &offset);
+        m_d3dContext->IASetIndexBuffer(m_indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+        m_d3dContext->DrawIndexed(m_indexBuffer.BufferSize(), 0, 0);
     }
-    m_d3dContext->VSSetConstantBuffers(0, 1, m_constantBuffer.GetAddressOf());
     
-    m_d3dContext->PSSetShaderResources(0, 1, m_myTexture.GetAddressOf());
-    m_d3dContext->IASetVertexBuffers(0, 1, m_vertexBuffer.GetAddressOf(), m_vertexBuffer.StridePtr(), &offset);
-    m_d3dContext->IASetIndexBuffer(m_indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
-    m_d3dContext->DrawIndexed(m_indexBuffer.BufferSize(), 0, 0);
 
     // Draw Text
+    static int fpsCounter = 0;
+    static std::wstring fpsString = L"SAITAMA!!! FPS: 0";
+    fpsCounter += 1;
+    if (m_fpsTimer.GetMillisecondsElapsed() > 1000.0)
+    {
+        fpsString = L"SAITAMA!!! FPS: " + std::to_wstring(fpsCounter);
+        fpsCounter = 0;
+        m_fpsTimer.Restart();
+    }
+    
     m_spriteBatch->Begin();
-    m_spriteFont->DrawString(m_spriteBatch.get(), L"SAITAMA!!!", DirectX::XMFLOAT2(0.0f, 0.0f), DirectX::Colors::White, 0.0f, DirectX::XMFLOAT2(0.0f, 0.0f), DirectX::XMFLOAT2(1.0f, 1.0f));
+    m_spriteFont->DrawString(m_spriteBatch.get(), fpsString.c_str(), DirectX::XMFLOAT2(0.0f, 0.0f), DirectX::Colors::White, 0.0f, DirectX::XMFLOAT2(0.0f, 0.0f), DirectX::XMFLOAT2(1.0f, 1.0f));
     m_spriteBatch->End();
+
+
+
+
+    ImGui_ImplDX11_NewFrame();
+    ImGui_ImplWin32_NewFrame();
+    ImGui::NewFrame();
+    ImGui::Begin("Test");
+    ImGui::DragFloat("Alpha", &alpha, 0.1f, 0.0f, 1.0f);
+
+    ImGui::End();
+    ImGui::Render();
+    ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+
 
     m_swapChain->Present(1, NULL);
 }
@@ -168,6 +212,24 @@ bool Graphics::InitializeDirectX(HWND hwnd)
     rasterizerDesc.CullMode = D3D11_CULL_MODE::D3D11_CULL_BACK;
     DX::ThrowIfFailed(m_d3dDevice->CreateRasterizerState(&rasterizerDesc, m_rasterizerState.GetAddressOf()));
     
+    // Create Blend State 
+    D3D11_BLEND_DESC blendDesc;
+    ZeroMemory(&blendDesc, sizeof(D3D11_BLEND_DESC));
+
+    D3D11_RENDER_TARGET_BLEND_DESC rtbd;
+    ZeroMemory(&rtbd, sizeof(D3D11_RENDER_TARGET_BLEND_DESC));
+    rtbd.BlendEnable = true;
+    rtbd.SrcBlend = D3D11_BLEND::D3D11_BLEND_SRC_ALPHA;
+    rtbd.DestBlend = D3D11_BLEND::D3D11_BLEND_INV_SRC_ALPHA;
+    rtbd.BlendOp = D3D11_BLEND_OP::D3D11_BLEND_OP_ADD;
+    rtbd.SrcBlendAlpha = D3D11_BLEND::D3D11_BLEND_ONE;
+    rtbd.DestBlendAlpha = D3D11_BLEND::D3D11_BLEND_ZERO;
+    rtbd.BlendOpAlpha = D3D11_BLEND_OP::D3D11_BLEND_OP_ADD;
+    rtbd.RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE::D3D11_COLOR_WRITE_ENABLE_ALL;
+    
+    blendDesc.RenderTarget[0] = rtbd;
+    DX::ThrowIfFailed(m_d3dDevice->CreateBlendState(&blendDesc, m_blendState.GetAddressOf()));
+
     // Fonts
     m_spriteBatch = std::make_unique<DirectX::SpriteBatch>(m_d3dContext.Get());
     m_spriteFont = std::make_unique<DirectX::SpriteFont>(m_d3dDevice.Get(), L"Data\\Fonts\\comic_sans_ms_16.spritefont");
@@ -219,7 +281,12 @@ bool Graphics::InitializeScene()
         Vertex(-0.5f, -0.5f, 0.0f, 0.0f, 1.0f),
         Vertex(-0.5f,  0.5f, 0.0f, 0.0f, 0.0f),
         Vertex( 0.5f,  0.5f, 0.0f, 1.0f, 0.0f),        
-        Vertex( 0.5f, -0.5f, 0.0f, 1.0f, 1.0f)
+        Vertex( 0.5f, -0.5f, 0.0f, 1.0f, 1.0f),
+
+        Vertex(-0.5f, -0.5f, 1.0f, 0.0f, 1.0f),
+        Vertex(-0.5f,  0.5f, 1.0f, 0.0f, 0.0f),
+        Vertex(0.5f,  0.5f, 1.0f, 1.0f, 0.0f),
+        Vertex(0.5f, -0.5f, 1.0f, 1.0f, 1.0f)
     };
 
     HRESULT hr = m_vertexBuffer.Initialize(m_d3dDevice.Get(), v, ARRAYSIZE(v));
@@ -230,7 +297,17 @@ bool Graphics::InitializeScene()
     DWORD indices[] = 
     {
         0, 1, 2,
-        0, 2, 3
+        0, 2, 3,
+        4, 5, 1,
+        4, 1, 0,
+        1, 5, 6,
+        1, 6, 2,
+        3, 2, 6,
+        3, 6, 7,
+        4, 6, 5,
+        4, 7, 6,
+        4, 0, 3,
+        4, 3, 7
     };    
 
     hr = m_indexBuffer.Initialize(m_d3dDevice.Get(), indices, ARRAYSIZE(indices));
@@ -240,10 +317,15 @@ bool Graphics::InitializeScene()
     hr = DirectX::CreateWICTextureFromFile(m_d3dDevice.Get(), L"Data\\Textures\\pikachu.jfif", nullptr, m_myTexture.GetAddressOf());
     DX::ThrowIfFailed(hr);
 
+    hr = DirectX::CreateWICTextureFromFile(m_d3dDevice.Get(), L"Data\\Textures\\DetectivePikachu.png", nullptr, m_pikachuTexture.GetAddressOf());
+    DX::ThrowIfFailed(hr);
+
     // Constant Buffer
     hr = m_constantBuffer.Initialize(m_d3dDevice.Get(), m_d3dContext.Get());
     DX::ThrowIfFailed(hr);
 
+    hr = m_cb_ps_pixelshader.Initialize(m_d3dDevice.Get(), m_d3dContext.Get());
+    DX::ThrowIfFailed(hr);
 
     return true;
 }
