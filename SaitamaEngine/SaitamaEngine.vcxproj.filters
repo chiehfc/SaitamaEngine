@@ -61,6 +61,7 @@
     <ClInclude Include="Imgui\imgui.h">
       <Filter>Imgui</Filter>
     </ClInclude>
+    <ClInclude Include="Model.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -98,6 +99,7 @@
     <ClCompile Include="Imgui\imgui.cpp">
       <Filter>Imgui</Filter>
     </ClCompile>
+    <ClCompile Include="Model.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resource.rc" />

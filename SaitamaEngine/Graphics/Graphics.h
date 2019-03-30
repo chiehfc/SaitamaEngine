@@ -5,14 +5,12 @@
 #include <SpriteBatch.h>
 #include <SpriteFont.h>
 #include <WICTextureLoader.h>
-#include "..\\VertexBuffer.h"
-#include "..\\IndexBuffer.h"
-#include "..\\ConstantBuffer.h"
 #include "..\\Camera.h"
 #include "..\\Timer.h"
 #include "..\\Imgui\\imgui.h"
 #include "..\\Imgui\\imgui_impl_win32.h"
 #include "..\\Imgui\\imgui_impl_dx11.h"
+#include "..\\Model.h"
 
 class Graphics
 {
@@ -46,10 +44,9 @@ private:
     VertexShader m_vertexShader;    
     PixelShader m_pixelShader;
     ConstantBuffer<CB_VS_vertexshader> m_constantBuffer;
-    ConstantBuffer<CB_PS_pixelshader> m_cb_ps_pixelshader;
-        
-    VertexBuffer<Vertex> m_vertexBuffer;
-    IndexBuffer m_indexBuffer;
+    ConstantBuffer<CB_PS_pixelshader> m_cb_ps_pixelshader;        
+
+    Model m_model;
 
     Microsoft::WRL::ComPtr<ID3D11RasterizerState> m_rasterizerState;
     Microsoft::WRL::ComPtr<ID3D11BlendState> m_blendState;

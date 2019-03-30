@@ -47,7 +47,7 @@ void Graphics::RenderFrame()
     m_d3dContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
     m_d3dContext->RSSetState(m_rasterizerState.Get());    
     m_d3dContext->OMSetDepthStencilState(m_depthStencilState.Get(), 0);
-    m_d3dContext->OMSetBlendState(m_blendState.Get(), NULL, 0xFFFFFFFF);
+    m_d3dContext->OMSetBlendState(NULL, NULL, 0xFFFFFFFF);
     m_d3dContext->PSSetSamplers(0, 1, m_samplerState.GetAddressOf());
 
     m_d3dContext->VSSetShader(m_vertexShader.GetShader(), NULL, 0);
@@ -56,30 +56,11 @@ void Graphics::RenderFrame()
     UINT offset = 0;
 
     m_camera.UpdateViewMatrix();
-    static float alpha = 0.5f;
+    // For alpha blending
+    //static float alpha = 0.5f;
     // Update Constant Buffer            
     {
-        DirectX::XMMATRIX worldMatrix = DirectX::XMMatrixTranslation(0.0f, 0.0f, 0.0f);
-        m_constantBuffer.data.mat = worldMatrix * DirectX::XMMATRIX(m_camera.GetView()) * DirectX::XMMATRIX(m_camera.Proj());
-        // from row major(DirectXMath library) to column major(HLSL)
-        m_constantBuffer.data.mat = DirectX::XMMatrixTranspose(m_constantBuffer.data.mat);
-        if (!m_constantBuffer.ApplyChanges())
-        {
-            return;
-        }
-        m_d3dContext->VSSetConstantBuffers(0, 1, m_constantBuffer.GetAddressOf());
-
-        m_cb_ps_pixelshader.data.alpha = alpha;
-        if (!m_cb_ps_pixelshader.ApplyChanges())
-        {
-            return;
-        }
-        m_d3dContext->PSSetConstantBuffers(0, 1, m_cb_ps_pixelshader.GetAddressOf());
-
-        m_d3dContext->PSSetShaderResources(0, 1, m_myTexture.GetAddressOf());
-        m_d3dContext->IASetVertexBuffers(0, 1, m_vertexBuffer.GetAddressOf(), m_vertexBuffer.StridePtr(), &offset);
-        m_d3dContext->IASetIndexBuffer(m_indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
-        m_d3dContext->DrawIndexed(m_indexBuffer.BufferSize(), 0, 0);
+        m_model.Draw(DirectX::XMMATRIX(m_camera.GetView()) * DirectX::XMMATRIX(m_camera.Proj()));
     }
     
 
@@ -105,7 +86,7 @@ void Graphics::RenderFrame()
     ImGui_ImplWin32_NewFrame();
     ImGui::NewFrame();
     ImGui::Begin("Test");
-    ImGui::DragFloat("Alpha", &alpha, 0.1f, 0.0f, 1.0f);
+    //ImGui::DragFloat("Alpha", &alpha, 0.1f, 0.0f, 1.0f);
 
     ImGui::End();
     ImGui::Render();
@@ -274,47 +255,10 @@ bool Graphics::InitializeShaders()
 }
 
 bool Graphics::InitializeScene()
-{
-    // Vertex Buffer
-    Vertex v[] = 
-    {
-        Vertex(-0.5f, -0.5f, 0.0f, 0.0f, 1.0f),
-        Vertex(-0.5f,  0.5f, 0.0f, 0.0f, 0.0f),
-        Vertex( 0.5f,  0.5f, 0.0f, 1.0f, 0.0f),        
-        Vertex( 0.5f, -0.5f, 0.0f, 1.0f, 1.0f),
-
-        Vertex(-0.5f, -0.5f, 1.0f, 0.0f, 1.0f),
-        Vertex(-0.5f,  0.5f, 1.0f, 0.0f, 0.0f),
-        Vertex(0.5f,  0.5f, 1.0f, 1.0f, 0.0f),
-        Vertex(0.5f, -0.5f, 1.0f, 1.0f, 1.0f)
-    };
-
-    HRESULT hr = m_vertexBuffer.Initialize(m_d3dDevice.Get(), v, ARRAYSIZE(v));
-    DX::ThrowIfFailed(hr);
-
-
-    // Index Buffer
-    DWORD indices[] = 
-    {
-        0, 1, 2,
-        0, 2, 3,
-        4, 5, 1,
-        4, 1, 0,
-        1, 5, 6,
-        1, 6, 2,
-        3, 2, 6,
-        3, 6, 7,
-        4, 6, 5,
-        4, 7, 6,
-        4, 0, 3,
-        4, 3, 7
-    };    
-
-    hr = m_indexBuffer.Initialize(m_d3dDevice.Get(), indices, ARRAYSIZE(indices));
-    DX::ThrowIfFailed(hr);
+{   
 
     // Texture    
-    hr = DirectX::CreateWICTextureFromFile(m_d3dDevice.Get(), L"Data\\Textures\\pikachu.jfif", nullptr, m_myTexture.GetAddressOf());
+    HRESULT hr = DirectX::CreateWICTextureFromFile(m_d3dDevice.Get(), L"Data\\Textures\\pikachu.jfif", nullptr, m_myTexture.GetAddressOf());
     DX::ThrowIfFailed(hr);
 
     hr = DirectX::CreateWICTextureFromFile(m_d3dDevice.Get(), L"Data\\Textures\\DetectivePikachu.png", nullptr, m_pikachuTexture.GetAddressOf());
@@ -326,6 +270,12 @@ bool Graphics::InitializeScene()
 
     hr = m_cb_ps_pixelshader.Initialize(m_d3dDevice.Get(), m_d3dContext.Get());
     DX::ThrowIfFailed(hr);
+
+    // Initialize Model(s)
+    if (!m_model.Initialize(m_d3dDevice.Get(), m_d3dContext.Get(), m_myTexture.Get(), m_constantBuffer))
+    {
+        return false;
+    }
 
     return true;
 }

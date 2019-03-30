@@ -175,6 +175,7 @@
     <ClInclude Include="Imgui\imstb_textedit.h" />
     <ClInclude Include="Imgui\imstb_truetype.h" />
     <ClInclude Include="IndexBuffer.h" />
+    <ClInclude Include="Model.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="VertexBuffer.h" />
     <ClInclude Include="Keyboard\KeyboardClass.h" />
@@ -203,6 +204,7 @@
     <ClCompile Include="Keyboard\KeyboardEvent.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Math.cpp" />
+    <ClCompile Include="Model.cpp" />
     <ClCompile Include="MovingEntity.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
