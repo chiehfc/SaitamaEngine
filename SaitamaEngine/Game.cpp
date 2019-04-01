@@ -19,7 +19,7 @@ using Microsoft::WRL::ComPtr;
 static const XMVECTORF32 START_POSITION = { 0.f, -1.5f, 0.f, 0.f };
 static const XMVECTORF32 ROOM_BOUNDS = { 8.f, 6.f, 12.f, 0.f };
 static const float ROTATION_GAIN = 0.01f;
-static const float MOVEMENT_GAIN = 1.0f;
+static const float MOVEMENT_GAIN = 5.0f;
 
 Game::Game() :
     m_window(nullptr),
@@ -87,25 +87,29 @@ void Game::Update(DX::StepTimer const& timer)
     elapsedTime;
 
 	float time = static_cast<float>(timer.GetTotalSeconds());
-	//m_world = Matrix::CreateRotationZ(cosf(time) * 2.f);
-
 
   // Keyboard input.
   auto kb = m_keyboard->GetState();
   if (kb.Escape)
       PostQuitMessage(0);
   if (kb.W)
-      gfx.GetCamera()->Walk(MOVEMENT_GAIN * elapsedTime);
+      //gfx.GetGameModel()->AdjustPosition(gfx.GetGameModel()->GetForwardVector() * elapsedTime * MOVEMENT_GAIN);
+      gfx.GetCamera()->AdjustPosition(gfx.GetCamera()->GetForwardVector() * MOVEMENT_GAIN * elapsedTime);
   if (kb.S)
-      gfx.GetCamera()->Walk(-MOVEMENT_GAIN * elapsedTime);
+      //gfx.GetGameModel()->AdjustPosition(gfx.GetGameModel()->GetBackwardVector() * elapsedTime * MOVEMENT_GAIN);
+      gfx.GetCamera()->AdjustPosition(gfx.GetCamera()->GetBackwardVector() * MOVEMENT_GAIN * elapsedTime);
   if (kb.A)
-      gfx.GetCamera()->Strafe(-MOVEMENT_GAIN * elapsedTime);
+      //gfx.GetGameModel()->AdjustPosition(gfx.GetGameModel()->GetLeftVector() * elapsedTime * MOVEMENT_GAIN);
+      gfx.GetCamera()->AdjustPosition(gfx.GetCamera()->GetLeftVector() * MOVEMENT_GAIN * elapsedTime);
   if (kb.D)
-      gfx.GetCamera()->Strafe(MOVEMENT_GAIN * elapsedTime);
+      //gfx.GetGameModel()->AdjustPosition(gfx.GetGameModel()->GetRightVector() * elapsedTime * MOVEMENT_GAIN);
+      gfx.GetCamera()->AdjustPosition(gfx.GetCamera()->GetRightVector() * MOVEMENT_GAIN * elapsedTime);
   if (kb.R)
-      gfx.GetCamera()->Lift(MOVEMENT_GAIN * elapsedTime);
+      //gfx.GetGameModel()->AdjustPosition(gfx.GetGameModel()->GetForwardVector() * elapsedTime * MOVEMENT_GAIN);
+      gfx.GetCamera()->AdjustPosition(DirectX::SimpleMath::Vector3(0.0f, MOVEMENT_GAIN * dt, 0.0f));
   if (kb.F)
-      gfx.GetCamera()->Lift(-MOVEMENT_GAIN * elapsedTime);
+      //gfx.GetGameModel()->AdjustPosition(gfx.GetGameModel()->GetForwardVector() * elapsedTime * MOVEMENT_GAIN);
+      gfx.GetCamera()->AdjustPosition(DirectX::SimpleMath::Vector3(0.0f, -MOVEMENT_GAIN * dt, 0.0f));
 
   // Mouse input.
   auto mouse = m_mouse->GetState();
@@ -113,20 +117,9 @@ void Game::Update(DX::StepTimer const& timer)
   {
       DirectX::SimpleMath::Vector3 delta = DirectX::SimpleMath::Vector3(float(mouse.x), float(mouse.y), 0.f)
             * ROTATION_GAIN;
-      std::cout << delta.y << std::endl;
-      gfx.GetCamera()->Pitch(delta.y);
-      gfx.GetCamera()->RotateY(delta.x);          
+      gfx.GetCamera()->AdjustRotation(DirectX::SimpleMath::Vector3(delta.y,delta.x, 0));
   }
   m_mouse->SetMode(mouse.rightButton ? Mouse::MODE_RELATIVE : Mouse::MODE_ABSOLUTE);
-
-  /*Mouse::ButtonStateTracker tracker;
-  tracker.Update(mouse);
-  if (tracker.rightButton == Mouse::ButtonStateTracker::PRESSED)
-  {
-      DirectX::SimpleMath::Vector3 delta = DirectX::SimpleMath::Vector3(float(mouse.x), float(mouse.y), 0.f)
-          * ROTATION_GAIN;
-      gfx.GetCamera()->Rotate(DirectX::SimpleMath::Vector3(float(mouse.y), float(mouse.x), 0.f), ROTATION_GAIN);
-  }*/
 }
 
 // Draws the scene.

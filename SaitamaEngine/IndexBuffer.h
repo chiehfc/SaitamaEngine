@@ -1,7 +1,7 @@
 #pragma once
+
 #include <d3d11.h>
 #include <wrl/client.h>
-#include <vector>
 
 class IndexBuffer
 {
@@ -18,25 +18,25 @@ public:
         return m_buffer.GetAddressOf();
     }
 
-    UINT BufferSize() const
+    UINT IndexCount() const
     {
-        return m_bufferSize;
+        return m_indexCount;
     }
 
-    HRESULT Initialize(ID3D11Device *device, DWORD *data, UINT numIndices)
+    HRESULT Initialize(ID3D11Device *device, DWORD *data, UINT indexCount)
     {
         if (m_buffer.Get() != nullptr)
         {
             m_buffer.Reset();
         }
 
-        m_bufferSize = numIndices;
+        m_indexCount = indexCount;
 
         // Index Buffer
         D3D11_BUFFER_DESC indexBufferDesc;
         ZeroMemory(&indexBufferDesc, sizeof(indexBufferDesc));
         indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-        indexBufferDesc.ByteWidth = sizeof(DWORD) * numIndices;
+        indexBufferDesc.ByteWidth = sizeof(DWORD) * indexCount;
         indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
         indexBufferDesc.CPUAccessFlags = 0;
         indexBufferDesc.MiscFlags = 0;
@@ -55,5 +55,5 @@ private:
     IndexBuffer(const IndexBuffer &rhs);
 
     Microsoft::WRL::ComPtr<ID3D11Buffer> m_buffer;
-    UINT m_bufferSize = 0;
+    UINT m_indexCount = 0;
 };

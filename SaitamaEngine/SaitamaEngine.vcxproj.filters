@@ -61,7 +61,11 @@
     <ClInclude Include="Imgui\imgui.h">
       <Filter>Imgui</Filter>
     </ClInclude>
-    <ClInclude Include="Model.h" />
+    <ClInclude Include="GameModel.h" />
+    <ClInclude Include="Mesh.h" />
+    <ClInclude Include="Texture.h" />
+    <ClInclude Include="StringHelper.h" />
+    <ClInclude Include="RenderableGameObject.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -99,7 +103,11 @@
     <ClCompile Include="Imgui\imgui.cpp">
       <Filter>Imgui</Filter>
     </ClCompile>
-    <ClCompile Include="Model.cpp" />
+    <ClCompile Include="GameModel.cpp" />
+    <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="StringHelper.cpp" />
+    <ClCompile Include="RenderableGameObject.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resource.rc" />

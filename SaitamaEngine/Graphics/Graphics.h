@@ -10,7 +10,7 @@
 #include "..\\Imgui\\imgui.h"
 #include "..\\Imgui\\imgui_impl_win32.h"
 #include "..\\Imgui\\imgui_impl_dx11.h"
-#include "..\\Model.h"
+#include "..\\RenderableGameObject.h"
 
 class Graphics
 {
@@ -20,6 +20,7 @@ public:
     void Clear();
 
     Camera *GetCamera();
+    GameObject *GetGameObject();
 
 private:
     bool InitializeDirectX(HWND hwnd);
@@ -46,7 +47,7 @@ private:
     ConstantBuffer<CB_VS_vertexshader> m_constantBuffer;
     ConstantBuffer<CB_PS_pixelshader> m_cb_ps_pixelshader;        
 
-    Model m_model;
+    RenderableGameObject m_gameObject;
 
     Microsoft::WRL::ComPtr<ID3D11RasterizerState> m_rasterizerState;
     Microsoft::WRL::ComPtr<ID3D11BlendState> m_blendState;

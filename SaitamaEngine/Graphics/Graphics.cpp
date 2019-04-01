@@ -55,12 +55,11 @@ void Graphics::RenderFrame()
 
     UINT offset = 0;
 
-    m_camera.UpdateViewMatrix();
     // For alpha blending
     //static float alpha = 0.5f;
     // Update Constant Buffer            
     {
-        m_model.Draw(DirectX::XMMATRIX(m_camera.GetView()) * DirectX::XMMATRIX(m_camera.Proj()));
+        m_gameObject.Draw(DirectX::XMMATRIX(m_camera.GetViewMatrix()) * DirectX::XMMATRIX(m_camera.GetProjectionMatrix()));
     }
     
 
@@ -256,7 +255,6 @@ bool Graphics::InitializeShaders()
 
 bool Graphics::InitializeScene()
 {   
-
     // Texture    
     HRESULT hr = DirectX::CreateWICTextureFromFile(m_d3dDevice.Get(), L"Data\\Textures\\pikachu.jfif", nullptr, m_myTexture.GetAddressOf());
     DX::ThrowIfFailed(hr);
@@ -267,19 +265,20 @@ bool Graphics::InitializeScene()
     // Constant Buffer
     hr = m_constantBuffer.Initialize(m_d3dDevice.Get(), m_d3dContext.Get());
     DX::ThrowIfFailed(hr);
-
+    
     hr = m_cb_ps_pixelshader.Initialize(m_d3dDevice.Get(), m_d3dContext.Get());
     DX::ThrowIfFailed(hr);
 
-    // Initialize Model(s)
-    if (!m_model.Initialize(m_d3dDevice.Get(), m_d3dContext.Get(), m_myTexture.Get(), m_constantBuffer))
+    // Initialize Object(s)
+    if (!m_gameObject.Initialize("Data\\Models\\dodge_challenger.fbx", m_d3dDevice.Get(), m_d3dContext.Get(), m_constantBuffer))
     {
         return false;
     }
 
+    m_camera.UpdateMatrix();
+
     return true;
 }
-
 
 void Graphics::CreateDevice() 
 {
@@ -327,4 +326,9 @@ void Graphics::CreateDevice()
 Camera *Graphics::GetCamera()
 {
     return &m_camera;
+}
+
+GameObject *Graphics::GetGameObject()
+{
+    return &m_gameObject;
 }
