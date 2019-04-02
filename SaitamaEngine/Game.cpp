@@ -88,6 +88,8 @@ void Game::Update(DX::StepTimer const& timer)
 
 	float time = static_cast<float>(timer.GetTotalSeconds());
 
+    gfx.GetGameObject()->AdjustRotation(DirectX::SimpleMath::Vector3(0.0f, 1.0f * ROTATION_GAIN, 0.0f));
+
   // Keyboard input.
   auto kb = m_keyboard->GetState();
   if (kb.Escape)
@@ -106,10 +108,10 @@ void Game::Update(DX::StepTimer const& timer)
       gfx.GetCamera()->AdjustPosition(gfx.GetCamera()->GetRightVector() * MOVEMENT_GAIN * elapsedTime);
   if (kb.R)
       //gfx.GetGameModel()->AdjustPosition(gfx.GetGameModel()->GetForwardVector() * elapsedTime * MOVEMENT_GAIN);
-      gfx.GetCamera()->AdjustPosition(DirectX::SimpleMath::Vector3(0.0f, MOVEMENT_GAIN * dt, 0.0f));
+      gfx.GetCamera()->AdjustPosition(DirectX::SimpleMath::Vector3(0.0f, MOVEMENT_GAIN * elapsedTime, 0.0f));
   if (kb.F)
       //gfx.GetGameModel()->AdjustPosition(gfx.GetGameModel()->GetForwardVector() * elapsedTime * MOVEMENT_GAIN);
-      gfx.GetCamera()->AdjustPosition(DirectX::SimpleMath::Vector3(0.0f, -MOVEMENT_GAIN * dt, 0.0f));
+      gfx.GetCamera()->AdjustPosition(DirectX::SimpleMath::Vector3(0.0f, -MOVEMENT_GAIN * elapsedTime, 0.0f));
 
   // Mouse input.
   auto mouse = m_mouse->GetState();

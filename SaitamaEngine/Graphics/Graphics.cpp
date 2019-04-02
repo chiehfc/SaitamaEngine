@@ -39,6 +39,9 @@ bool Graphics::Initialize(HWND hwnd, int width, int height)
 
 void Graphics::RenderFrame()
 {
+    m_cb_ps_light.ApplyChanges();
+    m_d3dContext->PSSetConstantBuffers(0, 1, m_cb_ps_light.GetAddressOf());
+
     float bgColor[] = { 0.0f, 0.0f, 0.0f, 1.0f };
     m_d3dContext->ClearRenderTargetView(m_renderTargetView.Get(), bgColor);
     m_d3dContext->ClearDepthStencilView(m_depthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
@@ -84,8 +87,10 @@ void Graphics::RenderFrame()
     ImGui_ImplDX11_NewFrame();
     ImGui_ImplWin32_NewFrame();
     ImGui::NewFrame();
-    ImGui::Begin("Test");
-    //ImGui::DragFloat("Alpha", &alpha, 0.1f, 0.0f, 1.0f);
+    ImGui::Begin("Light Controls");
+    ImGui::DragFloat3("Ambient Light Color", &m_cb_ps_light.data.ambientLightColor.x, 0.01f, 0.0f, 1.0f);
+    ImGui::DragFloat("Ambient Light Strength", &m_cb_ps_light.data.ambientLightStrength, 0.01f, 0.0f, 1.0f);
+
 
     ImGui::End();
     ImGui::Render();
@@ -234,16 +239,17 @@ bool Graphics::InitializeShaders()
     D3D11_INPUT_ELEMENT_DESC layout[] =
     {
         { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+        { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        { "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 }
     };
     UINT numElements = ARRAYSIZE(layout);
 
-    if (!m_vertexShader.Initialize(m_d3dDevice, L"..\\Debug\\vertexshader.cso", layout, numElements))
+    if (!m_vertexShader.Initialize(m_d3dDevice, L"..\\x64\\Debug\\vertexshader.cso", layout, numElements))
     {
         return false;
     }
 
-    if (!m_pixelShader.Initialize(m_d3dDevice, L"..\\Debug\\pixelshader.cso"))
+    if (!m_pixelShader.Initialize(m_d3dDevice, L"..\\x64\\Debug\\pixelshader.cso"))
     {
         return false;
     }
@@ -266,11 +272,14 @@ bool Graphics::InitializeScene()
     hr = m_constantBuffer.Initialize(m_d3dDevice.Get(), m_d3dContext.Get());
     DX::ThrowIfFailed(hr);
     
-    hr = m_cb_ps_pixelshader.Initialize(m_d3dDevice.Get(), m_d3dContext.Get());
+    hr = m_cb_ps_light.Initialize(m_d3dDevice.Get(), m_d3dContext.Get());
     DX::ThrowIfFailed(hr);
 
+    m_cb_ps_light.data.ambientLightColor = DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f);
+    m_cb_ps_light.data.ambientLightStrength = 1.0f;
+
     // Initialize Object(s)
-    if (!m_gameObject.Initialize("Data\\Models\\dodge_challenger.fbx", m_d3dDevice.Get(), m_d3dContext.Get(), m_constantBuffer))
+    if (!m_gameObject.Initialize("Data\\Models\\XY_PikachuM.fbx", m_d3dDevice.Get(), m_d3dContext.Get(), m_constantBuffer))
     {
         return false;
     }

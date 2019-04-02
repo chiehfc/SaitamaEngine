@@ -23,7 +23,7 @@ void RenderableGameObject::Draw(const DirectX::XMMATRIX &viewProjectionMatrix)
 
 void RenderableGameObject::UpdateMatrix()
 {
-    m_worldMatrix = DirectX::XMMatrixScaling(0.1f, 0.1f, 0.1f) * DirectX::XMMatrixRotationRollPitchYaw(
+    m_worldMatrix = DirectX::XMMatrixScaling(1.0f, 1.0f, 1.0f) * DirectX::XMMatrixRotationRollPitchYaw(
         m_rotVector.x,
         m_rotVector.y,
         m_rotVector.z)

@@ -45,7 +45,7 @@ private:
     VertexShader m_vertexShader;    
     PixelShader m_pixelShader;
     ConstantBuffer<CB_VS_vertexshader> m_constantBuffer;
-    ConstantBuffer<CB_PS_pixelshader> m_cb_ps_pixelshader;        
+    ConstantBuffer<CB_PS_light> m_cb_ps_light;        
 
     RenderableGameObject m_gameObject;
 

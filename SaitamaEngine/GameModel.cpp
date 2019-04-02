@@ -28,9 +28,10 @@ void GameModel::Draw(const DirectX::XMMATRIX &worldMatrix, const DirectX::XMMATR
     
     for (UINT i = 0; i < m_meshes.size(); i++)
     {
-        m_cb_vs_vertexshader->data.mat = m_meshes[i].GetTransformMatrix() * worldMatrix * viewProjectionMatrix;
+        m_cb_vs_vertexshader->data.wvpMatrix = m_meshes[i].GetTransformMatrix() * worldMatrix * viewProjectionMatrix;
+        m_cb_vs_vertexshader->data.worldMatrix = m_meshes[i].GetTransformMatrix() * worldMatrix;
         // from row major(DirectXMath library) to column major(HLSL)
-        m_cb_vs_vertexshader->data.mat = DirectX::XMMatrixTranspose(m_cb_vs_vertexshader->data.mat);
+        m_cb_vs_vertexshader->data.wvpMatrix = DirectX::XMMatrixTranspose(m_cb_vs_vertexshader->data.wvpMatrix);
         if (!m_cb_vs_vertexshader->ApplyChanges())
         {
             return;
@@ -83,6 +84,10 @@ Mesh GameModel::ProcessMesh(aiMesh *mesh, const aiScene *scene, const DirectX::X
         vertex.pos.x = mesh->mVertices[i].x;
         vertex.pos.y = mesh->mVertices[i].y;
         vertex.pos.z = mesh->mVertices[i].z;
+
+        vertex.normal.x = mesh->mNormals[i].x;
+        vertex.normal.y = mesh->mNormals[i].y;
+        vertex.normal.z = mesh->mNormals[i].z;
 
         if (mesh->mTextureCoords[0])
         {
