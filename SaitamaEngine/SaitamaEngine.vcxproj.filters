@@ -66,6 +66,7 @@
     <ClInclude Include="Texture.h" />
     <ClInclude Include="StringHelper.h" />
     <ClInclude Include="RenderableGameObject.h" />
+    <ClInclude Include="Light.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -108,6 +109,7 @@
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="StringHelper.cpp" />
     <ClCompile Include="RenderableGameObject.cpp" />
+    <ClCompile Include="Light.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resource.rc" />
@@ -132,5 +134,6 @@
   <ItemGroup>
     <FxCompile Include="vertexshader.hlsl" />
     <FxCompile Include="pixelshader.hlsl" />
+    <FxCompile Include="pixelshader_nolight.hlsl" />
   </ItemGroup>
 </Project>

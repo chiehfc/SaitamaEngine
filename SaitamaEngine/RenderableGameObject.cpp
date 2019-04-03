@@ -32,9 +32,5 @@ void RenderableGameObject::UpdateMatrix()
             m_posVector.y,
             m_posVector.z);
 
-    Matrix vecRotationMatrix = DirectX::XMMatrixRotationRollPitchYaw(0.0f, m_rotVector.y, 0.0f);
-    m_vecForward = XMVector3TransformCoord(DEFAULT_FORWARD_VECTOR, vecRotationMatrix);
-    m_vecBack = XMVector3TransformCoord(DEFAULT_BACKWARD_VECTOR, vecRotationMatrix);
-    m_vecLeft = XMVector3TransformCoord(DEFAULT_LEFT_VECTOR, vecRotationMatrix);
-    m_vecRight = XMVector3TransformCoord(DEFAULT_RIGHT_VECTOR, vecRotationMatrix);
+    UpdateDirectionVectors();
 }

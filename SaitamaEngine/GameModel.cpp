@@ -17,7 +17,7 @@ bool GameModel::Initialize(const std::string &filePath, ID3D11Device *device, ID
 
 void GameModel::Draw(const DirectX::XMMATRIX &worldMatrix, const DirectX::XMMATRIX &viewProjectionMatrix)
 {
-    
+    m_deviceContext->VSSetConstantBuffers(0, 1, m_cb_vs_vertexshader->GetAddressOf());
 
     //m_cb_vs_vertexshader->data.alpha = alpha;
     //if (!m_cb_ps_pixelshader.ApplyChanges())
@@ -31,12 +31,13 @@ void GameModel::Draw(const DirectX::XMMATRIX &worldMatrix, const DirectX::XMMATR
         m_cb_vs_vertexshader->data.wvpMatrix = m_meshes[i].GetTransformMatrix() * worldMatrix * viewProjectionMatrix;
         m_cb_vs_vertexshader->data.worldMatrix = m_meshes[i].GetTransformMatrix() * worldMatrix;
         // from row major(DirectXMath library) to column major(HLSL)
-        m_cb_vs_vertexshader->data.wvpMatrix = DirectX::XMMatrixTranspose(m_cb_vs_vertexshader->data.wvpMatrix);
+        // We don't need to transpose anymore because of #pragma pack_matrix( row_major ) in vertexshader.hlsl
+        //m_cb_vs_vertexshader->data.wvpMatrix = DirectX::XMMatrixTranspose(m_cb_vs_vertexshader->data.wvpMatrix);
+        //m_cb_vs_vertexshader->data.worldMatrix = DirectX::XMMatrixTranspose(m_cb_vs_vertexshader->data.worldMatrix);
         if (!m_cb_vs_vertexshader->ApplyChanges())
         {
             return;
-        }
-        m_deviceContext->VSSetConstantBuffers(0, 1, m_cb_vs_vertexshader->GetAddressOf());
+        }        
         m_meshes[i].Draw();
     }
 }

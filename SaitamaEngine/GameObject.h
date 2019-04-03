@@ -13,13 +13,14 @@ public:
     void AdjustRotation(const DirectX::SimpleMath::Vector3 &rot);
     void SetLookAtPos(const DirectX::SimpleMath::Vector3 &pos);
 
-    const DirectX::SimpleMath::Vector3 &GetForwardVector();
-    const DirectX::SimpleMath::Vector3 &GetLeftVector();
-    const DirectX::SimpleMath::Vector3 &GetRightVector();
-    const DirectX::SimpleMath::Vector3 &GetBackwardVector();
+    const DirectX::SimpleMath::Vector3 &GetForwardVector(bool omitY = false);
+    const DirectX::SimpleMath::Vector3 &GetLeftVector(bool omitY = false);
+    const DirectX::SimpleMath::Vector3 &GetRightVector(bool omitY = false);
+    const DirectX::SimpleMath::Vector3 &GetBackwardVector(bool omitY = false);
 
 protected:
     virtual void UpdateMatrix();
+    void UpdateDirectionVectors();
 
     DirectX::SimpleMath::Vector3 m_posVector;
     DirectX::SimpleMath::Vector3 m_rotVector;
@@ -35,5 +36,9 @@ protected:
     DirectX::SimpleMath::Vector3 m_vecRight;
     DirectX::SimpleMath::Vector3 m_vecBack;
     
+    DirectX::SimpleMath::Vector3 m_vecForward_noY;
+    DirectX::SimpleMath::Vector3 m_vecLeft_noY;
+    DirectX::SimpleMath::Vector3 m_vecRight_noY;
+    DirectX::SimpleMath::Vector3 m_vecBack_noY;
 };
 

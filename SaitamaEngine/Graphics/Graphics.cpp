@@ -39,6 +39,12 @@ bool Graphics::Initialize(HWND hwnd, int width, int height)
 
 void Graphics::RenderFrame()
 {
+    m_cb_ps_light.data.dynamicLightColor = m_light.lightColor;
+    m_cb_ps_light.data.dynamicLightStrength = m_light.lightStrength;
+    m_cb_ps_light.data.dynamicLightPosition = m_light.GetPositionVector();
+    m_cb_ps_light.data.dynamicLightAttenuation_a = m_light.attenuation_a;
+    m_cb_ps_light.data.dynamicLightAttenuation_b = m_light.attenuation_b;
+    m_cb_ps_light.data.dynamicLightAttenuation_c = m_light.attenuation_c;
     m_cb_ps_light.ApplyChanges();
     m_d3dContext->PSSetConstantBuffers(0, 1, m_cb_ps_light.GetAddressOf());
 
@@ -54,7 +60,7 @@ void Graphics::RenderFrame()
     m_d3dContext->PSSetSamplers(0, 1, m_samplerState.GetAddressOf());
 
     m_d3dContext->VSSetShader(m_vertexShader.GetShader(), NULL, 0);
-    m_d3dContext->PSSetShader(m_pixelShader.GetShader(), NULL, 0);
+    m_d3dContext->PSSetShader(m_pixelShader.GetShader(), NULL, 0);    
 
     UINT offset = 0;
 
@@ -63,6 +69,10 @@ void Graphics::RenderFrame()
     // Update Constant Buffer            
     {
         m_gameObject.Draw(DirectX::XMMATRIX(m_camera.GetViewMatrix()) * DirectX::XMMATRIX(m_camera.GetProjectionMatrix()));
+    }
+    {
+        m_d3dContext->PSSetShader(m_pixelShader_noLight.GetShader(), NULL, 0);
+        m_light.Draw(DirectX::XMMATRIX(m_camera.GetViewMatrix()) * DirectX::XMMATRIX(m_camera.GetProjectionMatrix()));
     }
     
 
@@ -90,7 +100,12 @@ void Graphics::RenderFrame()
     ImGui::Begin("Light Controls");
     ImGui::DragFloat3("Ambient Light Color", &m_cb_ps_light.data.ambientLightColor.x, 0.01f, 0.0f, 1.0f);
     ImGui::DragFloat("Ambient Light Strength", &m_cb_ps_light.data.ambientLightStrength, 0.01f, 0.0f, 1.0f);
-
+    ImGui::NewLine();
+    ImGui::DragFloat3("Dynamic Light Color", &m_light.lightColor.x, 0.01f, 0.0f, 10.0f);
+    ImGui::DragFloat("Dynamic Light Strength", &m_light.lightStrength, 0.01f, 0.0f, 10.0f);
+    ImGui::DragFloat("Dynamic Light Attenuation A", &m_light.attenuation_a, 0.01f, 0.1f, 10.0f);
+    ImGui::DragFloat("Dynamic Light Attenuation B", &m_light.attenuation_b, 0.01f, 0.0f, 10.0f);
+    ImGui::DragFloat("Dynamic Light Attenuation C", &m_light.attenuation_c, 0.01f, 0.0f, 10.0f);
 
     ImGui::End();
     ImGui::Render();
@@ -254,6 +269,10 @@ bool Graphics::InitializeShaders()
         return false;
     }
     
+    if (!m_pixelShader_noLight.Initialize(m_d3dDevice, L"..\\x64\\Debug\\pixelshader_nolight.cso"))
+    {
+        return false;
+    }
     
 
     return true;
@@ -280,6 +299,11 @@ bool Graphics::InitializeScene()
 
     // Initialize Object(s)
     if (!m_gameObject.Initialize("Data\\Models\\XY_PikachuM.fbx", m_d3dDevice.Get(), m_d3dContext.Get(), m_constantBuffer))
+    {
+        return false;
+    }
+
+    if (!m_light.Initialize(m_d3dDevice.Get(), m_d3dContext.Get(), m_constantBuffer))
     {
         return false;
     }
@@ -340,4 +364,9 @@ Camera *Graphics::GetCamera()
 GameObject *Graphics::GetGameObject()
 {
     return &m_gameObject;
+}
+
+Light *Graphics::GetLight()
+{
+    return &m_light;
 }

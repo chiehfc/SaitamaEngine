@@ -68,22 +68,37 @@ void GameObject::SetLookAtPos(const Vector3 &lookAtPos)
 }
 
 
-const Vector3 &GameObject::GetForwardVector()
+const Vector3 &GameObject::GetForwardVector(bool omitY)
 {
-    return m_vecForward;
+    return omitY ? m_vecForward_noY : m_vecForward;
 }
 
-const Vector3 &GameObject::GetLeftVector()
+const Vector3 &GameObject::GetLeftVector(bool omitY)
 {
-    return m_vecLeft;
+    return omitY ? m_vecLeft_noY : m_vecLeft;
 }
 
-const Vector3 &GameObject::GetRightVector()
+const Vector3 &GameObject::GetRightVector(bool omitY)
 {
-    return m_vecRight;
+    return omitY ? m_vecRight_noY : m_vecRight;
 }
 
-const Vector3 &GameObject::GetBackwardVector()
+const Vector3 &GameObject::GetBackwardVector(bool omitY)
 {
-    return m_vecBack;
+    return omitY ? m_vecBack_noY : m_vecBack;
+}
+
+void GameObject::UpdateDirectionVectors()
+{
+    Matrix vecRotationMatrix = DirectX::XMMatrixRotationRollPitchYaw(m_rotVector.x, m_rotVector.y, 0.0f);
+    m_vecForward = XMVector3TransformCoord(DEFAULT_FORWARD_VECTOR, vecRotationMatrix);
+    m_vecBack = XMVector3TransformCoord(DEFAULT_BACKWARD_VECTOR, vecRotationMatrix);
+    m_vecLeft = XMVector3TransformCoord(DEFAULT_LEFT_VECTOR, vecRotationMatrix);
+    m_vecRight = XMVector3TransformCoord(DEFAULT_RIGHT_VECTOR, vecRotationMatrix);
+
+    Matrix vecRotationMatrixNoY = DirectX::XMMatrixRotationRollPitchYaw(0.0f, m_rotVector.y, 0.0f);
+    m_vecForward_noY = XMVector3TransformCoord(DEFAULT_FORWARD_VECTOR, vecRotationMatrixNoY);
+    m_vecBack_noY = XMVector3TransformCoord(DEFAULT_BACKWARD_VECTOR, vecRotationMatrixNoY);
+    m_vecLeft_noY = XMVector3TransformCoord(DEFAULT_LEFT_VECTOR, vecRotationMatrixNoY);
+    m_vecRight_noY = XMVector3TransformCoord(DEFAULT_RIGHT_VECTOR, vecRotationMatrixNoY);
 }

@@ -11,6 +11,7 @@
 #include "..\\Imgui\\imgui_impl_win32.h"
 #include "..\\Imgui\\imgui_impl_dx11.h"
 #include "..\\RenderableGameObject.h"
+#include "..\\Light.h"
 
 class Graphics
 {
@@ -21,6 +22,7 @@ public:
 
     Camera *GetCamera();
     GameObject *GetGameObject();
+    Light *GetLight();
 
 private:
     bool InitializeDirectX(HWND hwnd);
@@ -44,6 +46,7 @@ private:
     
     VertexShader m_vertexShader;    
     PixelShader m_pixelShader;
+    PixelShader m_pixelShader_noLight;
     ConstantBuffer<CB_VS_vertexshader> m_constantBuffer;
     ConstantBuffer<CB_PS_light> m_cb_ps_light;        
 
@@ -64,5 +67,6 @@ private:
 
     Camera m_camera;
     Timer m_fpsTimer;
+    Light m_light;
 };
 

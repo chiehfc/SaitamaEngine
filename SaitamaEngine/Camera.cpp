@@ -39,11 +39,7 @@ void Camera::UpdateMatrix() //Updates view matrix and also updates the movement 
     //Rebuild view matrix
     m_view = XMMatrixLookAtLH(m_posVector, camTarget, upDir);
 
-    Matrix vecRotationMatrix = DirectX::XMMatrixRotationRollPitchYaw(0.0f, m_rotVector.y, 0.0f);
-    m_vecForward = XMVector3TransformCoord(this->DEFAULT_FORWARD_VECTOR, vecRotationMatrix);
-    m_vecBack = XMVector3TransformCoord(this->DEFAULT_BACKWARD_VECTOR, vecRotationMatrix);
-    m_vecLeft = XMVector3TransformCoord(this->DEFAULT_LEFT_VECTOR, vecRotationMatrix);
-    m_vecRight = XMVector3TransformCoord(this->DEFAULT_RIGHT_VECTOR, vecRotationMatrix);
+    UpdateDirectionVectors();
 }
 
 const Matrix &Camera::GetViewMatrix() const
