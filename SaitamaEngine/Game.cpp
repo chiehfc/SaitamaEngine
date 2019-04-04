@@ -42,6 +42,9 @@ void Game::Initialize(HWND window, int width, int height)
         return;
     }
 
+
+    factory.CreateActor(nullptr, nullptr, nullptr, 0);
+
     //camera = new Camera();
     //camera->SetAngle(XM_PI / 4.f);
       //InitProjMatrix(camera->GetAngle(), m_outputWidth,m_outputHeight,1.0f,10.0f);

@@ -67,6 +67,11 @@
     <ClInclude Include="StringHelper.h" />
     <ClInclude Include="RenderableGameObject.h" />
     <ClInclude Include="Light.h" />
+    <ClInclude Include="templates.h" />
+    <ClInclude Include="Saitama.h" />
+    <ClInclude Include="GameObjectFactory.h" />
+    <ClInclude Include="GameObjectComponent.h" />
+    <ClInclude Include="XMLLoader.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -110,6 +115,9 @@
     <ClCompile Include="StringHelper.cpp" />
     <ClCompile Include="RenderableGameObject.cpp" />
     <ClCompile Include="Light.cpp" />
+    <ClCompile Include="Saitama.cpp" />
+    <ClCompile Include="GameObjectFactory.cpp" />
+    <ClCompile Include="XMLLoader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resource.rc" />

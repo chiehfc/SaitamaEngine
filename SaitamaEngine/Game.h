@@ -8,6 +8,7 @@
 #include "Camera.h"
 #include "Graphics/Graphics.h"
 #include "Timer.h"
+#include "GameObjectFactory.h"
 
 // A basic game implementation that creates a D3D11 device and
 // provides a game loop.
@@ -55,6 +56,7 @@ private:
 
    
     Graphics gfx;
+    GameObjectFactory factory;
     
 
     // Rendering loop timer.

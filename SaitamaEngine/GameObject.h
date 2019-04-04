@@ -1,9 +1,66 @@
 #pragma once
 #include "GameModel.h"
+#include "Saitama.h"
 
 class GameObject
 {
+    friend class GameObjectFactory;
+
 public:   
+
+    typedef std::map<ComponentId, StrongGameObjectComponentPtr> GameObjectComponents;
+
+    explicit GameObject(GameObjectId id);
+    ~GameObject(void);
+
+    bool Init(tinyxml2::XMLElement* pData);
+    void PostInit(void);
+    void Destroy(void);
+
+    // accessors
+    GameObjectId GetId(void) const { return m_id; }
+    GameObjectType GetType(void) const { return m_type; }
+
+    // template function for retrieving components
+    template <class ComponentType>
+    std::weak_ptr<ComponentType> GetComponent(ComponentId id)
+    {
+        ActorComponents::iterator findIt = m_components.find(id);
+        if (findIt != m_components.end())
+        {
+            StrongActorComponentPtr pBase(findIt->second);
+            shared_ptr<ComponentType> pSub(static_pointer_cast<ComponentType>(pBase));  // cast to subclass version of the pointer
+            weak_ptr<ComponentType> pWeakSub(pSub);  // convert strong pointer to weak pointer
+            return pWeakSub;  // return the weak pointer
+        } else
+        {
+            return weak_ptr<ComponentType>();
+        }
+    }
+
+    template <class ComponentType>
+    std::weak_ptr<ComponentType> GetComponent(const char *name)
+    {
+        ComponentId id = ActorComponent::GetIdFromName(name);
+        ActorComponents::iterator findIt = m_components.find(id);
+        if (findIt != m_components.end())
+        {
+            StrongActorComponentPtr pBase(findIt->second);
+            shared_ptr<ComponentType> pSub(static_pointer_cast<ComponentType>(pBase));  // cast to subclass version of the pointer
+            weak_ptr<ComponentType> pWeakSub(pSub);  // convert strong pointer to weak pointer
+            return pWeakSub;  // return the weak pointer
+        } else
+        {
+            return weak_ptr<ComponentType>();
+        }
+    }
+
+    const GameObjectComponents* GetComponents() { return &m_components; }
+
+    void AddComponent(StrongGameObjectComponentPtr pComponent);
+
+
+
     const DirectX::SimpleMath::Vector3 &GetPositionVector() const;
     const DirectX::SimpleMath::Vector3 &GetRotationVector() const;
 
@@ -40,5 +97,10 @@ protected:
     DirectX::SimpleMath::Vector3 m_vecLeft_noY;
     DirectX::SimpleMath::Vector3 m_vecRight_noY;
     DirectX::SimpleMath::Vector3 m_vecBack_noY;
+
+    GameObjectId m_id;					// unique id for the actor
+    GameObjectComponents m_components;	// all components this actor has
+    GameObjectType m_type;
+
 };
 
