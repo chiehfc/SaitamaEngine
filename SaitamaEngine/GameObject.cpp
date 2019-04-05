@@ -9,6 +9,38 @@ void GameObject::UpdateMatrix()
     assert("UpdateMatrix mush be overridden." && 0);
 }
 
+GameObject::GameObject(GameObjectId id)
+{
+    m_id = id;
+    m_type = "Unknown";
+}
+
+GameObject::~GameObject()
+{
+
+}
+
+bool GameObject::Init(tinyxml2::XMLElement* pData)
+{
+    //GCC_LOG("Actor", std::string("Initializing Actor ") + ToStr(m_id));
+
+    m_type = pData->Attribute("type");
+    return true;
+}
+
+void GameObject::PostInit(void)
+{
+    for (GameObjectComponents::iterator it = m_components.begin(); it != m_components.end(); ++it)
+    {
+        it->second->VPostInit();
+    }
+}
+
+void GameObject::Destroy(void)
+{
+    m_components.clear();
+}
+
 const Vector3 &GameObject::GetPositionVector() const
 {
     return m_posVector;

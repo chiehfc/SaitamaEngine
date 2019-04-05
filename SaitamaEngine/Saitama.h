@@ -4,7 +4,7 @@
 #include "templates.h"
 #include <memory>
 
-
+typedef 
 
 class GameObject;
 class GameObjectComponent;

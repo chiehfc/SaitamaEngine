@@ -72,6 +72,8 @@
     <ClInclude Include="GameObjectFactory.h" />
     <ClInclude Include="GameObjectComponent.h" />
     <ClInclude Include="XMLLoader.h" />
+    <ClInclude Include="RenderComponent.h" />
+    <ClInclude Include="TransformComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -118,6 +120,8 @@
     <ClCompile Include="Saitama.cpp" />
     <ClCompile Include="GameObjectFactory.cpp" />
     <ClCompile Include="XMLLoader.cpp" />
+    <ClCompile Include="RenderComponent.cpp" />
+    <ClCompile Include="TransformComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resource.rc" />

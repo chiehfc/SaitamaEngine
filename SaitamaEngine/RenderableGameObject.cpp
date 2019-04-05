@@ -5,6 +5,8 @@ using namespace DirectX::SimpleMath;
 
 bool RenderableGameObject::Initialize(const std::string &filePath, ID3D11Device *device, ID3D11DeviceContext *deviceContext, ConstantBuffer<CB_VS_vertexshader> &cb_vs_vertexshader)
 {
+    auto transformComponent = GetComponent<TransformComponent>
+
     if (!m_gameModel.Initialize(filePath, device, deviceContext, cb_vs_vertexshader))
     {
         return false;
