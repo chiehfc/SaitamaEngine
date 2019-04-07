@@ -1,12 +1,15 @@
 #include "pch.h"
 #include "RenderComponent.h"
 
+const char *RenderComponent::g_Name = "RenderComponent";
 
-RenderComponent::RenderComponent()
+bool RenderComponent::VInit(tinyxml2::XMLElement *pData)
 {
-}
+    tinyxml2::XMLElement *pNode = pData->FirstChildElement("FilePath");
 
-
-RenderComponent::~RenderComponent()
-{
+    if (pNode)
+    {        
+        m_filePath = pNode->Attribute("filepath");
+    }
+    return true;
 }

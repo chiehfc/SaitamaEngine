@@ -43,7 +43,8 @@ void Game::Initialize(HWND window, int width, int height)
     }
 
 
-    factory.CreateActor(nullptr, nullptr, nullptr, 0);
+    //auto gameObject = factory.CreateGameObject(nullptr, nullptr, nullptr, 0);
+
 
     //camera = new Camera();
     //camera->SetAngle(XM_PI / 4.f);

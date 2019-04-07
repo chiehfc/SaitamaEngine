@@ -1,17 +1,20 @@
 #include "pch.h"
 #include "RenderableGameObject.h"
+//#include "TransformComponent.h"
+//#include "RenderComponent.h"
 
 using namespace DirectX::SimpleMath;
 
 bool RenderableGameObject::Initialize(const std::string &filePath, ID3D11Device *device, ID3D11DeviceContext *deviceContext, ConstantBuffer<CB_VS_vertexshader> &cb_vs_vertexshader)
 {
-    auto transformComponent = GetComponent<TransformComponent>
+    //std::shared_ptr<TransformComponent> pTransformComponent = MakeStrongPtr<TransformComponent>(GetComponent<TransformComponent>(TransformComponent::g_Name));
+    //std::shared_ptr<RenderComponent> pRenderComponent = MakeStrongPtr<RenderComponent>(GetComponent<RenderComponent>(RenderComponent::g_Name));
 
     if (!m_gameModel.Initialize(filePath, device, deviceContext, cb_vs_vertexshader))
     {
         return false;
     }
-
+    
     SetPosition(Vector3::Zero);
     SetRotation(Vector3::Zero);
     UpdateMatrix();

@@ -7,7 +7,7 @@
 
 class GameObjectFactory
 {
-    GameObjectId m_lastActorId;
+    GameObjectId m_lastGameObjectId;
 
 protected:
     GenericObjectFactory<GameObjectComponent, ComponentId> m_componentFactory;
@@ -15,8 +15,8 @@ protected:
 public:
     GameObjectFactory(void);
 
-    StrongActorPtr CreateActor(const char* actorResource, tinyxml2::XMLElement* overrides, const DirectX::XMMATRIX* initialTransform, const GameObjectId serversActorId);
-    void ModifyActor(StrongActorPtr pActor, tinyxml2::XMLElement* overrides);
+    StrongGameObjectPtr CreateGameObject(const char* gameObjectResource, tinyxml2::XMLElement* overrides, const DirectX::XMMATRIX* initialTransform, const GameObjectId serversGameObjectId);
+    void ModifyGameObject(StrongGameObjectPtr pGameObject, tinyxml2::XMLElement* overrides);
 
     //protected:
         // [rez] This function can be overridden by a subclass so you can create game-specific C++ components.  If you do
@@ -24,6 +24,6 @@ public:
     virtual StrongGameObjectComponentPtr VCreateComponent(tinyxml2::XMLElement* pData);
 
 private:
-    GameObjectId GetNextActorId(void) { ++m_lastActorId; return m_lastActorId; }
+    GameObjectId GetNextActorId(void) { ++m_lastGameObjectId; return m_lastGameObjectId; }
 };
 

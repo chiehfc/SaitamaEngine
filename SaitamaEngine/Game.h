@@ -56,7 +56,7 @@ private:
 
    
     Graphics gfx;
-    GameObjectFactory factory;
+    //GameObjectFactory factory;
     
 
     // Rendering loop timer.

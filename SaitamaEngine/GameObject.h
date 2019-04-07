@@ -7,9 +7,24 @@ class GameObject
     friend class GameObjectFactory;
 
 public:   
+    const DirectX::SimpleMath::Vector3 &GetPositionVector() const;
+    const DirectX::SimpleMath::Vector3 &GetRotationVector() const;
+
+    void SetPosition(const DirectX::SimpleMath::Vector3 &pos);
+    void AdjustPosition(const DirectX::SimpleMath::Vector3 &pos);
+    void SetRotation(const DirectX::SimpleMath::Vector3 &rot);
+    void AdjustRotation(const DirectX::SimpleMath::Vector3 &rot);
+    void SetLookAtPos(const DirectX::SimpleMath::Vector3 &pos);
+
+    const DirectX::SimpleMath::Vector3 &GetForwardVector(bool omitY = false);
+    const DirectX::SimpleMath::Vector3 &GetLeftVector(bool omitY = false);
+    const DirectX::SimpleMath::Vector3 &GetRightVector(bool omitY = false);
+    const DirectX::SimpleMath::Vector3 &GetBackwardVector(bool omitY = false);
+
+
 
     typedef std::map<ComponentId, StrongGameObjectComponentPtr> GameObjectComponents;
-
+    GameObject() {}
     explicit GameObject(GameObjectId id);
     ~GameObject(void);
 
@@ -32,7 +47,8 @@ public:
             shared_ptr<ComponentType> pSub(static_pointer_cast<ComponentType>(pBase));  // cast to subclass version of the pointer
             weak_ptr<ComponentType> pWeakSub(pSub);  // convert strong pointer to weak pointer
             return pWeakSub;  // return the weak pointer
-        } else
+        }
+        else
         {
             return weak_ptr<ComponentType>();
         }
@@ -41,17 +57,18 @@ public:
     template <class ComponentType>
     std::weak_ptr<ComponentType> GetComponent(const char *name)
     {
-        ComponentId id = ActorComponent::GetIdFromName(name);
-        ActorComponents::iterator findIt = m_components.find(id);
+        ComponentId id = GameObjectComponent::GetIdFromName(name);
+        GameObjectComponents::iterator findIt = m_components.find(id);
         if (findIt != m_components.end())
         {
-            StrongActorComponentPtr pBase(findIt->second);
-            shared_ptr<ComponentType> pSub(static_pointer_cast<ComponentType>(pBase));  // cast to subclass version of the pointer
-            weak_ptr<ComponentType> pWeakSub(pSub);  // convert strong pointer to weak pointer
+            StrongGameObjectComponentPtr pBase(findIt->second);
+            std::shared_ptr<ComponentType> pSub(static_pointer_cast<ComponentType>(pBase));  // cast to subclass version of the pointer
+            std::weak_ptr<ComponentType> pWeakSub(pSub);  // convert strong pointer to weak pointer
             return pWeakSub;  // return the weak pointer
-        } else
+        }
+        else
         {
-            return weak_ptr<ComponentType>();
+            return std::weak_ptr<ComponentType>();
         }
     }
 
@@ -60,20 +77,6 @@ public:
     void AddComponent(StrongGameObjectComponentPtr pComponent);
 
 
-
-    const DirectX::SimpleMath::Vector3 &GetPositionVector() const;
-    const DirectX::SimpleMath::Vector3 &GetRotationVector() const;
-
-    void SetPosition(const DirectX::SimpleMath::Vector3 &pos);
-    void AdjustPosition(const DirectX::SimpleMath::Vector3 &pos);
-    void SetRotation(const DirectX::SimpleMath::Vector3 &rot);
-    void AdjustRotation(const DirectX::SimpleMath::Vector3 &rot);
-    void SetLookAtPos(const DirectX::SimpleMath::Vector3 &pos);
-
-    const DirectX::SimpleMath::Vector3 &GetForwardVector(bool omitY = false);
-    const DirectX::SimpleMath::Vector3 &GetLeftVector(bool omitY = false);
-    const DirectX::SimpleMath::Vector3 &GetRightVector(bool omitY = false);
-    const DirectX::SimpleMath::Vector3 &GetBackwardVector(bool omitY = false);
 
 protected:
     virtual void UpdateMatrix();

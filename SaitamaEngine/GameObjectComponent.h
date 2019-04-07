@@ -4,10 +4,10 @@
 
 class GameObjectComponent
 {
-    friend class ActorFactory;
+    friend class GameObjectFactory;
 
 protected:
-    StrongActorPtr m_pOwner;
+    StrongGameObjectPtr m_pOwner;
 
 public:
     virtual ~GameObjectComponent(void) { m_pOwner.reset(); }
@@ -17,9 +17,6 @@ public:
     virtual void VPostInit(void) { }
     virtual void VUpdate(int deltaMs) { }
     virtual void VOnChanged(void) { }				
-
-    // for the editor
-    virtual tinyxml2::XMLElement* VGenerateXml(void) = 0;
 
     // This function should be overridden by the interface class.
     virtual ComponentId VGetId(void) const { return GetIdFromName(VGetName()); }
@@ -31,7 +28,7 @@ public:
     }
 
 private:
-    void SetOwner(StrongActorPtr pOwner) { m_pOwner = pOwner; }
+    void SetOwner(StrongGameObjectPtr pOwner) { m_pOwner = pOwner; }
 
 };
 

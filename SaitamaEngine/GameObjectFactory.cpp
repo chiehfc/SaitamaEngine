@@ -4,12 +4,13 @@
 //#include "../ResourceCache/XmlResource.h"
 #include "GameObjectComponent.h"
 //#include "AudioComponent.h"
-//#include "TransformComponent.h"
-//#include "RenderComponent.h"
+#include "TransformComponent.h"
+#include "RenderComponent.h"
 //#include "PhysicsComponent.h"
 //#include "AmmoPickup.h"
 //#include "HealthPickup.h"
 //#include "BaseScriptComponent.h"
+#include "GameObject.h"
 #include "StringHelper.h"
 #include "XMLLoader.h"
 #include <iostream>
@@ -20,13 +21,15 @@
 //---------------------------------------------------------------------------------------------------------------------
 GameObjectFactory::GameObjectFactory(void)
 {
-    m_lastActorId = INVALID_ACTOR_ID;
-    /*
+    m_lastGameObjectId = INVALID_GAMEOBJECT_ID;
+    
     m_componentFactory.Register<TransformComponent>(GameObjectComponent::GetIdFromName(TransformComponent::g_Name));
+    m_componentFactory.Register<RenderComponent>(GameObjectComponent::GetIdFromName(RenderComponent::g_Name));
+    /*
     m_componentFactory.Register<MeshRenderComponent>(GameObjectComponent::GetIdFromName(MeshRenderComponent::g_Name));
     m_componentFactory.Register<SphereRenderComponent>(GameObjectComponent::GetIdFromName(SphereRenderComponent::g_Name));
     m_componentFactory.Register<PhysicsComponent>(GameObjectComponent::GetIdFromName(PhysicsComponent::g_Name));
-    m_componentFactory.Register<TeapotRenderComponent>(GameObjectComponent::GetIdFromName(TeapotRenderComponent::g_Name));
+    
     m_componentFactory.Register<GridRenderComponent>(GameObjectComponent::GetIdFromName(GridRenderComponent::g_Name));
     m_componentFactory.Register<LightRenderComponent>(GameObjectComponent::GetIdFromName(LightRenderComponent::g_Name));
     m_componentFactory.Register<SkyRenderComponent>(GameObjectComponent::GetIdFromName(SkyRenderComponent::g_Name));
@@ -40,7 +43,7 @@ GameObjectFactory::GameObjectFactory(void)
     */
 }
 
-StrongActorPtr GameObjectFactory::CreateActor(const char* actorResource, tinyxml2::XMLElement *overrides, const DirectX::XMMATRIX *pInitialTransform, const GameObjectId serversActorId)
+StrongGameObjectPtr GameObjectFactory::CreateGameObject(const char* gameObjectResource, tinyxml2::XMLElement *overrides, const DirectX::XMMATRIX *pInitialTransform, const GameObjectId serversGameObjectId)
 {
     XMLLoader xml;
     tinyxml2::XMLNode *pRoot = xml.GetRoot();
@@ -49,6 +52,8 @@ StrongActorPtr GameObjectFactory::CreateActor(const char* actorResource, tinyxml
     {
         std::cout << pNode->Value() << std::endl;
     }
+
+    
 
     //tinyxml2::XMLError eResult = xml_doc.LoadFile("test.xml");
     //if (eResult != tinyxml2::XML_SUCCESS) return false;
@@ -64,36 +69,36 @@ StrongActorPtr GameObjectFactory::CreateActor(const char* actorResource, tinyxml
     //}
 
     //// create the actor instance
-    //ActorId nextActorId = serversActorId;
-    //if (nextActorId == INVALID_ACTOR_ID)
-    //{
-    //    nextActorId = GetNextActorId();
-    //}
-    //StrongActorPtr pActor(GCC_NEW Actor(nextActorId));
-    //if (!pActor->Init(pRoot))
-    //{
-    //    GCC_ERROR("Failed to initialize actor: " + std::string(actorResource));
-    //    return StrongActorPtr();
-    //}
+    GameObjectId nextGameObjectId = serversGameObjectId;
+    if (nextGameObjectId == INVALID_GAMEOBJECT_ID)
+    {
+        nextGameObjectId = GetNextActorId();
+    }
+    StrongGameObjectPtr pGameObject(new GameObject(nextGameObjectId));
+    if (!pGameObject->Init(pRoot->ToElement()))
+    {
+        //GCC_ERROR("Failed to initialize actor: " + std::string(gameObjectResource));
+        return StrongGameObjectPtr();
+    }
 
     //bool initialTransformSet = false;
 
     //// Loop through each child element and load the component
-    //for (tinyxml2::XMLElement* pNode = pRoot->FirstChildElement(); pNode; pNode = pNode->NextSiblingElement())
-    //{
-    //    StrongGameObjectComponentPtr pComponent(VCreateComponent(pNode));
-    //    if (pComponent)
-    //    {
-    //        pActor->AddComponent(pComponent);
-    //        pComponent->SetOwner(pActor);
-    //    } else
-    //    {
-    //        // If an error occurs, we kill the actor and bail.  We could keep going, but the actor is will only be 
-    //        // partially complete so it's not worth it.  Note that the pActor instance will be destroyed because it
-    //        // will fall out of scope with nothing else pointing to it.
-    //        return StrongActorPtr();
-    //    }
-    //}
+    for (tinyxml2::XMLElement* pNode = pRoot->FirstChildElement(); pNode; pNode = pNode->NextSiblingElement())
+    {
+        StrongGameObjectComponentPtr pComponent(VCreateComponent(pNode));
+        if (pComponent)
+        {
+            pGameObject->AddComponent(pComponent);
+            pComponent->SetOwner(pGameObject);
+        } else
+        {
+            // If an error occurs, we kill the actor and bail.  We could keep going, but the actor is will only be 
+            // partially complete so it's not worth it.  Note that the pActor instance will be destroyed because it
+            // will fall out of scope with nothing else pointing to it.
+            return StrongGameObjectPtr();
+        }
+    }
 
     //if (overrides)
     //{
@@ -102,7 +107,7 @@ StrongActorPtr GameObjectFactory::CreateActor(const char* actorResource, tinyxml
 
     //// This is a bit of a hack to get the initial transform of the transform component set before the 
     //// other components (like PhysicsComponent) read it.
-    //shared_ptr<TransformComponent> pTransformComponent = MakeStrongPtr(pActor->GetComponent<TransformComponent>(TransformComponent::g_Name));
+    //std::shared_ptr<TransformComponent> pTransformComponent = MakeStrongPtr<TransformComponent>(pGameObject->GetComponent<TransformComponent>(TransformComponent::g_Name));
     //if (pInitialTransform && pTransformComponent)
     //{
     //    pTransformComponent->SetPosition(pInitialTransform->GetPosition());
@@ -111,8 +116,7 @@ StrongActorPtr GameObjectFactory::CreateActor(const char* actorResource, tinyxml
     //// Now that the actor has been fully created, run the post init phase
     //pActor->PostInit();
 
-    //return pActor;
-    return nullptr;
+    return pGameObject;
 }
 
 StrongGameObjectComponentPtr GameObjectFactory::VCreateComponent(tinyxml2::XMLElement* pData)
@@ -140,7 +144,7 @@ StrongGameObjectComponentPtr GameObjectFactory::VCreateComponent(tinyxml2::XMLEl
 }
 
 
-void GameObjectFactory::ModifyActor(StrongActorPtr pActor, tinyxml2::XMLElement *overrides)
+void GameObjectFactory::ModifyGameObject(StrongGameObjectPtr pGameObject, tinyxml2::XMLElement *overrides)
 {
     //// Loop through each child element and load the component
     //for (tinyxml2::XMLElement *pNode = overrides->FirstChildElement(); pNode; pNode = pNode->NextSiblingElement())

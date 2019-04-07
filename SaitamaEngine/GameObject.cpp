@@ -1,44 +1,12 @@
 #include "pch.h"
 #include "GameObject.h"
+#include "GameObjectComponent.h"
 
 using namespace DirectX::SimpleMath;
-
 
 void GameObject::UpdateMatrix()
 {
     assert("UpdateMatrix mush be overridden." && 0);
-}
-
-GameObject::GameObject(GameObjectId id)
-{
-    m_id = id;
-    m_type = "Unknown";
-}
-
-GameObject::~GameObject()
-{
-
-}
-
-bool GameObject::Init(tinyxml2::XMLElement* pData)
-{
-    //GCC_LOG("Actor", std::string("Initializing Actor ") + ToStr(m_id));
-
-    m_type = pData->Attribute("type");
-    return true;
-}
-
-void GameObject::PostInit(void)
-{
-    for (GameObjectComponents::iterator it = m_components.begin(); it != m_components.end(); ++it)
-    {
-        it->second->VPostInit();
-    }
-}
-
-void GameObject::Destroy(void)
-{
-    m_components.clear();
 }
 
 const Vector3 &GameObject::GetPositionVector() const
@@ -133,4 +101,46 @@ void GameObject::UpdateDirectionVectors()
     m_vecBack_noY = XMVector3TransformCoord(DEFAULT_BACKWARD_VECTOR, vecRotationMatrixNoY);
     m_vecLeft_noY = XMVector3TransformCoord(DEFAULT_LEFT_VECTOR, vecRotationMatrixNoY);
     m_vecRight_noY = XMVector3TransformCoord(DEFAULT_RIGHT_VECTOR, vecRotationMatrixNoY);
+}
+
+
+
+//////////////////// Component System
+
+
+GameObject::GameObject(GameObjectId id)
+{
+    m_id = id;
+    m_type = "Unknown";
+}
+
+GameObject::~GameObject()
+{
+
+}
+
+bool GameObject::Init(tinyxml2::XMLElement* pData)
+{
+    //GCC_LOG("Actor", std::string("Initializing Actor ") + ToStr(m_id));
+
+    m_type = pData->Attribute("type");
+    return true;
+}
+
+void GameObject::PostInit(void)
+{
+    for (GameObjectComponents::iterator it = m_components.begin(); it != m_components.end(); ++it)
+    {
+        it->second->VPostInit();
+    }
+}
+
+void GameObject::Destroy(void)
+{
+    m_components.clear();
+}
+
+void GameObject::AddComponent(StrongGameObjectComponentPtr pComponent)
+{
+    std::pair<GameObjectComponents::iterator, bool> success = m_components.insert(std::make_pair(pComponent->VGetId(), pComponent));
 }

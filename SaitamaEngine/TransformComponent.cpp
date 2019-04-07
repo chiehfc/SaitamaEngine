@@ -1,17 +1,7 @@
 #include "pch.h"
 #include "TransformComponent.h"
 
-
 const char* TransformComponent::g_Name = "TransformComponent";
-
-TransformComponent::TransformComponent()
-{
-}
-
-
-TransformComponent::~TransformComponent()
-{
-}
 
 bool TransformComponent::VInit(tinyxml2::XMLElement *pData)
 {

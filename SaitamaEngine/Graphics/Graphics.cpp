@@ -297,6 +297,9 @@ bool Graphics::InitializeScene()
     m_cb_ps_light.data.ambientLightColor = DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f);
     m_cb_ps_light.data.ambientLightStrength = 1.0f;
 
+    //m_gameObject = m_factory.CreateGameObject(nullptr, nullptr, nullptr, 0);
+    
+
     // Initialize Object(s)
     if (!m_gameObject.Initialize("Data\\Models\\XY_PikachuM.fbx", m_d3dDevice.Get(), m_d3dContext.Get(), m_constantBuffer))
     {

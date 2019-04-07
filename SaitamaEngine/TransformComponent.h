@@ -9,8 +9,9 @@ public:
 
     virtual bool VInit(tinyxml2::XMLElement *pData) override;
 
-    TransformComponent();
-    ~TransformComponent();
+    DirectX::SimpleMath::Vector3 GetPosition() const { return m_posVector; }
+    DirectX::SimpleMath::Vector3 GetRotation() const { return m_rotVector; }
+
 private:
     DirectX::SimpleMath::Vector3 m_posVector;
     DirectX::SimpleMath::Vector3 m_rotVector;
