@@ -6,7 +6,7 @@ using namespace DirectX::SimpleMath;
 
 void GameObject::UpdateMatrix()
 {
-    assert("UpdateMatrix mush be overridden." && 0);
+    //assert("UpdateMatrix mush be overridden." && 0);
 }
 
 const Vector3 &GameObject::GetPositionVector() const

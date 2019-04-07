@@ -12,6 +12,7 @@
 #include "..\\Imgui\\imgui_impl_dx11.h"
 #include "..\\RenderableGameObject.h"
 #include "..\\Light.h"
+#include "..\\GameObjectFactory.h"
 
 class Graphics
 {
@@ -50,7 +51,7 @@ private:
     ConstantBuffer<CB_VS_vertexshader> m_constantBuffer;
     ConstantBuffer<CB_PS_light> m_cb_ps_light;        
 
-    RenderableGameObject m_gameObject;
+    //RenderableGameObject m_gameObject;
 
     Microsoft::WRL::ComPtr<ID3D11RasterizerState> m_rasterizerState;
     Microsoft::WRL::ComPtr<ID3D11BlendState> m_blendState;
@@ -68,5 +69,8 @@ private:
     Camera m_camera;
     Timer m_fpsTimer;
     Light m_light;
+
+    StrongGameObjectPtr m_gameObject;
+    GameObjectFactory m_factory;
 };
 

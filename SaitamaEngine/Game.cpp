@@ -92,7 +92,7 @@ void Game::Update(DX::StepTimer const& timer)
 
 	float time = static_cast<float>(timer.GetTotalSeconds());
 
-    gfx.GetGameObject()->AdjustRotation(DirectX::SimpleMath::Vector3(0.0f, 1.0f * ROTATION_GAIN, 0.0f));
+    //gfx.GetGameObject()->AdjustRotation(DirectX::SimpleMath::Vector3(0.0f, 1.0f * ROTATION_GAIN, 0.0f));
 
   // Keyboard input.
   auto kb = m_keyboard->GetState();

@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "Graphics.h"
 #include <string>
+#include "..\\TransformComponent.h"
+#include "..\\RenderComponent.h"
 
 
 using Microsoft::WRL::ComPtr;
@@ -68,7 +70,19 @@ void Graphics::RenderFrame()
     //static float alpha = 0.5f;
     // Update Constant Buffer            
     {
-        m_gameObject.Draw(DirectX::XMMATRIX(m_camera.GetViewMatrix()) * DirectX::XMMATRIX(m_camera.GetProjectionMatrix()));
+        //m_gameObject.Draw(DirectX::XMMATRIX(m_camera.GetViewMatrix()) * DirectX::XMMATRIX(m_camera.GetProjectionMatrix()));
+        std::shared_ptr<RenderComponent> pRenderComponent = MakeStrongPtr<RenderComponent>(m_gameObject->GetComponent<RenderComponent>(RenderComponent::g_Name));
+        std::shared_ptr<TransformComponent> pTransformComponent = MakeStrongPtr<TransformComponent>(m_gameObject->GetComponent<TransformComponent>(TransformComponent::g_Name));
+        pRenderComponent->SetWorldMatrix(DirectX::XMMatrixScaling(1.0f, 1.0f, 1.0f) * DirectX::XMMatrixRotationRollPitchYaw(
+            pTransformComponent->GetRotation().x,
+            pTransformComponent->GetRotation().y,
+            pTransformComponent->GetRotation().z)
+            * DirectX::XMMatrixTranslation(
+                pTransformComponent->GetPosition().x,
+                pTransformComponent->GetPosition().y,
+                pTransformComponent->GetPosition().z));
+
+        pRenderComponent->GetGameModel()->Draw(pRenderComponent->GetWorldMatrix(), DirectX::XMMATRIX(m_camera.GetViewMatrix()) * DirectX::XMMATRIX(m_camera.GetProjectionMatrix()));
     }
     {
         m_d3dContext->PSSetShader(m_pixelShader_noLight.GetShader(), NULL, 0);
@@ -297,14 +311,25 @@ bool Graphics::InitializeScene()
     m_cb_ps_light.data.ambientLightColor = DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f);
     m_cb_ps_light.data.ambientLightStrength = 1.0f;
 
-    //m_gameObject = m_factory.CreateGameObject(nullptr, nullptr, nullptr, 0);
+    m_gameObject = m_factory.CreateGameObject(nullptr, nullptr, nullptr, 0);
     
+    std::shared_ptr<TransformComponent> pTransformComponent = MakeStrongPtr<TransformComponent>(m_gameObject->GetComponent<TransformComponent>(TransformComponent::g_Name));
 
-    // Initialize Object(s)
-    if (!m_gameObject.Initialize("Data\\Models\\XY_PikachuM.fbx", m_d3dDevice.Get(), m_d3dContext.Get(), m_constantBuffer))
+    std::shared_ptr<RenderComponent> pRenderComponent = MakeStrongPtr<RenderComponent>(m_gameObject->GetComponent<RenderComponent>(RenderComponent::g_Name));
+    GameModel gameModel;
+    if (!gameModel.Initialize(pRenderComponent->GetFilePath(), m_d3dDevice.Get(), m_d3dContext.Get(), m_constantBuffer))
     {
         return false;
     }
+    pRenderComponent->SetGameModel(gameModel);
+    m_gameObject->SetPosition(pTransformComponent->GetPosition());
+    m_gameObject->SetRotation(pTransformComponent->GetRotation());
+
+    // Initialize Object(s)
+    /*if (!m_gameObject.Initialize("Data\\Models\\XY_PikachuM.fbx", m_d3dDevice.Get(), m_d3dContext.Get(), m_constantBuffer))
+    {
+        return false;
+    }*/
 
     if (!m_light.Initialize(m_d3dDevice.Get(), m_d3dContext.Get(), m_constantBuffer))
     {
@@ -366,7 +391,8 @@ Camera *Graphics::GetCamera()
 
 GameObject *Graphics::GetGameObject()
 {
-    return &m_gameObject;
+    return nullptr;
+    //return &m_gameObject;
 }
 
 Light *Graphics::GetLight()
