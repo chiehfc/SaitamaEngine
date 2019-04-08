@@ -2,6 +2,7 @@
 #include "Saitama.h"
 #include "GameObjectComponent.h"
 #include "GameModel.h"
+#include "SceneNode.h"
 
 class RenderComponent : public GameObjectComponent
 {
@@ -10,6 +11,9 @@ public:
     virtual const char* VGetName() const { return g_Name; }
 
     virtual bool VInit(tinyxml2::XMLElement *pData) override;
+    virtual void VPostInit(void) override;
+    virtual shared_ptr<SceneNode> VCreateSceneNode(void);  
+
 
     void UpdateMatrix();
 
@@ -26,6 +30,9 @@ public:
     //void Draw(const DirectX::XMMATRIX &viewProjectionMatrix);
 
 private:
+    virtual shared_ptr<SceneNode> VGetSceneNode(void);
+    shared_ptr<SceneNode> m_pSceneNode;
+
     std::string m_filePath;
 
     GameModel m_gameModel;

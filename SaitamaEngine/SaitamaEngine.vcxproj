@@ -81,7 +81,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <LibraryPath>$(SolutionDir)\SaitamaEngine\Libs;$(LibraryPath)</LibraryPath>
-    <IncludePath>$(SolutionDir)\packages\directxtk_desktop_2015.2017.9.22.1\src\native;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include;$(SolutionDir)\packages\directxtk_desktop_2015.2017.9.22.1\src\native;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -172,6 +172,7 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="ConstantBuffer.h" />
     <ClInclude Include="ConstantBufferTypes.h" />
+    <ClInclude Include="D3DRenderer11.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameObject.h" />
@@ -179,6 +180,8 @@
     <ClInclude Include="GameObjectFactory.h" />
     <ClInclude Include="Graphics\Graphics.h" />
     <ClInclude Include="guicon.h" />
+    <ClInclude Include="IRenderer.h" />
+    <ClInclude Include="ISceneNode.h" />
     <ClInclude Include="Imgui\imconfig.h" />
     <ClInclude Include="Imgui\imgui.h" />
     <ClInclude Include="Imgui\imgui_impl_dx11.h" />
@@ -190,10 +193,13 @@
     <ClInclude Include="IndexBuffer.h" />
     <ClInclude Include="GameModel.h" />
     <ClInclude Include="Light.h" />
+    <ClInclude Include="MatrixStack.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="RenderableGameObject.h" />
     <ClInclude Include="RenderComponent.h" />
     <ClInclude Include="Saitama.h" />
+    <ClInclude Include="Scene.h" />
+    <ClInclude Include="SceneNode.h" />
     <ClInclude Include="StringHelper.h" />
     <ClInclude Include="templates.h" />
     <ClInclude Include="Texture.h" />
@@ -213,6 +219,7 @@
   <ItemGroup>
     <ClCompile Include="Bot.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="D3DRenderer11.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameObject.cpp" />
@@ -230,6 +237,7 @@
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Math.cpp" />
     <ClCompile Include="GameModel.cpp" />
+    <ClCompile Include="MatrixStack.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="MovingEntity.cpp" />
     <ClCompile Include="pch.cpp">
@@ -241,6 +249,8 @@
     <ClCompile Include="RenderableGameObject.cpp" />
     <ClCompile Include="RenderComponent.cpp" />
     <ClCompile Include="Saitama.cpp" />
+    <ClCompile Include="Scene.cpp" />
+    <ClCompile Include="SceneNode.cpp" />
     <ClCompile Include="Shaders.cpp" />
     <ClCompile Include="StringHelper.cpp" />
     <ClCompile Include="Texture.cpp" />
