@@ -3,9 +3,23 @@
 #include <string>
 #include "..\\TransformComponent.h"
 #include "..\\RenderComponent.h"
+#include <iostream>
 
 
 using Microsoft::WRL::ComPtr;
+
+Graphics *Graphics::GetInstance()
+{
+    if (m_instance)
+    {
+        return m_instance;
+    } 
+    else
+    {
+        std::cout << "Graphics not created" << std::endl;
+    }
+    return nullptr;
+}
 
 bool Graphics::Initialize(HWND hwnd, int width, int height)
 {
@@ -35,6 +49,12 @@ bool Graphics::Initialize(HWND hwnd, int width, int height)
     ImGui_ImplWin32_Init(hwnd);
     ImGui_ImplDX11_Init(m_d3dDevice.Get(), m_d3dContext.Get());
     ImGui::StyleColorsDark();
+
+    if (m_instance) 
+    {
+        return false;
+    }
+    m_instance = this;
 
     return true;
 }

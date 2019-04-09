@@ -3,6 +3,7 @@
 #include "TransformComponent.h"
 #include "RenderComponent.h"
 #include "Scene.h"
+#include "Graphics/Graphics.h"
 
 SceneNodeProperties::SceneNodeProperties(void)
 {
@@ -426,21 +427,22 @@ HRESULT RootNode::VRenderChildren(Scene *pScene)
 //
 // D3DShaderMeshNode11::D3DShaderMeshNode11					- Chapter 16, page 562 
 //
-D3DShaderMeshNode11::D3DShaderMeshNode11(const ActorId actorId,
-    WeakBaseRenderComponentPtr renderComponent,
-    std::string sdkMeshFileName,
+GameModelNode::GameModelNode(const GameObjectId gameObjectId,
+    WeakRenderComponentPtr renderComponent,
+    std::string filePath,
     RenderPass renderPass,
-    const Mat4x4 *t)
-    : SceneNode(actorId, renderComponent, renderPass, t)
+    const Matrix *t)
+    : SceneNode(gameObjectId, renderComponent, renderPass, t)
 {
-    m_sdkMeshFileName = sdkMeshFileName;
+    m_model.Initialize(filePath, Graphics::GetInstance()->GetDevice(), Graphics::GetInstance()->GetDeviceContext(), cb_vs_vertexshader);
+    
 }
 
 
 //
 // D3DShaderMeshNode11::VOnRestore							- Chapter 16, page 563
 //
-HRESULT D3DShaderMeshNode11::VOnRestore(Scene *pScene)
+HRESULT GameModelNode::VOnRestore(Scene *pScene)
 {
     HRESULT hr;
 
@@ -462,7 +464,7 @@ HRESULT D3DShaderMeshNode11::VOnRestore(Scene *pScene)
 //
 // D3DShaderMeshNode11::VRender								- Chapter 16, page 564
 //
-HRESULT D3DShaderMeshNode11::VRender(Scene *pScene)
+HRESULT GameModelNode::VRender(Scene *pScene)
 {
     HRESULT hr;
 

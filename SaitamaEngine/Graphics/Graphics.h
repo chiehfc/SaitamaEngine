@@ -21,6 +21,10 @@ public:
     void RenderFrame();
     void Clear();
 
+    static Graphics *GetInstance();
+    ID3D11Device1 *GetDevice() { return m_d3dDevice.Get(); }
+    ID3D11DeviceContext1 *GetDeviceContext() { return m_d3dContext.Get(); }
+
     Camera *GetCamera();
     GameObject *GetGameObject();
     Light *GetLight();
@@ -72,5 +76,7 @@ private:
 
     StrongGameObjectPtr m_gameObject;
     GameObjectFactory m_factory;
+
+    Graphics *m_instance = nullptr;
 };
 

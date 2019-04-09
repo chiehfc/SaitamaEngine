@@ -111,10 +111,10 @@ public:
 };
 
 
-class D3DShaderMeshNode11 : public SceneNode
+class GameModelNode : public SceneNode
 {
 public:
-    D3DShaderMeshNode11(const GameObjectId actorId,
+    GameModelNode(const GameObjectId actorId,
         WeakRenderComponentPtr renderComponent,
         std::string sdkMeshFileName,
         RenderPass renderPass,
@@ -126,7 +126,8 @@ public:
     //virtual HRESULT VPick(Scene *pScene, RayCast *pRayCast);
 
 protected:
-    std::string					m_sdkMeshFileName;
+
+    GameModel m_model;
 
     GameCode4_Hlsl_VertexShader		m_VertexShader;
     GameCode4_Hlsl_PixelShader		m_PixelShader;
