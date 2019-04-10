@@ -2,7 +2,7 @@
 #include "ISceneNode.h"
 #include "Saitama.h"
 
-
+#include "Shaders.h"
 class RenderComponent;
 class TransformComponent;
 
@@ -130,8 +130,8 @@ protected:
     GameModel m_model;
 
     ConstantBuffer<CB_VS_vertexshader> m_constantBuffer;
-    GameCode4_Hlsl_VertexShader		m_VertexShader;
-    GameCode4_Hlsl_PixelShader		m_PixelShader;
+    VertexShader m_vertexShader;
+    PixelShader m_pixelShader;
 
     //float CalcBoundingSphere(CDXUTSDKMesh *mesh11);			// this was added post press.
 };

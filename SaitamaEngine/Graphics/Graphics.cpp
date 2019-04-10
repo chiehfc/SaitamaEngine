@@ -8,6 +8,8 @@
 
 using Microsoft::WRL::ComPtr;
 
+static Graphics *m_instance = nullptr;
+
 Graphics *Graphics::GetInstance()
 {
     if (m_instance)
@@ -16,9 +18,10 @@ Graphics *Graphics::GetInstance()
     } 
     else
     {
-        std::cout << "Graphics not created" << std::endl;
+        m_instance = new Graphics();
+        
     }
-    return nullptr;
+    return m_instance;
 }
 
 bool Graphics::Initialize(HWND hwnd, int width, int height)
@@ -293,17 +296,17 @@ bool Graphics::InitializeShaders()
     };
     UINT numElements = ARRAYSIZE(layout);
 
-    if (!m_vertexShader.Initialize(m_d3dDevice, L"..\\x64\\Debug\\vertexshader.cso", layout, numElements))
+    if (!m_vertexShader.Initialize(m_d3dDevice.Get(), L"..\\x64\\Debug\\vertexshader.cso", layout, numElements))
     {
         return false;
     }
 
-    if (!m_pixelShader.Initialize(m_d3dDevice, L"..\\x64\\Debug\\pixelshader.cso"))
+    if (!m_pixelShader.Initialize(m_d3dDevice.Get(), L"..\\x64\\Debug\\pixelshader.cso"))
     {
         return false;
     }
     
-    if (!m_pixelShader_noLight.Initialize(m_d3dDevice, L"..\\x64\\Debug\\pixelshader_nolight.cso"))
+    if (!m_pixelShader_noLight.Initialize(m_d3dDevice.Get(), L"..\\x64\\Debug\\pixelshader_nolight.cso"))
     {
         return false;
     }

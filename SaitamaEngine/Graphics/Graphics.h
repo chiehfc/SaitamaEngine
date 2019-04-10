@@ -77,6 +77,6 @@ private:
     StrongGameObjectPtr m_gameObject;
     GameObjectFactory m_factory;
 
-    Graphics *m_instance = nullptr;
+    static Graphics *m_instance;
 };
 

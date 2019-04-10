@@ -1,16 +1,18 @@
 #pragma once
 #pragma comment(lib, "D3DCompiler.lib")
 #include <d3dcompiler.h>
-#include "SceneNode.h"
+
+//class Scene;
+//class SceneNode;
 
 class VertexShader
 {
 public:
-    bool Initialize(Microsoft::WRL::ComPtr<ID3D11Device1> &device, std::wstring shaderPath, D3D11_INPUT_ELEMENT_DESC *layoutDesc, UINT numElements);
+    bool Initialize(ID3D11Device *device, std::wstring shaderPath, D3D11_INPUT_ELEMENT_DESC *layoutDesc, UINT numElements);
     ID3D11VertexShader *GetShader();
     ID3D10Blob *GetBuffer();
 
-    HRESULT SetupRender(Scene *pScene, SceneNode *pNode);
+    HRESULT SetupRender(/*Scene *pScene, SceneNode *pNode*/);
 
     ID3D11InputLayout *GetInputLayout();
 
@@ -23,11 +25,11 @@ private:
 class PixelShader
 {
 public:
-    bool Initialize(Microsoft::WRL::ComPtr<ID3D11Device1> &device, std::wstring shaderPath);
+    bool Initialize(ID3D11Device *device, std::wstring shaderPath);
     ID3D11PixelShader *GetShader();
     ID3D10Blob *GetBuffer();
 
-    HRESULT SetupRender(Scene *pScene, SceneNode *pNode);
+    HRESULT SetupRender(/*Scene *pScene, SceneNode *pNode*/);
 
 private:
     Microsoft::WRL::ComPtr<ID3D11PixelShader> m_shader;

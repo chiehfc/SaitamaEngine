@@ -21,6 +21,15 @@ bool D3DRenderer11::VPreRender()
     //    //
     //    DXUTGetD3D11DeviceContext()->ClearDepthStencilView(DXUTGetD3D11DepthStencilView(), D3D11_CLEAR_DEPTH, 1.0f, 0);
     //}
+    float bgColor[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+    m_d3dContext->ClearRenderTargetView(m_renderTargetView.Get(), bgColor);
+    m_d3dContext->ClearDepthStencilView(m_depthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+
+    m_d3dContext->RSSetState(m_rasterizerState.Get());
+    m_d3dContext->OMSetDepthStencilState(m_depthStencilState.Get(), 0);
+    m_d3dContext->OMSetBlendState(NULL, NULL, 0xFFFFFFFF);
+    m_d3dContext->PSSetSamplers(0, 1, m_samplerState.GetAddressOf());
+
     return true;
 }
 
@@ -297,17 +306,17 @@ bool D3DRenderer11::InitializeShaders()
     };
     UINT numElements = ARRAYSIZE(layout);
 
-    if (!m_vertexShader.Initialize(m_d3dDevice, L"..\\x64\\Debug\\vertexshader.cso", layout, numElements))
+    if (!m_vertexShader.Initialize(m_d3dDevice.Get(), L"..\\x64\\Debug\\vertexshader.cso", layout, numElements))
     {
         return false;
     }
 
-    if (!m_pixelShader.Initialize(m_d3dDevice, L"..\\x64\\Debug\\pixelshader.cso"))
+    if (!m_pixelShader.Initialize(m_d3dDevice.Get(), L"..\\x64\\Debug\\pixelshader.cso"))
     {
         return false;
     }
 
-    if (!m_pixelShader_noLight.Initialize(m_d3dDevice, L"..\\x64\\Debug\\pixelshader_nolight.cso"))
+    if (!m_pixelShader_noLight.Initialize(m_d3dDevice.Get(), L"..\\x64\\Debug\\pixelshader_nolight.cso"))
     {
         return false;
     }

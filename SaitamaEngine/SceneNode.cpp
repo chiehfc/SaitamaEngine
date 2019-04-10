@@ -434,12 +434,25 @@ GameModelNode::GameModelNode(const GameObjectId gameObjectId,
     const Matrix *t)
     : SceneNode(gameObjectId, renderComponent, renderPass, t)
 {
+    D3D11_INPUT_ELEMENT_DESC layout[] =
+    {
+        { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+    { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+    { "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+    };
+    UINT numElements = ARRAYSIZE(layout);
+
+    m_vertexShader.Initialize(Graphics::GetInstance()->GetDevice(), L"..\\x64\\Debug\\vertexshader.cso", layout, numElements);
+    
+    m_pixelShader.Initialize(Graphics::GetInstance()->GetDevice(), L"..\\x64\\Debug\\pixelshader.cso");
+    
+
 
     m_constantBuffer.Initialize(Graphics::GetInstance()->GetDevice(), Graphics::GetInstance()->GetDeviceContext());
     m_model.Initialize(filePath, Graphics::GetInstance()->GetDevice(), Graphics::GetInstance()->GetDeviceContext(), m_constantBuffer);
     SetPosition(Vector3::Zero);
-    SetRotation(Vector3::Zero);
-    UpdateMatrix();
+    //SetRotation(Vector3::Zero);
+    //UpdateMatrix();
 }
 
 
@@ -472,44 +485,11 @@ HRESULT GameModelNode::VRender(Scene *pScene)
 {
     HRESULT hr;
 
+    m_vertexShader.SetupRender(/*pScene, this*/);
+    m_pixelShader.SetupRender(/*pScene, this*/);
+
     m_model.Draw(VGet()->ToWorld(), Graphics::GetInstance()->GetCamera()->GetViewMatrix() * DirectX::XMMATRIX(Graphics::GetInstance()->GetCamera()->GetProjectionMatrix()));
 
-    V_RETURN(m_VertexShader.SetupRender(pScene, this));
-    V_RETURN(m_PixelShader.SetupRender(pScene, this));
-
-    //Get the Mesh
-    Resource resource(m_sdkMeshFileName);
-    shared_ptr<ResHandle> pResourceHandle = g_pApp->m_ResCache->GetHandle(&resource);
-    shared_ptr<D3DSdkMeshResourceExtraData11> extra = static_pointer_cast<D3DSdkMeshResourceExtraData11>(pResourceHandle->GetExtra());
-
-    // FUTURE WORK - this code WON'T be able to find texture resources referred to by the sdkmesh file 
-    // in the Resource cache.
-
-    //IA setup
-    UINT Strides[1];
-    UINT Offsets[1];
-    ID3D11Buffer* pVB[1];
-    pVB[0] = extra->m_Mesh11.GetVB11(0, 0);
-    Strides[0] = (UINT)extra->m_Mesh11.GetVertexStride(0, 0);
-    Offsets[0] = 0;
-    DXUTGetD3D11DeviceContext()->IASetVertexBuffers(0, 1, pVB, Strides, Offsets);
-    DXUTGetD3D11DeviceContext()->IASetIndexBuffer(extra->m_Mesh11.GetIB11(0), extra->m_Mesh11.GetIBFormat11(0), 0);
-
-    //Render
-    D3D11_PRIMITIVE_TOPOLOGY PrimType;
-    for (UINT subset = 0; subset < extra->m_Mesh11.GetNumSubsets(0); ++subset)
-    {
-        // Get the subset
-        SDKMESH_SUBSET *pSubset = extra->m_Mesh11.GetSubset(0, subset);
-
-        PrimType = CDXUTSDKMesh::GetPrimitiveType11((SDKMESH_PRIMITIVE_TYPE)pSubset->PrimitiveType);
-        DXUTGetD3D11DeviceContext()->IASetPrimitiveTopology(PrimType);
-
-        ID3D11ShaderResourceView* pDiffuseRV = extra->m_Mesh11.GetMaterial(pSubset->MaterialID)->pDiffuseRV11;
-        DXUTGetD3D11DeviceContext()->PSSetShaderResources(0, 1, &pDiffuseRV);
-
-        DXUTGetD3D11DeviceContext()->DrawIndexed((UINT)pSubset->IndexCount, 0, (UINT)pSubset->VertexStart);
-    }
     return S_OK;
 }
 

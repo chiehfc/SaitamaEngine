@@ -11,6 +11,7 @@ using namespace DirectX::SimpleMath;
 // Forward declarations
 typedef std::map<GameObjectId, shared_ptr<ISceneNode> > SceneGameObjectMap;
 
+class SceneNode;
 //class CameraNode;
 //class SkyNode;
 //class LightNode;
