@@ -434,8 +434,12 @@ GameModelNode::GameModelNode(const GameObjectId gameObjectId,
     const Matrix *t)
     : SceneNode(gameObjectId, renderComponent, renderPass, t)
 {
-    m_model.Initialize(filePath, Graphics::GetInstance()->GetDevice(), Graphics::GetInstance()->GetDeviceContext(), cb_vs_vertexshader);
-    
+
+    m_constantBuffer.Initialize(Graphics::GetInstance()->GetDevice(), Graphics::GetInstance()->GetDeviceContext());
+    m_model.Initialize(filePath, Graphics::GetInstance()->GetDevice(), Graphics::GetInstance()->GetDeviceContext(), m_constantBuffer);
+    SetPosition(Vector3::Zero);
+    SetRotation(Vector3::Zero);
+    UpdateMatrix();
 }
 
 
@@ -444,19 +448,19 @@ GameModelNode::GameModelNode(const GameObjectId gameObjectId,
 //
 HRESULT GameModelNode::VOnRestore(Scene *pScene)
 {
-    HRESULT hr;
+    //HRESULT hr;
 
-    hr = SceneNode::VOnRestore(pScene);
+    //hr = SceneNode::VOnRestore(pScene);
 
-    hr = m_VertexShader.OnRestore(pScene);
-    hr = m_PixelShader.OnRestore(pScene);
+    //hr = m_VertexShader.OnRestore(pScene);
+    //hr = m_PixelShader.OnRestore(pScene);
 
-    // Force the Mesh to reload
-    Resource resource(m_sdkMeshFileName);
-    shared_ptr<ResHandle> pResourceHandle = g_pApp->m_ResCache->GetHandle(&resource);
-    shared_ptr<D3DSdkMeshResourceExtraData11> extra = static_pointer_cast<D3DSdkMeshResourceExtraData11>(pResourceHandle->GetExtra());
+    //// Force the Mesh to reload
+    //Resource resource(m_sdkMeshFileName);
+    //shared_ptr<ResHandle> pResourceHandle = g_pApp->m_ResCache->GetHandle(&resource);
+    //shared_ptr<D3DSdkMeshResourceExtraData11> extra = static_pointer_cast<D3DSdkMeshResourceExtraData11>(pResourceHandle->GetExtra());
 
-    //SetRadius(CalcBoundingSphere(&extra->m_Mesh11));
+    ////SetRadius(CalcBoundingSphere(&extra->m_Mesh11));
 
     return S_OK;
 }
@@ -467,6 +471,8 @@ HRESULT GameModelNode::VOnRestore(Scene *pScene)
 HRESULT GameModelNode::VRender(Scene *pScene)
 {
     HRESULT hr;
+
+    m_model.Draw(VGet()->ToWorld(), Graphics::GetInstance()->GetCamera()->GetViewMatrix() * DirectX::XMMATRIX(Graphics::GetInstance()->GetCamera()->GetProjectionMatrix()));
 
     V_RETURN(m_VertexShader.SetupRender(pScene, this));
     V_RETURN(m_PixelShader.SetupRender(pScene, this));

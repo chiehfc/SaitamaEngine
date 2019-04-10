@@ -129,6 +129,7 @@ protected:
 
     GameModel m_model;
 
+    ConstantBuffer<CB_VS_vertexshader> m_constantBuffer;
     GameCode4_Hlsl_VertexShader		m_VertexShader;
     GameCode4_Hlsl_PixelShader		m_PixelShader;
 
