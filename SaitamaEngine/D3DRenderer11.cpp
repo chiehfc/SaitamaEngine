@@ -5,6 +5,21 @@
 #include "RenderComponent.h"
 
 
+D3DRenderer11 *D3DRenderer11::m_instance = nullptr;
+
+D3DRenderer11 *D3DRenderer11::GetInstance()
+{
+    if (m_instance)
+    {
+        return m_instance;
+    } else
+    {
+        m_instance = new D3DRenderer11();
+
+    }
+    return m_instance;
+}
+
 HRESULT D3DRenderer11::VOnRestore()
 {
     return S_OK;
@@ -12,15 +27,6 @@ HRESULT D3DRenderer11::VOnRestore()
 
 bool D3DRenderer11::VPreRender()
 {
-    //if (DXUTGetD3D11DeviceContext() && DXUTGetD3D11RenderTargetView())
-    //{
-    //    DXUTGetD3D11DeviceContext()->ClearRenderTargetView(DXUTGetD3D11RenderTargetView(), m_backgroundColor);
-
-    //    //
-    //    // Clear the depth buffer to 1.0 (max depth)
-    //    //
-    //    DXUTGetD3D11DeviceContext()->ClearDepthStencilView(DXUTGetD3D11DepthStencilView(), D3D11_CLEAR_DEPTH, 1.0f, 0);
-    //}
     float bgColor[] = { 0.0f, 0.0f, 0.0f, 1.0f };
     m_d3dContext->ClearRenderTargetView(m_renderTargetView.Get(), bgColor);
     m_d3dContext->ClearDepthStencilView(m_depthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
@@ -35,6 +41,7 @@ bool D3DRenderer11::VPreRender()
 
 bool D3DRenderer11::VPostRender(void)
 {
+    m_swapChain->Present(1, NULL);
     return true;
 }
 
@@ -131,6 +138,7 @@ using Microsoft::WRL::ComPtr;
 
 bool D3DRenderer11::Initialize(HWND hwnd, int width, int height)
 {
+    m_instance = this;
     m_windowWidth = width;
     m_windowHeight = height;
 
@@ -417,17 +425,17 @@ void D3DRenderer11::CreateDevice()
 }
 
 
-//Camera *D3DRenderer11::GetCamera()
-//{
-//    return &m_camera;
-//}
-//
-//GameObject *D3DRenderer11::GetGameObject()
-//{
-//    return nullptr;
-//    //return &m_gameObject;
-//}
-//
+Camera *D3DRenderer11::GetCamera()
+{
+    return &m_camera;
+}
+
+StrongGameObjectPtr D3DRenderer11::GetGameObject()
+{
+    return m_gameObject;
+    //return &m_gameObject;
+}
+
 //Light *D3DRenderer11::GetLight()
 //{
 //    return &m_light;

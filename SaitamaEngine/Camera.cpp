@@ -4,7 +4,7 @@
 using namespace DirectX::SimpleMath;
 
 Camera::Camera() {
-  m_posVector = Vector3(0.0f, 50.0f, -100.0f);
+  m_posVector = Vector3(0.0f, 0.0f, -10.0f);
   m_angle = DirectX::XM_PI / 4.f;
   m_clientWidth = 800.0f;
   m_clientHeight = 600.0f;

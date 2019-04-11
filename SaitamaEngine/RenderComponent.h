@@ -11,7 +11,7 @@ public:
     virtual const char* VGetName() const { return g_Name; }
 
     virtual bool VInit(tinyxml2::XMLElement *pData) override;
-    virtual void VPostInit(void) override;
+    virtual void VPostInit(void) override {}
     virtual shared_ptr<SceneNode> VCreateSceneNode(void);  
 
 
@@ -28,9 +28,10 @@ public:
     void SetWorldMatrix(Matrix worldMatrix) { m_worldMatrix = worldMatrix; }
 
     //void Draw(const DirectX::XMMATRIX &viewProjectionMatrix);
+    virtual shared_ptr<SceneNode> VGetSceneNode(void);
 
 private:
-    virtual shared_ptr<SceneNode> VGetSceneNode(void);
+    
     shared_ptr<SceneNode> m_pSceneNode;
 
     std::string m_filePath;

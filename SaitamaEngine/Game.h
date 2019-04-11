@@ -9,6 +9,8 @@
 #include "Graphics/Graphics.h"
 #include "Timer.h"
 #include "GameObjectFactory.h"
+#include "D3DRenderer11.h"
+#include "Scene.h"
 
 // A basic game implementation that creates a D3D11 device and
 // provides a game loop.
@@ -55,7 +57,11 @@ private:
     int                                             m_outputHeight;
 
    
-    Graphics gfx;
+    //Graphics gfx;
+    std::shared_ptr<D3DRenderer11> renderer;
+
+    Scene *scene;
+
     //GameObjectFactory factory;
     
 

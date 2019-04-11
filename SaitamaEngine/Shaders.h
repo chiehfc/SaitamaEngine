@@ -2,8 +2,8 @@
 #pragma comment(lib, "D3DCompiler.lib")
 #include <d3dcompiler.h>
 
-//class Scene;
-//class SceneNode;
+class SceneNode;
+class Scene;
 
 class VertexShader
 {
@@ -12,7 +12,7 @@ public:
     ID3D11VertexShader *GetShader();
     ID3D10Blob *GetBuffer();
 
-    HRESULT SetupRender(/*Scene *pScene, SceneNode *pNode*/);
+    HRESULT SetupRender(Scene *pScene, SceneNode *pNode);
 
     ID3D11InputLayout *GetInputLayout();
 
@@ -29,7 +29,7 @@ public:
     ID3D11PixelShader *GetShader();
     ID3D10Blob *GetBuffer();
 
-    HRESULT SetupRender(/*Scene *pScene, SceneNode *pNode*/);
+    HRESULT SetupRender(Scene *pScene, SceneNode *pNode);
 
 private:
     Microsoft::WRL::ComPtr<ID3D11PixelShader> m_shader;

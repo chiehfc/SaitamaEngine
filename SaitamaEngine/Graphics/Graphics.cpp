@@ -8,7 +8,7 @@
 
 using Microsoft::WRL::ComPtr;
 
-static Graphics *m_instance = nullptr;
+Graphics *Graphics::m_instance = nullptr;
 
 Graphics *Graphics::GetInstance()
 {

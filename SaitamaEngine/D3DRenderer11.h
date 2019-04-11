@@ -19,6 +19,13 @@
 class D3DRenderer11 : public IRenderer
 {
 public:
+
+    static D3DRenderer11 *GetInstance();
+    ID3D11Device1 *GetDevice() { return m_d3dDevice.Get(); }
+    ID3D11DeviceContext1 *GetDeviceContext() { return m_d3dContext.Get(); }
+
+    StrongGameObjectPtr GetGameObject();
+
     bool Initialize(HWND hwnd, int width, int height);
     void Clear();
     virtual void VShutdown() {  }
@@ -41,13 +48,15 @@ public:
     virtual void VSetViewTransform(const Matrix *m) {  }
     virtual void VSetProjectionTransform(const Matrix *m) {  }
 
-    virtual void VDrawLine(const Vector3& from, const Vector3& to, const Color& color);
+    virtual void VDrawLine(const Vector3& from, const Vector3& to, const Color& color) {}
 
+
+    Camera *GetCamera();
     //virtual shared_ptr<IRenderState> VPrepareAlphaPass();
     //virtual shared_ptr<IRenderState> VPrepareSkyBoxPass();
 
-    HRESULT CompileShader(LPCSTR pSrcData, SIZE_T SrcDataLen, LPCSTR pFileName, LPCSTR szEntryPoint, LPCSTR szShaderModel, ID3DBlob** ppBlobOut);
-    HRESULT CompileShaderFromFile(WCHAR* szFileName, LPCSTR szEntryPoint, LPCSTR szShaderModel, ID3DBlob** ppBlobOut);
+    //HRESULT CompileShader(LPCSTR pSrcData, SIZE_T SrcDataLen, LPCSTR pFileName, LPCSTR szEntryPoint, LPCSTR szShaderModel, ID3DBlob** ppBlobOut);
+    //HRESULT CompileShaderFromFile(WCHAR* szFileName, LPCSTR szEntryPoint, LPCSTR szShaderModel, ID3DBlob** ppBlobOut);
 
 protected:
     float m_backgroundColor[4];
@@ -98,4 +107,9 @@ private:
 
     StrongGameObjectPtr m_gameObject;
     GameObjectFactory m_factory;
+
+
+    static D3DRenderer11 *m_instance;
+
+
 };

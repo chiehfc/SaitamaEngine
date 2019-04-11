@@ -3,7 +3,7 @@
 #include "TransformComponent.h"
 #include "RenderComponent.h"
 #include "Scene.h"
-#include "Graphics/Graphics.h"
+#include "D3DRenderer11.h"
 
 SceneNodeProperties::SceneNodeProperties(void)
 {
@@ -406,7 +406,7 @@ HRESULT RootNode::VRenderChildren(Scene *pScene)
     {
         switch (pass)
         {
-        case RenderPass_Static:
+        //case RenderPass_Static:
         case RenderPass_Actor:
             m_Children[pass]->VRenderChildren(pScene);
             break;
@@ -442,14 +442,14 @@ GameModelNode::GameModelNode(const GameObjectId gameObjectId,
     };
     UINT numElements = ARRAYSIZE(layout);
 
-    m_vertexShader.Initialize(Graphics::GetInstance()->GetDevice(), L"..\\x64\\Debug\\vertexshader.cso", layout, numElements);
+    m_vertexShader.Initialize(D3DRenderer11::GetInstance()->GetDevice(), L"..\\x64\\Debug\\vertexshader.cso", layout, numElements);
     
-    m_pixelShader.Initialize(Graphics::GetInstance()->GetDevice(), L"..\\x64\\Debug\\pixelshader.cso");
+    m_pixelShader.Initialize(D3DRenderer11::GetInstance()->GetDevice(), L"..\\x64\\Debug\\pixelshader.cso");
     
 
 
-    m_constantBuffer.Initialize(Graphics::GetInstance()->GetDevice(), Graphics::GetInstance()->GetDeviceContext());
-    m_model.Initialize(filePath, Graphics::GetInstance()->GetDevice(), Graphics::GetInstance()->GetDeviceContext(), m_constantBuffer);
+    m_constantBuffer.Initialize(D3DRenderer11::GetInstance()->GetDevice(), D3DRenderer11::GetInstance()->GetDeviceContext());
+    m_model.Initialize(filePath, D3DRenderer11::GetInstance()->GetDevice(), D3DRenderer11::GetInstance()->GetDeviceContext(), m_constantBuffer);
     SetPosition(Vector3::Zero);
     //SetRotation(Vector3::Zero);
     //UpdateMatrix();
@@ -483,12 +483,19 @@ HRESULT GameModelNode::VOnRestore(Scene *pScene)
 //
 HRESULT GameModelNode::VRender(Scene *pScene)
 {
-    HRESULT hr;
 
-    m_vertexShader.SetupRender(/*pScene, this*/);
-    m_pixelShader.SetupRender(/*pScene, this*/);
+    m_vertexShader.SetupRender(pScene, this);
+    m_pixelShader.SetupRender(pScene, this);
+    auto x = VGet()->ToWorld();
 
-    m_model.Draw(VGet()->ToWorld(), Graphics::GetInstance()->GetCamera()->GetViewMatrix() * DirectX::XMMATRIX(Graphics::GetInstance()->GetCamera()->GetProjectionMatrix()));
+
+    Matrix m = DirectX::XMMatrixTranslation(
+            GetPosition().x,
+            GetPosition().y,
+            GetPosition().z);
+
+
+    m_model.Draw(m, D3DRenderer11::GetInstance()->GetCamera()->GetViewMatrix() * DirectX::XMMATRIX(D3DRenderer11::GetInstance()->GetCamera()->GetProjectionMatrix()));
 
     return S_OK;
 }

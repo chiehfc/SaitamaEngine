@@ -81,7 +81,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <LibraryPath>$(SolutionDir)\SaitamaEngine\Libs;$(LibraryPath)</LibraryPath>
-    <IncludePath>C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include;$(SolutionDir)\packages\directxtk_desktop_2015.2017.9.22.1\src\native;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)\packages\directxtk_desktop_2015.2017.9.22.1\src\native;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -119,6 +119,7 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <FloatingPointModel>Fast</FloatingPointModel>
       <AdditionalIncludeDirectories>$(SolutionDir)\SaitamaEngine\Includes;D:\Jeff\SourceTree\SaitamaEngine\packages\directxtk_desktop_2015.2017.9.22.1\src\native;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>/D_DISABLE_EXTENDED_ALIGNED_STORAGE %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

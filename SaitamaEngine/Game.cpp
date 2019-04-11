@@ -7,6 +7,7 @@
 #include <GeometricPrimitive.h>
 #include <SimpleMath.h>
 #include "Math.h"
+#include "RenderComponent.h"
 
 extern void ExitGame();
 
@@ -37,11 +38,21 @@ void Game::Initialize(HWND window, int width, int height)
     
     m_fpsTimer.Start();
 
-    if (!gfx.Initialize(window, width, height))
+    renderer = make_shared<D3DRenderer11>();
+
+    if (!renderer->Initialize(window, width, height))
     {
         return;
     }
 
+    auto gameObject = renderer->GetGameObject();
+
+    std::shared_ptr<RenderComponent> pRenderComponent = MakeStrongPtr<RenderComponent>(gameObject->GetComponent<RenderComponent>(RenderComponent::g_Name));
+
+    
+
+    scene = new Scene(renderer);
+    scene->AddChild(gameObject->GetId(), pRenderComponent->VGetSceneNode());
 
     //auto gameObject = factory.CreateGameObject(nullptr, nullptr, nullptr, 0);
 
@@ -100,29 +111,30 @@ void Game::Update(DX::StepTimer const& timer)
       PostQuitMessage(0);
   if (kb.W)
       //gfx.GetGameModel()->AdjustPosition(gfx.GetGameModel()->GetForwardVector() * elapsedTime * MOVEMENT_GAIN);
-      gfx.GetCamera()->AdjustPosition(gfx.GetCamera()->GetForwardVector() * MOVEMENT_GAIN * elapsedTime);
+      renderer->GetCamera()->AdjustPosition(renderer->GetCamera()->GetForwardVector() * MOVEMENT_GAIN * elapsedTime);
   if (kb.S)
       //gfx.GetGameModel()->AdjustPosition(gfx.GetGameModel()->GetBackwardVector() * elapsedTime * MOVEMENT_GAIN);
-      gfx.GetCamera()->AdjustPosition(gfx.GetCamera()->GetBackwardVector() * MOVEMENT_GAIN * elapsedTime);
+      renderer->GetCamera()->AdjustPosition(renderer->GetCamera()->GetBackwardVector() * MOVEMENT_GAIN * elapsedTime);
   if (kb.A)
       //gfx.GetGameModel()->AdjustPosition(gfx.GetGameModel()->GetLeftVector() * elapsedTime * MOVEMENT_GAIN);
-      gfx.GetCamera()->AdjustPosition(gfx.GetCamera()->GetLeftVector() * MOVEMENT_GAIN * elapsedTime);
+      renderer->GetCamera()->AdjustPosition(renderer->GetCamera()->GetLeftVector() * MOVEMENT_GAIN * elapsedTime);
   if (kb.D)
       //gfx.GetGameModel()->AdjustPosition(gfx.GetGameModel()->GetRightVector() * elapsedTime * MOVEMENT_GAIN);
-      gfx.GetCamera()->AdjustPosition(gfx.GetCamera()->GetRightVector() * MOVEMENT_GAIN * elapsedTime);
+      renderer->GetCamera()->AdjustPosition(renderer->GetCamera()->GetRightVector() * MOVEMENT_GAIN * elapsedTime);
   if (kb.R)
       //gfx.GetGameModel()->AdjustPosition(gfx.GetGameModel()->GetForwardVector() * elapsedTime * MOVEMENT_GAIN);
-      gfx.GetCamera()->AdjustPosition(DirectX::SimpleMath::Vector3(0.0f, MOVEMENT_GAIN * elapsedTime, 0.0f));
+      renderer->GetCamera()->AdjustPosition(DirectX::SimpleMath::Vector3(0.0f, MOVEMENT_GAIN * elapsedTime, 0.0f));
   if (kb.F)
       //gfx.GetGameModel()->AdjustPosition(gfx.GetGameModel()->GetForwardVector() * elapsedTime * MOVEMENT_GAIN);
-      gfx.GetCamera()->AdjustPosition(DirectX::SimpleMath::Vector3(0.0f, -MOVEMENT_GAIN * elapsedTime, 0.0f));
+      renderer->GetCamera()->AdjustPosition(DirectX::SimpleMath::Vector3(0.0f, -MOVEMENT_GAIN * elapsedTime, 0.0f));
+
 
   if (kb.C)
   {
-      DirectX::SimpleMath::Vector3 lightPosition = gfx.GetCamera()->GetPositionVector();
-      lightPosition += gfx.GetCamera()->GetForwardVector();
-      gfx.GetLight()->SetPosition(lightPosition);
-      gfx.GetLight()->SetRotation(gfx.GetCamera()->GetRotationVector());
+      //DirectX::SimpleMath::Vector3 lightPosition = renderer.GetCamera()->GetPositionVector();
+      //lightPosition += renderer.GetCamera()->GetForwardVector();
+      //renderer.GetLight()->SetPosition(lightPosition);
+      //renderer.GetLight()->SetRotation(renderer.GetCamera()->GetRotationVector());
   }
 
   // Mouse input.
@@ -131,7 +143,7 @@ void Game::Update(DX::StepTimer const& timer)
   {
       DirectX::SimpleMath::Vector3 delta = DirectX::SimpleMath::Vector3(float(mouse.x), float(mouse.y), 0.f)
             * ROTATION_GAIN;
-      gfx.GetCamera()->AdjustRotation(DirectX::SimpleMath::Vector3(delta.y,delta.x, 0));
+      renderer->GetCamera()->AdjustRotation(DirectX::SimpleMath::Vector3(delta.y,delta.x, 0));
   }
   m_mouse->SetMode(mouse.rightButton ? Mouse::MODE_RELATIVE : Mouse::MODE_ABSOLUTE);
 }
@@ -145,7 +157,13 @@ void Game::Render()
         return;
     }
 
-    gfx.RenderFrame();
+    renderer->VPreRender();
+
+    scene->OnRender();
+
+    renderer->VPostRender();
+
+    //gfx.RenderFrame();
 
     //Clear();
    // camera->UpdateViewMatrix();
