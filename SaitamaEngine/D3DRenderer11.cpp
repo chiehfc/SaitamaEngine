@@ -27,7 +27,7 @@ HRESULT D3DRenderer11::VOnRestore()
 
 bool D3DRenderer11::VPreRender()
 {
-    float bgColor[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+    float bgColor[] = { 0.0f, 0.0f, 1.0f, 1.0f };
     m_d3dContext->ClearRenderTargetView(m_renderTargetView.Get(), bgColor);
     m_d3dContext->ClearDepthStencilView(m_depthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 

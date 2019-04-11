@@ -449,6 +449,7 @@ GameModelNode::GameModelNode(const GameObjectId gameObjectId,
 
 
     m_constantBuffer.Initialize(D3DRenderer11::GetInstance()->GetDevice(), D3DRenderer11::GetInstance()->GetDeviceContext());
+
     m_model.Initialize(filePath, D3DRenderer11::GetInstance()->GetDevice(), D3DRenderer11::GetInstance()->GetDeviceContext(), m_constantBuffer);
     SetPosition(Vector3::Zero);
     //SetRotation(Vector3::Zero);
@@ -488,6 +489,7 @@ HRESULT GameModelNode::VRender(Scene *pScene)
     m_pixelShader.SetupRender(pScene, this);
     auto x = VGet()->ToWorld();
 
+    auto vec = GetPosition();
 
     Matrix m = DirectX::XMMatrixTranslation(
             GetPosition().x,
@@ -495,7 +497,7 @@ HRESULT GameModelNode::VRender(Scene *pScene)
             GetPosition().z);
 
 
-    m_model.Draw(m, D3DRenderer11::GetInstance()->GetCamera()->GetViewMatrix() * DirectX::XMMATRIX(D3DRenderer11::GetInstance()->GetCamera()->GetProjectionMatrix()));
+    m_model.Draw(x, D3DRenderer11::GetInstance()->GetCamera()->GetViewMatrix() * DirectX::XMMATRIX(D3DRenderer11::GetInstance()->GetCamera()->GetProjectionMatrix()));
 
     return S_OK;
 }
