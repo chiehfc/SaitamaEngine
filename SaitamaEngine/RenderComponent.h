@@ -40,3 +40,18 @@ private:
     Matrix m_worldMatrix = DirectX::XMMatrixIdentity();
 };
 
+class LightRenderComponent : public RenderComponent
+{
+public:
+    static const char *g_Name;
+    virtual const char *VGetName() const { return g_Name; }
+
+    virtual bool VInit(tinyxml2::XMLElement *pData) override;
+
+    LightRenderComponent(void);
+
+protected:
+    //virtual bool VDelegateInit(TiXmlElement* pData) override;
+    virtual shared_ptr<SceneNode> VCreateSceneNode(void) override;  // factory method to create the appropriate scene node
+
+};

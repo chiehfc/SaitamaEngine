@@ -80,6 +80,7 @@
     <ClInclude Include="MatrixStack.h" />
     <ClInclude Include="IRenderer.h" />
     <ClInclude Include="D3DRenderer11.h" />
+    <ClInclude Include="Lights.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -132,6 +133,7 @@
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="MatrixStack.cpp" />
     <ClCompile Include="D3DRenderer11.cpp" />
+    <ClCompile Include="Lights.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resource.rc" />

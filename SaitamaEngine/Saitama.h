@@ -17,6 +17,7 @@ enum RenderPass
 using namespace std;
 using namespace DirectX::SimpleMath;
 
+
 class GameObject;
 class GameObjectComponent;
 

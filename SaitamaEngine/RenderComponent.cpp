@@ -1,8 +1,10 @@
 #include "pch.h"
 #include "RenderComponent.h"
 #include "TransformComponent.h"
+#include "Lights.h"
 
 const char *RenderComponent::g_Name = "RenderComponent";
+const char* LightRenderComponent::g_Name = "LightRenderComponent";
 
 bool RenderComponent::VInit(tinyxml2::XMLElement *pData)
 {
@@ -53,4 +55,70 @@ shared_ptr<SceneNode> RenderComponent::VGetSceneNode(void)
     if (!m_pSceneNode)
         m_pSceneNode = VCreateSceneNode();
     return m_pSceneNode;
+}
+
+LightRenderComponent::LightRenderComponent(void)
+{
+}
+
+bool LightRenderComponent::VInit(tinyxml2::XMLElement *pData)
+{
+    tinyxml2::XMLElement *pNode = pData->FirstChildElement("FilePath");
+
+    if (pNode)
+    {
+        //m_filePath = pNode->Attribute("filepath");
+    }
+
+    return true;
+}
+
+//
+//bool LightRenderComponent::VDelegateInit(TiXmlElement* pData)
+//{
+//    TiXmlElement* pLight = pData->FirstChildElement("Light");
+//
+//    double temp;
+//    TiXmlElement* pAttenuationNode = NULL;
+//    pAttenuationNode = pLight->FirstChildElement("Attenuation");
+//    if (pAttenuationNode)
+//    {
+//        double temp;
+//        pAttenuationNode->Attribute("const", &temp);
+//        m_Props.m_Attenuation[0] = (float)temp;
+//
+//        pAttenuationNode->Attribute("linear", &temp);
+//        m_Props.m_Attenuation[1] = (float)temp;
+//
+//        pAttenuationNode->Attribute("exp", &temp);
+//        m_Props.m_Attenuation[2] = (float)temp;
+//    }
+//
+//    TiXmlElement* pShapeNode = NULL;
+//    pShapeNode = pLight->FirstChildElement("Shape");
+//    if (pShapeNode)
+//    {
+//        pShapeNode->Attribute("range", &temp);
+//        m_Props.m_Range = (float)temp;
+//        pShapeNode->Attribute("falloff", &temp);
+//        m_Props.m_Falloff = (float)temp;
+//        pShapeNode->Attribute("theta", &temp);
+//        m_Props.m_Theta = (float)temp;
+//        pShapeNode->Attribute("phi", &temp);
+//        m_Props.m_Phi = (float)temp;
+//    }
+//    return true;
+//}
+
+shared_ptr<SceneNode> LightRenderComponent::VCreateSceneNode(void)
+{
+    shared_ptr<TransformComponent> pTransformComponent = MakeStrongPtr(m_pOwner->GetComponent<TransformComponent>(TransformComponent::g_Name));
+    if (pTransformComponent)
+    {
+        WeakRenderComponentPtr weakThis(this);
+
+        return shared_ptr<SceneNode>(new D3DLightNode11(m_pOwner->GetId(), weakThis, &(pTransformComponent->GetTransform())));
+
+    }
+    return shared_ptr<SceneNode>();
 }

@@ -16,6 +16,7 @@
 #include "GameObjectFactory.h"
 
 
+
 class D3DRenderer11 : public IRenderer
 {
 public:
@@ -41,7 +42,7 @@ public:
     virtual bool VPreRender();
     virtual bool VPostRender();
     virtual HRESULT VOnRestore();
-    //virtual void VCalcLighting(Lights *lights, int maximumLights) { }
+    virtual void VCalcLighting(Lights *lights, int maximumLights);
 
     // These three functions are done for each shader, not as a part of beginning the render - so they do nothing in D3D11.
     virtual void VSetWorldTransform(const Matrix *m) {  }

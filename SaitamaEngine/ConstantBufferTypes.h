@@ -12,11 +12,11 @@ struct CB_PS_light
     DirectX::XMFLOAT3 ambientLightColor;
     float ambientLightStrength;
 
-    DirectX::XMFLOAT3 dynamicLightColor;
+    DirectX::XMFLOAT3 dynamicLightColor[8];
     float dynamicLightStrength;
-    DirectX::XMFLOAT3 dynamicLightPosition;
+    DirectX::XMFLOAT3 dynamicLightPosition[8];
     float dynamicLightAttenuation_a;
     float dynamicLightAttenuation_b;
     float dynamicLightAttenuation_c;
-
+    float numberOfLights;
 };

@@ -15,7 +15,7 @@ class SceneNode;
 //class CameraNode;
 //class SkyNode;
 //class LightNode;
-//class LightManager;
+class LightManager;
 
 class Scene
 {
@@ -28,7 +28,7 @@ protected:
     //AlphaSceneNodes 		m_AlphaSceneNodes;
     SceneGameObjectMap m_GameObjectMap;
 
-    //LightManager			*m_LightManager;
+    LightManager *m_LightManager;
 
     //void RenderAlphaPass();
 

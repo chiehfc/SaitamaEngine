@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "Scene.h"
-
+#include "Lights.h"
 
 Scene::Scene(shared_ptr<IRenderer> renderer)
 {
@@ -54,7 +54,7 @@ HRESULT Scene::OnRender()
 
         //m_Camera->SetViewTransform(this);
 
-        //m_LightManager->CalcLighting(this);
+        m_LightManager->CalcLighting(this);
 
         if (m_Root->VPreRender(this) == S_OK)
         {
@@ -108,11 +108,11 @@ bool Scene::AddChild(GameObjectId id, shared_ptr<ISceneNode> kid)
         m_GameObjectMap[id] = kid;
     }
 
-    /*shared_ptr<LightNode> pLight = dynamic_pointer_cast<LightNode>(kid);
-    if (pLight != NULL && m_LightManager->m_Lights.size() + 1 < MAXIMUM_LIGHTS_SUPPORTED)
+    shared_ptr<LightNode> pLight = dynamic_pointer_cast<LightNode>(kid);
+    if (pLight != NULL && m_LightManager->m_Lights.size() + 1 < 8)
     {
         m_LightManager->m_Lights.push_back(pLight);
-    }*/
+    }
     return m_Root->VAddChild(kid);
 }
 
