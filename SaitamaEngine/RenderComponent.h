@@ -3,6 +3,7 @@
 #include "GameObjectComponent.h"
 #include "GameModel.h"
 #include "SceneNode.h"
+#include "Lights.h"
 
 class RenderComponent : public GameObjectComponent
 {
@@ -48,10 +49,10 @@ public:
 
     virtual bool VInit(tinyxml2::XMLElement *pData) override;
 
-    LightRenderComponent(void);
-
 protected:
+    
     //virtual bool VDelegateInit(TiXmlElement* pData) override;
     virtual shared_ptr<SceneNode> VCreateSceneNode(void) override;  // factory method to create the appropriate scene node
-
+private:
+    LightProperties m_lightProps;
 };

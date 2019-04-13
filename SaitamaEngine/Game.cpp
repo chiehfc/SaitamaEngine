@@ -46,13 +46,14 @@ void Game::Initialize(HWND window, int width, int height)
     }
 
     auto gameObject = renderer->GetGameObject();
-
     std::shared_ptr<RenderComponent> pRenderComponent = MakeStrongPtr<RenderComponent>(gameObject->GetComponent<RenderComponent>(RenderComponent::g_Name));
-
     
+    auto light = renderer->GetLight();
+    std::shared_ptr<LightRenderComponent> pLightComponent = MakeStrongPtr<LightRenderComponent>(light->GetComponent<LightRenderComponent>(LightRenderComponent::g_Name));
 
     scene = new Scene(renderer);
     scene->AddChild(gameObject->GetId(), pRenderComponent->VGetSceneNode());
+    scene->AddChild(light->GetId(), pLightComponent->VGetSceneNode());
 
     //auto gameObject = factory.CreateGameObject(nullptr, nullptr, nullptr, 0);
 
@@ -131,10 +132,12 @@ void Game::Update(DX::StepTimer const& timer)
 
   if (kb.C)
   {
-      //DirectX::SimpleMath::Vector3 lightPosition = renderer.GetCamera()->GetPositionVector();
-      //lightPosition += renderer.GetCamera()->GetForwardVector();
-      //renderer.GetLight()->SetPosition(lightPosition);
-      //renderer.GetLight()->SetRotation(renderer.GetCamera()->GetRotationVector());
+      DirectX::SimpleMath::Vector3 lightPosition = renderer->GetCamera()->GetPositionVector();
+      lightPosition += renderer->GetCamera()->GetForwardVector();
+      renderer->GetLight()->SetPosition(lightPosition);
+      std::shared_ptr<LightRenderComponent> pLightComponent = MakeStrongPtr<LightRenderComponent>(renderer->GetLight()->GetComponent<LightRenderComponent>(LightRenderComponent::g_Name));
+      pLightComponent->VGetSceneNode()->SetPosition(lightPosition);
+      renderer->GetLight()->SetRotation(renderer->GetCamera()->GetRotationVector());
   }
 
   // Mouse input.

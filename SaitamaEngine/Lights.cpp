@@ -3,15 +3,17 @@
 #include "RenderComponent.h"
 #include "Scene.h"
 
-LightNode::LightNode(const GameObjectId gameObjectId, WeakRenderComponentPtr renderComponent, const Matrix *t)
+LightNode::LightNode(const GameObjectId gameObjectId, WeakRenderComponentPtr renderComponent, const LightProperties &lightProps, const Matrix *t)
     : SceneNode(gameObjectId, renderComponent, RenderPass_NotRendered, t)
 {
+    m_lightProps = lightProps;
 }
 
-HRESULT D3DLightNode11::VOnUpdate(Scene *, DWORD const elapsedMs)
+HRESULT D3DLightNode11::VOnUpdate(Scene *pScene, DWORD const elapsedMs)
 {
     // light color can change anytime! Check the BaseRenderComponent!
     LightRenderComponent* lrc = static_cast<LightRenderComponent*>(m_RenderComponent);    
+    
     return S_OK;
 }
 

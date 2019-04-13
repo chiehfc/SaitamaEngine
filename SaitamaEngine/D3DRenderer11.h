@@ -27,6 +27,8 @@ public:
 
     StrongGameObjectPtr GetGameObject();
 
+    StrongGameObjectPtr GetLight() { return m_light; }
+
     bool Initialize(HWND hwnd, int width, int height);
     void Clear();
     virtual void VShutdown() {  }
@@ -104,9 +106,9 @@ private:
 
     Camera m_camera;
     Timer m_fpsTimer;
-    Light m_light;
 
     StrongGameObjectPtr m_gameObject;
+    StrongGameObjectPtr m_light;
     GameObjectFactory m_factory;
 
 

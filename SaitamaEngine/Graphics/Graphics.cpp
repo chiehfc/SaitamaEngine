@@ -64,9 +64,9 @@ bool Graphics::Initialize(HWND hwnd, int width, int height)
 
 void Graphics::RenderFrame()
 {
-    m_cb_ps_light.data.dynamicLightColor[0] = m_light.lightColor;
+    //m_cb_ps_light.data.dynamicLightColor[0] = m_light.lightColor;
     m_cb_ps_light.data.dynamicLightStrength = m_light.lightStrength;
-    m_cb_ps_light.data.dynamicLightPosition[0] = m_light.GetPositionVector();
+    //m_cb_ps_light.data.dynamicLightPosition[0] = m_light.GetPositionVector();
     m_cb_ps_light.data.dynamicLightAttenuation_a = m_light.attenuation_a;
     m_cb_ps_light.data.dynamicLightAttenuation_b = m_light.attenuation_b;
     m_cb_ps_light.data.dynamicLightAttenuation_c = m_light.attenuation_c;

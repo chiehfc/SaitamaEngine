@@ -24,6 +24,6 @@ public:
     virtual StrongGameObjectComponentPtr VCreateComponent(tinyxml2::XMLElement* pData);
 
 private:
-    GameObjectId GetNextActorId(void) { ++m_lastGameObjectId; return m_lastGameObjectId; }
+    GameObjectId GetNextGameObjectId(void) { ++m_lastGameObjectId; return m_lastGameObjectId; }
 };
 

@@ -27,19 +27,40 @@ HRESULT D3DRenderer11::VOnRestore()
 
 void D3DRenderer11::VCalcLighting(Lights *lights, int maximumLights)
 {
-    m_cb_ps_light.data.dynamicLightColor[0] = m_light.lightColor;
-    m_cb_ps_light.data.dynamicLightStrength = m_light.lightStrength;
-    m_cb_ps_light.data.dynamicLightPosition[0] = m_light.GetPositionVector();
-    m_cb_ps_light.data.dynamicLightAttenuation_a = m_light.attenuation_a;
-    m_cb_ps_light.data.dynamicLightAttenuation_b = m_light.attenuation_b;
-    m_cb_ps_light.data.dynamicLightAttenuation_c = m_light.attenuation_c;
+    int count = 0;
+    if (lights && lights->size() > 0)
+    {
+        for (Lights::iterator i = lights->begin(); i != lights->end(); ++i)
+        {
+            shared_ptr<LightNode> light = *i;
+            shared_ptr<D3DLightNode11> light11 = static_pointer_cast<D3DLightNode11>(light);
+            
+            for (int i = 0; i < 8; i++)
+            {
+                m_cb_ps_light.data.dynamicLightColor[i] = light11->GetLightProps()->color;
+                m_cb_ps_light.data.dynamicLightPosition[i] =
+                    Vector4(light11->GetPosition().x,
+                        light11->GetPosition().y,
+                        light11->GetPosition().z,
+                        1.0f);
+            }
+            m_cb_ps_light.data.dynamicLightStrength = light11->GetLightProps()->lightStrength;
+            m_cb_ps_light.data.dynamicLightAttenuation_a = light11->GetLightProps()->attenuation[0];
+            m_cb_ps_light.data.dynamicLightAttenuation_b = light11->GetLightProps()->attenuation[1];
+            m_cb_ps_light.data.dynamicLightAttenuation_c = light11->GetLightProps()->attenuation[2];
+            count++;
+        }
+    }
+
+    m_cb_ps_light.data.numberOfLights = count;
+
     m_cb_ps_light.ApplyChanges();
     m_d3dContext->PSSetConstantBuffers(0, 1, m_cb_ps_light.GetAddressOf());
 }
 
 bool D3DRenderer11::VPreRender()
 {
-    float bgColor[] = { 0.0f, 0.0f, 1.0f, 1.0f };
+    float bgColor[] = { 0.0f, 0.0f, 0.0f, 1.0f };
     m_d3dContext->ClearRenderTargetView(m_renderTargetView.Get(), bgColor);
     m_d3dContext->ClearDepthStencilView(m_depthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
@@ -361,33 +382,18 @@ bool D3DRenderer11::InitializeScene()
     hr = m_cb_ps_light.Initialize(m_d3dDevice.Get(), m_d3dContext.Get());
     DX::ThrowIfFailed(hr);
 
-    m_cb_ps_light.data.ambientLightColor = DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f);
+    m_cb_ps_light.data.ambientLightColor = DirectX::XMFLOAT3(0.01f, 0.01f, 0.01f);
     m_cb_ps_light.data.ambientLightStrength = 1.0f;
 
-    m_gameObject = m_factory.CreateGameObject(nullptr, nullptr, nullptr, 0);
-
+    m_gameObject = m_factory.CreateGameObject("gameObject.xml", nullptr, nullptr, 0);
     std::shared_ptr<TransformComponent> pTransformComponent = MakeStrongPtr<TransformComponent>(m_gameObject->GetComponent<TransformComponent>(TransformComponent::g_Name));
-
-    std::shared_ptr<RenderComponent> pRenderComponent = MakeStrongPtr<RenderComponent>(m_gameObject->GetComponent<RenderComponent>(RenderComponent::g_Name));
-    GameModel gameModel;
-    if (!gameModel.Initialize(pRenderComponent->GetFilePath(), m_d3dDevice.Get(), m_d3dContext.Get(), m_constantBuffer))
-    {
-        return false;
-    }
-    pRenderComponent->SetGameModel(gameModel);
     m_gameObject->SetPosition(pTransformComponent->GetPosition());
     m_gameObject->SetRotation(pTransformComponent->GetRotation());
 
-    // Initialize Object(s)
-    /*if (!m_gameObject.Initialize("Data\\Models\\XY_PikachuM.fbx", m_d3dDevice.Get(), m_d3dContext.Get(), m_constantBuffer))
-    {
-    return false;
-    }*/
-
-    if (!m_light.Initialize(m_d3dDevice.Get(), m_d3dContext.Get(), m_constantBuffer))
-    {
-        return false;
-    }
+    m_light = m_factory.CreateGameObject("light.xml", nullptr, nullptr, 0);
+    std::shared_ptr<TransformComponent> pLightTransform = MakeStrongPtr<TransformComponent>(m_light->GetComponent<TransformComponent>(TransformComponent::g_Name));
+    m_light->SetPosition(pLightTransform->GetPosition());
+    m_light->SetRotation(pLightTransform->GetRotation());
 
     m_camera.UpdateMatrix();
 
@@ -445,10 +451,4 @@ Camera *D3DRenderer11::GetCamera()
 StrongGameObjectPtr D3DRenderer11::GetGameObject()
 {
     return m_gameObject;
-    //return &m_gameObject;
 }
-
-//Light *D3DRenderer11::GetLight()
-//{
-//    return &m_light;
-//}

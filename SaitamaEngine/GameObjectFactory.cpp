@@ -47,19 +47,14 @@ GameObjectFactory::GameObjectFactory(void)
 StrongGameObjectPtr GameObjectFactory::CreateGameObject(const char* gameObjectResource, tinyxml2::XMLElement *overrides, const DirectX::XMMATRIX *pInitialTransform, const GameObjectId serversGameObjectId)
 {
     XMLLoader xml;
-    tinyxml2::XMLNode *pRoot = xml.GetRoot();
-
-    for (tinyxml2::XMLElement* pNode = pRoot->FirstChildElement(); pNode; pNode = pNode->NextSiblingElement())
+    tinyxml2::XMLNode *pRoot = xml.LoadAndReturnRootXmlElement(gameObjectResource);
+    if (pRoot)
     {
-        std::cout << pNode->Value() << std::endl;
+        for (tinyxml2::XMLElement* pNode = pRoot->FirstChildElement(); pNode; pNode = pNode->NextSiblingElement())
+        {
+            std::cout << pNode->Value() << std::endl;
+        }
     }
-
-    
-
-    //tinyxml2::XMLError eResult = xml_doc.LoadFile("test.xml");
-    //if (eResult != tinyxml2::XML_SUCCESS) return false;
-
-    //tinyxml2::XMLNode* root = xml_doc.FirstChildElement("empleados");
 
     //// Grab the root XML node
     //tinyxml2::XMLElement* pRoot = XmlResourceLoader::LoadAndReturnRootXmlElement(actorResource);
@@ -73,7 +68,7 @@ StrongGameObjectPtr GameObjectFactory::CreateGameObject(const char* gameObjectRe
     GameObjectId nextGameObjectId = serversGameObjectId;
     if (nextGameObjectId == INVALID_GAMEOBJECT_ID)
     {
-        nextGameObjectId = GetNextActorId();
+        nextGameObjectId = GetNextGameObjectId();
     }
     StrongGameObjectPtr pGameObject(new GameObject(nextGameObjectId));
     if (!pGameObject->Init(pRoot->ToElement()))

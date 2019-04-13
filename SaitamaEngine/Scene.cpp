@@ -6,7 +6,7 @@ Scene::Scene(shared_ptr<IRenderer> renderer)
 {
     m_Root.reset(new RootNode());
     m_Renderer = renderer;
-    //m_LightManager = GCC_NEW LightManager;
+    m_LightManager = new LightManager();
 
     m_MatrixStack = new MatrixStack();
 
@@ -32,7 +32,7 @@ Scene::~Scene()
     pEventMgr->VRemoveListener(MakeDelegate(this, &Scene::ModifiedRenderComponentDelegate), EvtData_Modified_Render_Component::sk_EventType);*/
 
     delete m_MatrixStack;
-    //SAFE_DELETE(m_LightManager);
+    delete m_LightManager;    
 }
 
 //

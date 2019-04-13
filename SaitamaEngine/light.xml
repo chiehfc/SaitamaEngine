@@ -1,0 +1,39 @@
+<GameObject type="Light" resource="actors\ai_teapot.xml">
+    
+	<TransformComponent>
+		<Position x="0" y="0" z="0"/>
+		<YawPitchRoll x="0" y="0" z="0"/>
+	</TransformComponent>
+	
+	<RenderComponent>
+        <FilePath filepath="Data\\Models\\XY_PikachuM.fbx"/>
+    </RenderComponent>
+
+    <LightRenderComponent>
+    <Color r="0.1" g="0.1" b="0.1" a="1.0"/>
+    <Light>
+      <LightStrength strength="0.1"/>
+      <Attenuation const="0.1" linear="0.0" exp="0.0" />
+    </Light>
+  </LightRenderComponent>
+
+
+    <!-- <PhysicsComponent> -->
+        <!-- <Shape>Box</Shape> -->
+        <!-- <Density>glass</Density> -->
+        <!-- <PhysicsMaterial>Normal</PhysicsMaterial> -->
+    <!-- </PhysicsComponent> -->
+
+	
+    <!-- <TeapotRenderComponent> -->
+        <!-- <Color r="1.0" g="0" b="0" a="1.0"/> -->
+    <!-- </TeapotRenderComponent> -->
+
+
+    <!-- <BaseScriptComponent> -->
+        <!-- <ScriptObject constructor="AddEnemy" destructor="RemoveEnemy" /> -->
+        <!-- <ScriptData actorType="Teapot" /> -->
+    <!-- </BaseScriptComponent> -->
+    
+	
+</GameObject>

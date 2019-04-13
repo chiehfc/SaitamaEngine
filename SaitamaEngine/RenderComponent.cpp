@@ -1,7 +1,6 @@
 #include "pch.h"
 #include "RenderComponent.h"
 #include "TransformComponent.h"
-#include "Lights.h"
 
 const char *RenderComponent::g_Name = "RenderComponent";
 const char* LightRenderComponent::g_Name = "LightRenderComponent";
@@ -57,17 +56,30 @@ shared_ptr<SceneNode> RenderComponent::VGetSceneNode(void)
     return m_pSceneNode;
 }
 
-LightRenderComponent::LightRenderComponent(void)
-{
-}
-
 bool LightRenderComponent::VInit(tinyxml2::XMLElement *pData)
 {
-    tinyxml2::XMLElement *pNode = pData->FirstChildElement("FilePath");
+    tinyxml2::XMLElement *pNode = pData->FirstChildElement("Color");
 
     if (pNode)
     {
-        //m_filePath = pNode->Attribute("filepath");
+        m_lightProps.color = Color(pNode->FloatAttribute("r"), pNode->FloatAttribute("g"), pNode->FloatAttribute("b"), pNode->FloatAttribute("a"));
+    }
+
+    tinyxml2::XMLElement *pLight = pData->FirstChildElement("Light");
+    if (pLight)
+    {
+        tinyxml2::XMLElement *pStrength = pLight->FirstChildElement("LightStrength");
+        if (pStrength)
+        {
+            m_lightProps.lightStrength = pStrength->FloatAttribute("strength");
+        }        
+        tinyxml2::XMLElement *pAttenuation = pLight->FirstChildElement("Attenuation");
+        if (pAttenuation)
+        {
+            m_lightProps.attenuation[0] = pAttenuation->FloatAttribute("const");
+            m_lightProps.attenuation[1] = pAttenuation->FloatAttribute("linear");
+            m_lightProps.attenuation[2] = pAttenuation->FloatAttribute("exp");
+        }
     }
 
     return true;
@@ -117,7 +129,7 @@ shared_ptr<SceneNode> LightRenderComponent::VCreateSceneNode(void)
     {
         WeakRenderComponentPtr weakThis(this);
 
-        return shared_ptr<SceneNode>(new D3DLightNode11(m_pOwner->GetId(), weakThis, &(pTransformComponent->GetTransform())));
+        return shared_ptr<SceneNode>(new D3DLightNode11(m_pOwner->GetId(), weakThis, m_lightProps, &(pTransformComponent->GetTransform())));
 
     }
     return shared_ptr<SceneNode>();
