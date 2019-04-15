@@ -3,7 +3,7 @@
 #include "RenderComponent.h"
 #include "Scene.h"
 
-LightNode::LightNode(const GameObjectId gameObjectId, WeakRenderComponentPtr renderComponent, const LightProperties &lightProps, const Matrix *t)
+LightNode::LightNode(const GameObjectId gameObjectId, WeakBaseRenderComponentPtr renderComponent, const LightProperties &lightProps, const Matrix *t)
     : SceneNode(gameObjectId, renderComponent, RenderPass_NotRendered, t)
 {
     m_lightProps = lightProps;

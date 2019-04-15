@@ -3,10 +3,10 @@
 #include "Saitama.h"
 
 #include "Shaders.h"
-class RenderComponent;
+class BaseRenderComponent;
 class TransformComponent;
 
-typedef RenderComponent* WeakRenderComponentPtr;
+typedef BaseRenderComponent* WeakBaseRenderComponentPtr;
 
 class SceneNodeProperties
 {
@@ -57,10 +57,10 @@ protected:
     SceneNodeList			m_Children;
     SceneNode				*m_pParent;
     SceneNodeProperties		m_Props;
-    WeakRenderComponentPtr	m_RenderComponent;
+    WeakBaseRenderComponentPtr	m_RenderComponent;
 
 public:
-    SceneNode(GameObjectId gameObjectId, WeakRenderComponentPtr renderComponent, RenderPass renderPass, const Matrix *to, const Matrix *from = NULL);
+    SceneNode(GameObjectId gameObjectId, WeakBaseRenderComponentPtr renderComponent, RenderPass renderPass, const Matrix *to, const Matrix *from = NULL);
 
     virtual ~SceneNode();
 
@@ -115,7 +115,7 @@ class GameModelNode : public SceneNode
 {
 public:
     GameModelNode(const GameObjectId actorId,
-        WeakRenderComponentPtr renderComponent,
+        WeakBaseRenderComponentPtr renderComponent,
         std::string sdkMeshFileName,
         RenderPass renderPass,
         const Matrix *t);

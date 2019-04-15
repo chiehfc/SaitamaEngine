@@ -46,7 +46,7 @@ void Game::Initialize(HWND window, int width, int height)
     }
 
     auto gameObject = renderer->GetGameObject();
-    std::shared_ptr<RenderComponent> pRenderComponent = MakeStrongPtr<RenderComponent>(gameObject->GetComponent<RenderComponent>(RenderComponent::g_Name));
+    std::shared_ptr<ModelRenderComponent> pRenderComponent = MakeStrongPtr<ModelRenderComponent>(gameObject->GetComponent<ModelRenderComponent>(ModelRenderComponent::g_Name));
     
     auto light = renderer->GetLight();
     std::shared_ptr<LightRenderComponent> pLightComponent = MakeStrongPtr<LightRenderComponent>(light->GetComponent<LightRenderComponent>(LightRenderComponent::g_Name));
@@ -104,7 +104,7 @@ void Game::Update(DX::StepTimer const& timer)
 
 	float time = static_cast<float>(timer.GetTotalSeconds());
 
-    std::shared_ptr<RenderComponent> pComponent = MakeStrongPtr<RenderComponent>(renderer->GetGameObject()->GetComponent<RenderComponent>(RenderComponent::g_Name));
+    std::shared_ptr<ModelRenderComponent> pComponent = MakeStrongPtr<ModelRenderComponent>(renderer->GetGameObject()->GetComponent<ModelRenderComponent>(ModelRenderComponent::g_Name));
     auto sceneNode = pComponent->VGetSceneNode();
     auto toWorld = sceneNode->VGet()->ToWorld();
     Matrix rot;

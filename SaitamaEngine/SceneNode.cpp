@@ -26,7 +26,7 @@ void SceneNodeProperties::Transform(Matrix *toWorld, Matrix *fromWorld) const
         *fromWorld = m_FromWorld;
 }
 
-SceneNode::SceneNode(GameObjectId gameObjectId, WeakRenderComponentPtr renderComponent, RenderPass renderPass, const Matrix *to, const Matrix *from)
+SceneNode::SceneNode(GameObjectId gameObjectId, WeakBaseRenderComponentPtr renderComponent, RenderPass renderPass, const Matrix *to, const Matrix *from)
 {
     m_pParent = NULL;
     m_Props.m_GameObjectId = gameObjectId;
@@ -341,14 +341,14 @@ bool SceneNode::VRemoveChild(GameObjectId id)
 
 
 RootNode::RootNode()
-    : SceneNode(INVALID_GAMEOBJECT_ID, WeakRenderComponentPtr(), RenderPass_0, &Matrix::Identity)
+    : SceneNode(INVALID_GAMEOBJECT_ID, WeakBaseRenderComponentPtr(), RenderPass_0, &Matrix::Identity)
 {
     m_Children.reserve(RenderPass_Last);
 
     //shared_ptr<SceneNode> staticGroup(new SceneNode(INVALID_GAMEOBJECT_ID, WeakRenderComponentPtr(), RenderPass_Static, &Mat4x4::g_Identity));
     //m_Children.push_back(staticGroup);	// RenderPass_Static = 0
 
-    shared_ptr<SceneNode> actorGroup(new SceneNode(INVALID_GAMEOBJECT_ID, WeakRenderComponentPtr(), RenderPass_Actor, &Matrix::Identity));
+    shared_ptr<SceneNode> actorGroup(new SceneNode(INVALID_GAMEOBJECT_ID, WeakBaseRenderComponentPtr(), RenderPass_Actor, &Matrix::Identity));
     m_Children.push_back(actorGroup);	// RenderPass_Actor = 1
 
     //shared_ptr<SceneNode> skyGroup(GCC_NEW SceneNode(INVALID_GAMEOBJECT_ID, WeakRenderComponentPtr(), RenderPass_Sky, &Mat4x4::g_Identity));
@@ -428,7 +428,7 @@ HRESULT RootNode::VRenderChildren(Scene *pScene)
 // D3DShaderMeshNode11::D3DShaderMeshNode11					- Chapter 16, page 562 
 //
 GameModelNode::GameModelNode(const GameObjectId gameObjectId,
-    WeakRenderComponentPtr renderComponent,
+    WeakBaseRenderComponentPtr renderComponent,
     std::string filePath,
     RenderPass renderPass,
     const Matrix *t)
@@ -451,8 +451,8 @@ GameModelNode::GameModelNode(const GameObjectId gameObjectId,
     m_constantBuffer.Initialize(D3DRenderer11::GetInstance()->GetDevice(), D3DRenderer11::GetInstance()->GetDeviceContext());
 
     m_model.Initialize(filePath, D3DRenderer11::GetInstance()->GetDevice(), D3DRenderer11::GetInstance()->GetDeviceContext(), m_constantBuffer);
-    SetPosition(Vector3::Zero);
-    //VSetTransform(&m_Props.ToWorld());
+    //SetPosition(Vector3::Zero);
+    VSetTransform(&m_Props.ToWorld());
     //SetRotation(Vector3::Zero);
     //UpdateMatrix();
 }

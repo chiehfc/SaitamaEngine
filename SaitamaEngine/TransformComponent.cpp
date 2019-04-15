@@ -30,5 +30,49 @@ bool TransformComponent::VInit(tinyxml2::XMLElement *pData)
         m_rotVector = DirectX::SimpleMath::Vector3(yaw, pitch, roll);
     }
 
+    tinyxml2::XMLElement *pScaleElement = pData->FirstChildElement("Scale");
+    if (pScaleElement)
+    {
+        double x = 0;
+        double y = 0;
+        double z = 0;
+        pScaleElement->QueryAttribute("x", &x);
+        pScaleElement->QueryAttribute("y", &y);
+        pScaleElement->QueryAttribute("z", &z);
+        m_scale = DirectX::SimpleMath::Vector3((float)x, (float)y, (float)z);
+    }
+
+    DirectX::SimpleMath::Matrix translation;
+    translation = translation.CreateTranslation(m_posVector);
+    
+    DirectX::SimpleMath::Matrix rotation;
+    rotation = rotation.CreateFromYawPitchRoll(DirectX::XMConvertToRadians(m_rotVector.x), DirectX::XMConvertToRadians(m_rotVector.y), DirectX::XMConvertToRadians(m_rotVector.z));
+
+    DirectX::SimpleMath::Matrix scale;
+    scale = scale.CreateScale(m_scale);
+
+    m_transform = scale * rotation * translation;
+
+    /**
+    // This is not supported yet.
+    TiXmlElement* pLookAtElement = pData->FirstChildElement("LookAt");
+    if (pLookAtElement)
+    {
+        double x = 0;
+        double y = 0;
+        double z = 0;
+        pLookAtElement->Attribute("x", &x);
+        pLookAtElement->Attribute("y", &y);
+        pLookAtElement->Attribute("z", &z);
+
+        Vec3 lookAt((float)x, (float)y, (float)z);
+        rotation.BuildRotationLookAt(translation.GetPosition(), lookAt, g_Up);
+    }
+
+    
+    **/
+
+    
+
     return true;
 }

@@ -94,7 +94,7 @@ void Graphics::RenderFrame()
     // Update Constant Buffer            
     {
         //m_gameObject.Draw(DirectX::XMMATRIX(m_camera.GetViewMatrix()) * DirectX::XMMATRIX(m_camera.GetProjectionMatrix()));
-        std::shared_ptr<RenderComponent> pRenderComponent = MakeStrongPtr<RenderComponent>(m_gameObject->GetComponent<RenderComponent>(RenderComponent::g_Name));
+        std::shared_ptr<ModelRenderComponent> pRenderComponent = MakeStrongPtr<ModelRenderComponent>(m_gameObject->GetComponent<ModelRenderComponent>(ModelRenderComponent::g_Name));
         std::shared_ptr<TransformComponent> pTransformComponent = MakeStrongPtr<TransformComponent>(m_gameObject->GetComponent<TransformComponent>(TransformComponent::g_Name));
         pRenderComponent->SetWorldMatrix(DirectX::XMMatrixScaling(1.0f, 1.0f, 1.0f) * DirectX::XMMatrixRotationRollPitchYaw(
             pTransformComponent->GetRotation().x,
@@ -105,7 +105,7 @@ void Graphics::RenderFrame()
                 pTransformComponent->GetPosition().y,
                 pTransformComponent->GetPosition().z));
 
-        pRenderComponent->GetGameModel()->Draw(pRenderComponent->GetWorldMatrix(), DirectX::XMMATRIX(m_camera.GetViewMatrix()) * DirectX::XMMATRIX(m_camera.GetProjectionMatrix()));
+        //pRenderComponent->GetGameModel()->Draw(pRenderComponent->GetWorldMatrix(), DirectX::XMMATRIX(m_camera.GetViewMatrix()) * DirectX::XMMATRIX(m_camera.GetProjectionMatrix()));
     }
     {
         m_d3dContext->PSSetShader(m_pixelShader_noLight.GetShader(), NULL, 0);
@@ -338,13 +338,13 @@ bool Graphics::InitializeScene()
     
     std::shared_ptr<TransformComponent> pTransformComponent = MakeStrongPtr<TransformComponent>(m_gameObject->GetComponent<TransformComponent>(TransformComponent::g_Name));
 
-    std::shared_ptr<RenderComponent> pRenderComponent = MakeStrongPtr<RenderComponent>(m_gameObject->GetComponent<RenderComponent>(RenderComponent::g_Name));
+    std::shared_ptr<ModelRenderComponent> pRenderComponent = MakeStrongPtr<ModelRenderComponent>(m_gameObject->GetComponent<ModelRenderComponent>(ModelRenderComponent::g_Name));
     GameModel gameModel;
     if (!gameModel.Initialize(pRenderComponent->GetFilePath(), m_d3dDevice.Get(), m_d3dContext.Get(), m_constantBuffer))
     {
         return false;
     }
-    pRenderComponent->SetGameModel(gameModel);
+    //pRenderComponent->SetGameModel(gameModel);
     m_gameObject->SetPosition(pTransformComponent->GetPosition());
     m_gameObject->SetRotation(pTransformComponent->GetRotation());
 

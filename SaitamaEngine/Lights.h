@@ -14,7 +14,7 @@ class LightNode : public SceneNode
 protected:
     LightProperties m_lightProps;
 public:
-    LightNode(const GameObjectId gameObjectId, WeakRenderComponentPtr renderComponent, const LightProperties &lightProps, const Matrix *t);
+    LightNode(const GameObjectId gameObjectId, WeakBaseRenderComponentPtr renderComponent, const LightProperties &lightProps, const Matrix *t);
 
     const LightProperties* GetLightProps() const { return &m_lightProps; }
 };
@@ -22,7 +22,7 @@ public:
 class D3DLightNode11 : public LightNode
 {
 public:
-    D3DLightNode11(const GameObjectId gameObjectId, WeakRenderComponentPtr renderComponent, const LightProperties &lightProps, const Matrix *t)
+    D3DLightNode11(const GameObjectId gameObjectId, WeakBaseRenderComponentPtr renderComponent, const LightProperties &lightProps, const Matrix *t)
         : LightNode(gameObjectId, renderComponent, lightProps, t) { }
 
     virtual HRESULT VOnRestore() { return S_OK; };

@@ -18,6 +18,7 @@ public:
 private:
     DirectX::SimpleMath::Vector3 m_posVector;
     DirectX::SimpleMath::Vector3 m_rotVector;
+    DirectX::SimpleMath::Vector3 m_scale;
 
     DirectX::SimpleMath::Matrix m_transform = Matrix::Identity;
 };

@@ -24,7 +24,7 @@ GameObjectFactory::GameObjectFactory(void)
     m_lastGameObjectId = INVALID_GAMEOBJECT_ID;
     
     m_componentFactory.Register<TransformComponent>(GameObjectComponent::GetIdFromName(TransformComponent::g_Name));
-    m_componentFactory.Register<RenderComponent>(GameObjectComponent::GetIdFromName(RenderComponent::g_Name));
+    m_componentFactory.Register<ModelRenderComponent>(GameObjectComponent::GetIdFromName(ModelRenderComponent::g_Name));
     m_componentFactory.Register<LightRenderComponent>(GameObjectComponent::GetIdFromName(LightRenderComponent::g_Name));
     /*
     m_componentFactory.Register<MeshRenderComponent>(GameObjectComponent::GetIdFromName(MeshRenderComponent::g_Name));
@@ -55,14 +55,6 @@ StrongGameObjectPtr GameObjectFactory::CreateGameObject(const char* gameObjectRe
             std::cout << pNode->Value() << std::endl;
         }
     }
-
-    //// Grab the root XML node
-    //tinyxml2::XMLElement* pRoot = XmlResourceLoader::LoadAndReturnRootXmlElement(actorResource);
-    //if (!pRoot)
-    //{
-    //    GCC_ERROR("Failed to create actor from resource: " + std::string(actorResource));
-    //    return StrongActorPtr();
-    //}
 
     //// create the actor instance
     GameObjectId nextGameObjectId = serversGameObjectId;
@@ -110,7 +102,7 @@ StrongGameObjectPtr GameObjectFactory::CreateGameObject(const char* gameObjectRe
     //}
 
     //// Now that the actor has been fully created, run the post init phase
-    //pActor->PostInit();
+    pGameObject->PostInit();
 
     return pGameObject;
 }

@@ -4,18 +4,14 @@
 		<Position x="0" y="0" z="0"/>
 		<YawPitchRoll x="0" y="0" z="0"/>
 	</TransformComponent>
-	
-	<RenderComponent>
-        <FilePath filepath="Data\\Models\\XY_PikachuM.fbx"/>
-    </RenderComponent>
-
+    
     <LightRenderComponent>
-    <Color r="0.1" g="0.1" b="0.1" a="1.0"/>
-    <Light>
-      <LightStrength strength="5.0"/>
-      <Attenuation const="1.0" linear="0.01" exp="0.0" />
-    </Light>
-  </LightRenderComponent>
+        <Color r="0.1" g="0.1" b="0.1" a="1.0"/>
+        <Light>
+            <LightStrength strength="5.0"/>
+            <Attenuation const="1.0" linear="0.01" exp="0.0" />
+        </Light>
+    </LightRenderComponent>
 
 
     <!-- <PhysicsComponent> -->

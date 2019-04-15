@@ -5,54 +5,54 @@
 #include "SceneNode.h"
 #include "Lights.h"
 
-class RenderComponent : public GameObjectComponent
+class BaseRenderComponent : public GameObjectComponent
 {
 public:
-    static const char* g_Name;
-    virtual const char* VGetName() const { return g_Name; }
-
     virtual bool VInit(tinyxml2::XMLElement *pData) override;
-    virtual void VPostInit(void) override {}
-    virtual shared_ptr<SceneNode> VCreateSceneNode(void);  
+    virtual void VPostInit(void) override;
 
-
-    void UpdateMatrix();
-
-    std::string GetFilePath() const { return m_filePath; }
-
-    GameModel *GetGameModel() { return &m_gameModel; }
-
-    void SetGameModel(GameModel gameModel) { m_gameModel = gameModel; }
-
-    Matrix GetWorldMatrix() const { return m_worldMatrix; }
-
-    void SetWorldMatrix(Matrix worldMatrix) { m_worldMatrix = worldMatrix; }
-
-    //void Draw(const DirectX::XMMATRIX &viewProjectionMatrix);
     virtual shared_ptr<SceneNode> VGetSceneNode(void);
 
-private:
-    
+protected:
+    virtual bool VDelegateInit(tinyxml2::XMLElement *pData) { return true; }
     shared_ptr<SceneNode> m_pSceneNode;
+    virtual shared_ptr<SceneNode> VCreateSceneNode(void) = 0;  // factory method to create the appropriate scene node
 
+private:
+    //virtual shared_ptr<SceneNode> VGetSceneNode(void); TODO: After event system, put this back to private and use delegate to add SceneNode to Scene
+};
+
+
+class ModelRenderComponent : public BaseRenderComponent
+{
+public:    
+    static const char *g_Name;
+    virtual const char *VGetName() const { return g_Name; }
+
+    std::string GetFilePath() const { return m_filePath; }
+    Matrix GetWorldMatrix() const { return m_worldMatrix; }
+    void SetWorldMatrix(Matrix worldMatrix) { m_worldMatrix = worldMatrix; }
+
+protected:
+    virtual bool VDelegateInit(tinyxml2::XMLElement *pData) override;
+    virtual shared_ptr<SceneNode> VCreateSceneNode(void) override;
+
+private:
     std::string m_filePath;
-
     GameModel m_gameModel;
     Matrix m_worldMatrix = DirectX::XMMatrixIdentity();
 };
 
-class LightRenderComponent : public RenderComponent
+class LightRenderComponent : public BaseRenderComponent
 {
 public:
     static const char *g_Name;
     virtual const char *VGetName() const { return g_Name; }
 
-    virtual bool VInit(tinyxml2::XMLElement *pData) override;
-
 protected:
-    
-    //virtual bool VDelegateInit(TiXmlElement* pData) override;
+    virtual bool VDelegateInit(tinyxml2::XMLElement *pData) override;
     virtual shared_ptr<SceneNode> VCreateSceneNode(void) override;  // factory method to create the appropriate scene node
+
 private:
     LightProperties m_lightProps;
 };
