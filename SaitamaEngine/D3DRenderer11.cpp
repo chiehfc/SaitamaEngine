@@ -74,6 +74,25 @@ bool D3DRenderer11::VPreRender()
 
 bool D3DRenderer11::VPostRender(void)
 {
+    /*ImGui_ImplDX11_NewFrame();
+    ImGui_ImplWin32_NewFrame();
+    ImGui::NewFrame();
+    ImGui::Begin("Light Controls");
+    ImGui::DragFloat3("Ambient Light Color", &m_cb_ps_light.data.ambientLightColor.x, 0.01f, 0.0f, 1.0f);
+    ImGui::DragFloat("Ambient Light Strength", &m_cb_ps_light.data.ambientLightStrength, 0.01f, 0.0f, 1.0f);
+    ImGui::NewLine();
+    ImGui::DragFloat3("Dynamic Light Color", &m_cb_ps_light.data.dynamicLightColor[0].x, 0.01f, 0.0f, 10.0f);
+    ImGui::DragFloat("Dynamic Light Strength", &m_cb_ps_light.data.dynamicLightStrength, 0.01f, 0.0f, 10.0f);
+    ImGui::DragFloat("Dynamic Light Attenuation A", &m_cb_ps_light.data.dynamicLightAttenuation_a, 0.01f, 0.1f, 10.0f);
+    ImGui::DragFloat("Dynamic Light Attenuation B", &m_cb_ps_light.data.dynamicLightAttenuation_b, 0.01f, 0.0f, 10.0f);
+    ImGui::DragFloat("Dynamic Light Attenuation C", &m_cb_ps_light.data.dynamicLightAttenuation_c, 0.01f, 0.0f, 10.0f);
+
+    ImGui::End();
+    ImGui::Render();
+    ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());*/
+
+
+
     m_swapChain->Present(1, NULL);
     return true;
 }

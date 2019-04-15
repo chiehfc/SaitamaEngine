@@ -104,7 +104,13 @@ void Game::Update(DX::StepTimer const& timer)
 
 	float time = static_cast<float>(timer.GetTotalSeconds());
 
-    //gfx.GetGameObject()->AdjustRotation(DirectX::SimpleMath::Vector3(0.0f, 1.0f * ROTATION_GAIN, 0.0f));
+    std::shared_ptr<RenderComponent> pComponent = MakeStrongPtr<RenderComponent>(renderer->GetGameObject()->GetComponent<RenderComponent>(RenderComponent::g_Name));
+    auto sceneNode = pComponent->VGetSceneNode();
+    auto toWorld = sceneNode->VGet()->ToWorld();
+    Matrix rot;
+    rot = rot.CreateFromYawPitchRoll(1.0f * ROTATION_GAIN, 0.0f, 0.0f);
+    toWorld = rot * toWorld;
+    sceneNode->VSetTransform(&toWorld);
 
   // Keyboard input.
   auto kb = m_keyboard->GetState();
@@ -134,7 +140,7 @@ void Game::Update(DX::StepTimer const& timer)
   {
       DirectX::SimpleMath::Vector3 lightPosition = renderer->GetCamera()->GetPositionVector();
       lightPosition += renderer->GetCamera()->GetForwardVector();
-      renderer->GetLight()->SetPosition(lightPosition);
+      //renderer->GetLight()->SetPosition(lightPosition);
       std::shared_ptr<LightRenderComponent> pLightComponent = MakeStrongPtr<LightRenderComponent>(renderer->GetLight()->GetComponent<LightRenderComponent>(LightRenderComponent::g_Name));
       pLightComponent->VGetSceneNode()->SetPosition(lightPosition);
       renderer->GetLight()->SetRotation(renderer->GetCamera()->GetRotationVector());

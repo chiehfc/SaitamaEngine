@@ -62,7 +62,7 @@ public:
         m_MatrixStack->Push();
         m_MatrixStack->PreMult(toWorld);
         DirectX::SimpleMath::Matrix mat = GetTopMatrix();
-        m_Renderer->VSetWorldTransform(&mat);
+        m_Renderer->VSetWorldTransform(&mat); // Doesn't do stuffs...
     }
 
     void PopMatrix()
