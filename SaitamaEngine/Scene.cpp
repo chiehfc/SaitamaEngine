@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "Scene.h"
 #include "Lights.h"
+#include "Events.h"
 
 Scene::Scene(shared_ptr<IRenderer> renderer)
 {
@@ -11,9 +12,9 @@ Scene::Scene(shared_ptr<IRenderer> renderer)
     m_MatrixStack = new MatrixStack();
 
     // [mrmike] - event delegates were added post-press
-    /*IEventManager* pEventMgr = IEventManager::Get();
+    IEventManager* pEventMgr = IEventManager::Get();
     pEventMgr->VAddListener(MakeDelegate(this, &Scene::NewRenderComponentDelegate), EvtData_New_Render_Component::sk_EventType);
-    pEventMgr->VAddListener(MakeDelegate(this, &Scene::DestroyActorDelegate), EvtData_Destroy_Actor::sk_EventType);
+    /*pEventMgr->VAddListener(MakeDelegate(this, &Scene::DestroyActorDelegate), EvtData_Destroy_Actor::sk_EventType);
     pEventMgr->VAddListener(MakeDelegate(this, &Scene::MoveActorDelegate), EvtData_Move_Actor::sk_EventType);
     pEventMgr->VAddListener(MakeDelegate(this, &Scene::ModifiedRenderComponentDelegate), EvtData_Modified_Render_Component::sk_EventType);*/
 }
@@ -24,9 +25,9 @@ Scene::Scene(shared_ptr<IRenderer> renderer)
 Scene::~Scene()
 {
     // [mrmike] - event delegates were added post-press!
-    /*IEventManager* pEventMgr = IEventManager::Get();
+    IEventManager* pEventMgr = IEventManager::Get();
     pEventMgr->VRemoveListener(MakeDelegate(this, &Scene::NewRenderComponentDelegate), EvtData_New_Render_Component::sk_EventType);
-    pEventMgr->VRemoveListener(MakeDelegate(this, &Scene::DestroyActorDelegate), EvtData_Destroy_Actor::sk_EventType);
+    /*pEventMgr->VRemoveListener(MakeDelegate(this, &Scene::DestroyActorDelegate), EvtData_Destroy_Actor::sk_EventType);
     pEventMgr->VRemoveListener(MakeDelegate(this, &Scene::MoveActorDelegate), EvtData_Move_Actor::sk_EventType);
 
     pEventMgr->VRemoveListener(MakeDelegate(this, &Scene::ModifiedRenderComponentDelegate), EvtData_Modified_Render_Component::sk_EventType);*/
@@ -96,10 +97,6 @@ HRESULT Scene::OnRestore()
     return m_Root->VOnRestore(this);
 }
 
-
-
-
-
 bool Scene::AddChild(GameObjectId id, shared_ptr<ISceneNode> kid)
 {
     if (id != INVALID_GAMEOBJECT_ID)
@@ -131,24 +128,23 @@ bool Scene::RemoveChild(GameObjectId id)
 }
 
 
-//
-//void Scene::NewRenderComponentDelegate(IEventDataPtr pEventData)
-//{
-//    shared_ptr<EvtData_New_Render_Component> pCastEventData = static_pointer_cast<EvtData_New_Render_Component>(pEventData);
-//
-//    ActorId actorId = pCastEventData->GetActorId();
-//    shared_ptr<SceneNode> pSceneNode(pCastEventData->GetSceneNode());
-//
-//    // FUTURE WORK: Add better error handling here.		
-//    if (FAILED(pSceneNode->VOnRestore(this)))
-//    {
-//        std::string error = "Failed to restore scene node to the scene for actorid " + ToStr(actorId);
-//        GCC_ERROR(error);
-//        return;
-//    }
-//
-//    AddChild(actorId, pSceneNode);
-//}
+void Scene::NewRenderComponentDelegate(IEventDataPtr pEventData)
+{
+    shared_ptr<EvtData_New_Render_Component> pCastEventData = static_pointer_cast<EvtData_New_Render_Component>(pEventData);
+
+    GameObjectId gameObjectId = pCastEventData->GetGameObjectId();
+    shared_ptr<SceneNode> pSceneNode(pCastEventData->GetSceneNode());
+
+    // FUTURE WORK: Add better error handling here.		
+    /*if (FAILED(pSceneNode->VOnRestore(this)))
+    {
+        std::string error = "Failed to restore scene node to the scene for actorid " + ToStr(actorId);
+        GCC_ERROR(error);
+        return;
+    }*/
+
+    AddChild(gameObjectId, pSceneNode);
+}
 //
 //void Scene::ModifiedRenderComponentDelegate(IEventDataPtr pEventData)
 //{

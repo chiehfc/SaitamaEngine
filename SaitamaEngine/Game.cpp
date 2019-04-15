@@ -8,6 +8,7 @@
 #include <SimpleMath.h>
 #include "Math.h"
 #include "RenderComponent.h"
+#include "EventManagerImpl.h"
 
 extern void ExitGame();
 
@@ -38,7 +39,15 @@ void Game::Initialize(HWND window, int width, int height)
     
     m_fpsTimer.Start();
 
+    m_pEventManager = new EventManager("Saitama Event Mgr", true);
+    if (!m_pEventManager)
+    {
+        //GCC_ERROR("Failed to create EventManager.");
+        return;
+    }
+
     renderer = make_shared<D3DRenderer11>();
+    scene = new Scene(renderer);
 
     if (!renderer->Initialize(window, width, height))
     {
@@ -51,9 +60,9 @@ void Game::Initialize(HWND window, int width, int height)
     auto light = renderer->GetLight();
     std::shared_ptr<LightRenderComponent> pLightComponent = MakeStrongPtr<LightRenderComponent>(light->GetComponent<LightRenderComponent>(LightRenderComponent::g_Name));
 
-    scene = new Scene(renderer);
-    scene->AddChild(gameObject->GetId(), pRenderComponent->VGetSceneNode());
-    scene->AddChild(light->GetId(), pLightComponent->VGetSceneNode());
+    
+    //scene->AddChild(gameObject->GetId(), pRenderComponent->VGetSceneNode());
+    //scene->AddChild(light->GetId(), pLightComponent->VGetSceneNode());
 
     //auto gameObject = factory.CreateGameObject(nullptr, nullptr, nullptr, 0);
 

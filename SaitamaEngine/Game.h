@@ -12,6 +12,8 @@
 #include "D3DRenderer11.h"
 #include "Scene.h"
 
+class EventManager;
+
 // A basic game implementation that creates a D3D11 device and
 // provides a game loop.
 class Game
@@ -62,7 +64,8 @@ private:
 
     Scene *scene;
 
-    //GameObjectFactory factory;
+    // Event manager
+    EventManager *m_pEventManager;
     
 
     // Rendering loop timer.

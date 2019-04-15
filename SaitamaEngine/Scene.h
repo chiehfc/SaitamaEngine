@@ -1,10 +1,10 @@
 #pragma once
-#include "Geometry.h"
 #include "SceneNode.h"
 #include <map>
 #include "GameObject.h"
 #include "MatrixStack.h"
 #include "IRenderer.h"
+#include "EventManager.h"
 
 using namespace DirectX::SimpleMath;
 
@@ -45,7 +45,7 @@ public:
     bool RemoveChild(GameObjectId id);
 
     // event delegates
-    //void NewRenderComponentDelegate(IEventDataPtr pEventData);
+    void NewRenderComponentDelegate(IEventDataPtr pEventData);
     //void ModifiedRenderComponentDelegate(IEventDataPtr pEventData);			// added post-press!
     //void DestroyActorDelegate(IEventDataPtr pEventData);
     //void MoveActorDelegate(IEventDataPtr pEventData);

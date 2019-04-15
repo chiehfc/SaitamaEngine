@@ -16,6 +16,8 @@ enum RenderPass
 
 using namespace std;
 using namespace DirectX::SimpleMath;
+#include "FastDelegate.h"
+using fastdelegate::MakeDelegate;
 
 
 class GameObject;

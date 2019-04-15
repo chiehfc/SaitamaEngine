@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "RenderComponent.h"
 #include "TransformComponent.h"
+#include "Events.h"
 
 const char *ModelRenderComponent::g_Name = "ModelRenderComponent";
 const char *LightRenderComponent::g_Name = "LightRenderComponent";
@@ -13,8 +14,8 @@ bool BaseRenderComponent::VInit(tinyxml2::XMLElement *pData)
 void BaseRenderComponent::VPostInit(void)
 {
     shared_ptr<SceneNode> pSceneNode(VGetSceneNode());
-    //shared_ptr<EvtData_New_Render_Component> pEvent(GCC_NEW EvtData_New_Render_Component(m_pOwner->GetId(), pSceneNode));
-    //IEventManager::Get()->VTriggerEvent(pEvent);
+    shared_ptr<EvtData_New_Render_Component> pEvent(new EvtData_New_Render_Component(m_pOwner->GetId(), pSceneNode));
+    IEventManager::Get()->VTriggerEvent(pEvent);
 }
 
 shared_ptr<SceneNode> BaseRenderComponent::VGetSceneNode(void)

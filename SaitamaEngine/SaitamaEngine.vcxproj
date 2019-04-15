@@ -175,6 +175,11 @@
     <ClInclude Include="ConstantBufferTypes.h" />
     <ClInclude Include="D3DRenderer11.h" />
     <ClInclude Include="Entity.h" />
+    <ClInclude Include="EventManager.h" />
+    <ClInclude Include="EventManagerImpl.h" />
+    <ClInclude Include="Events.h" />
+    <ClInclude Include="FastDelegate.h" />
+    <ClInclude Include="FastDelegateBind.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GameObjectComponent.h" />
@@ -223,6 +228,9 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="D3DRenderer11.cpp" />
     <ClCompile Include="Entity.cpp" />
+    <ClCompile Include="EventManager.cpp" />
+    <ClCompile Include="EventManagerImpl.cpp" />
+    <ClCompile Include="Events.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="GameObjectFactory.cpp" />
