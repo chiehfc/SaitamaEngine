@@ -34,7 +34,7 @@ MovementController::MovementController(shared_ptr<SceneNode> object, float initi
 
 //  class MovementController::OnUpdate			- Chapter 10, page 283
 
-void MovementController::OnUpdate(DWORD const deltaMilliseconds)
+void MovementController::OnUpdate(const float deltaMilliseconds)
 {
     //if (m_bKey['Q'])
     //{
@@ -67,49 +67,51 @@ void MovementController::OnUpdate(DWORD const deltaMilliseconds)
     Vector4 rightWorld(0, 0, 0, 0);
     Vector4 upWorld(0, 0, 0, 0);
 
-    //if (m_bKey['W'] || m_bKey['S'])
-    //{
-    //    // In D3D, the "look at" default is always
-    //    // the positive Z axis.
-    //    Vec4 at = g_Forward4;
-    //    if (m_bKey['S'])
-    //        at *= -1;
+    if (kb.W || kb.S)
+    {
+        // In D3D, the "look at" default is always
+        // the positive Z axis.
+        Vector4 at = g_Forward4;
+        if (kb.S)
+            at *= -1;
 
-    //    // This will give us the "look at" vector 
-    //    // in world space - we'll use that to move
-    //    // the camera.
-    //    atWorld = m_matToWorld.Xform(at);
-    //    bTranslating = true;
-    //}
+        // This will give us the "look at" vector 
+        // in world space - we'll use that to move
+        // the camera.
+        atWorld = DirectX::XMVector4Transform(at, m_matToWorld);
+        //atWorld = m_matToWorld.Transform (at);
+        bTranslating = true;
+    }
 
-    //if (m_bKey['A'] || m_bKey['D'])
-    //{
-    //    // In D3D, the "right" default is always
-    //    // the positive X axis.
-    //    Vec4 right = g_Right4;
-    //    if (m_bKey['A'])
-    //        right *= -1;
+    if (kb.A || kb.D)
+    {
+        // In D3D, the "right" default is always
+        // the positive X axis.
+        Vector4 right = g_Right4;
+        if (kb.A)
+            right *= -1;
 
-    //    // This will give us the "right" vector 
-    //    // in world space - we'll use that to move
-    //    // the camera
-    //    rightWorld = m_matToWorld.Xform(right);
-    //    bTranslating = true;
-    //}
+        // This will give us the "right" vector 
+        // in world space - we'll use that to move
+        // the camera
+        rightWorld = DirectX::XMVector4Transform(right, m_matToWorld);
+        //rightWorld = m_matToWorld.Xform(right);
+        bTranslating = true;
+    }
 
-    //if (m_bKey[' '] || m_bKey['C'] || m_bKey['X'])
-    //{
-    //    // In D3D, the "up" default is always
-    //    // the positive Y axis.
-    //    Vec4 up = g_Right4;
-    //    if (!m_bKey[' '])
-    //        up *= -1;
+    if (kb.C || kb.X)
+    {
+        // In D3D, the "up" default is always
+        // the positive Y axis.
+        Vector4 up = g_Up4;
+        if (kb.C)
+            up *= -1;
 
-    //    //Unlike strafing, Up is always up no matter
-    //    //which way you are looking
-    //    upWorld = up;
-    //    bTranslating = true;
-    //}
+        //Unlike strafing, Up is always up no matter
+        //which way you are looking
+        upWorld = up;
+        bTranslating = true;
+    }
 
     //Handling rotation as a result of mouse position
     {
@@ -120,16 +122,16 @@ void MovementController::OnUpdate(DWORD const deltaMilliseconds)
 
 
             Matrix matRot;
-            matRot = matRot.CreateFromYawPitchRoll(delta.y, delta.x, 0);
+            matRot = matRot.CreateFromYawPitchRoll(delta.x, delta.y, 0);
 
             // Create the new object-to-world matrix, and the
             // new world-to-object matrix. 
 
-            m_matToWorld = matRot * m_matToWorld;
-            m_matFromWorld = m_matToWorld.Invert();
-            m_object->VSetTransform(&m_matToWorld, &m_matFromWorld);
+            //m_matToWorld = matRot * m_matToWorld;
+            //m_matFromWorld = m_matToWorld.Invert();
+            //m_object->VSetTransform(&m_matToWorld, &m_matFromWorld);
         }
-        m_mouse->SetMode(mouse.rightButton ? DirectX::Mouse::MODE_RELATIVE : DirectX::Mouse::MODE_ABSOLUTE);
+        //m_mouse->SetMode(mouse.rightButton ? DirectX::Mouse::MODE_RELATIVE : DirectX::Mouse::MODE_ABSOLUTE);
 
 
         //// The secret formula!!! Don't give it away!
@@ -151,30 +153,30 @@ void MovementController::OnUpdate(DWORD const deltaMilliseconds)
         //m_object->VSetTransform(&m_matToWorld, &m_matFromWorld);
     }
 
-    //if (bTranslating)
-    //{
-    //    float elapsedTime = (float)deltaMilliseconds / 1000.0f;
+    if (bTranslating)
+    {
+        //float elapsedTime = (float)deltaMilliseconds / 1000.0f;
 
-    //    Vec3 direction = atWorld + rightWorld + upWorld;
-    //    direction.Normalize();
+        Vector3 direction = atWorld + rightWorld + upWorld;
+        direction.Normalize();
 
-    //    // Ramp the acceleration by the elapsed time.
-    //    float numberOfSeconds = 5.f;
-    //    m_currentSpeed += m_maxSpeed * ((elapsedTime*elapsedTime) / numberOfSeconds);
-    //    if (m_currentSpeed > m_maxSpeed)
-    //        m_currentSpeed = m_maxSpeed;
+        // Ramp the acceleration by the elapsed time.
+        float numberOfSeconds = 5.f;
+        m_currentSpeed += m_maxSpeed * ((deltaMilliseconds*deltaMilliseconds) / numberOfSeconds);
+        if (m_currentSpeed > m_maxSpeed)
+            m_currentSpeed = m_maxSpeed;
 
-    //    direction *= m_currentSpeed;
+        direction *= m_currentSpeed;
 
-    //    Vec3 pos = m_matPosition.GetPosition() + direction;
-    //    m_matPosition.SetPosition(pos);
-    //    m_matToWorld.SetPosition(pos);
+        Vector3 pos = m_matPosition.Translation() + direction;
+        m_matPosition = m_matPosition.CreateTranslation(pos);        
+        m_matToWorld.Translation(pos);
 
-    //    m_matFromWorld = m_matToWorld.Inverse();
-    //    m_object->VSetTransform(&m_matToWorld, &m_matFromWorld);
-    //} else
-    //{
-    //    m_currentSpeed = 0.0f;
-    //}
+        m_matFromWorld = m_matToWorld.Invert();
+        m_object->VSetTransform(&m_matToWorld, &m_matFromWorld);
+    } else
+    {
+        m_currentSpeed = 0.0f;
+    }
 }
 

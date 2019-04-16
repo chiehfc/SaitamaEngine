@@ -130,24 +130,24 @@ void Game::Update(DX::StepTimer const& timer)
   auto kb = m_keyboard->GetState();
   if (kb.Escape)
       PostQuitMessage(0);
-  if (kb.W)
-      //gfx.GetGameModel()->AdjustPosition(gfx.GetGameModel()->GetForwardVector() * elapsedTime * MOVEMENT_GAIN);
-      renderer->GetCamera()->AdjustPosition(renderer->GetCamera()->GetForwardVector() * MOVEMENT_GAIN * elapsedTime);
-  if (kb.S)
-      //gfx.GetGameModel()->AdjustPosition(gfx.GetGameModel()->GetBackwardVector() * elapsedTime * MOVEMENT_GAIN);
-      renderer->GetCamera()->AdjustPosition(renderer->GetCamera()->GetBackwardVector() * MOVEMENT_GAIN * elapsedTime);
-  if (kb.A)
-      //gfx.GetGameModel()->AdjustPosition(gfx.GetGameModel()->GetLeftVector() * elapsedTime * MOVEMENT_GAIN);
-      renderer->GetCamera()->AdjustPosition(renderer->GetCamera()->GetLeftVector() * MOVEMENT_GAIN * elapsedTime);
-  if (kb.D)
-      //gfx.GetGameModel()->AdjustPosition(gfx.GetGameModel()->GetRightVector() * elapsedTime * MOVEMENT_GAIN);
-      renderer->GetCamera()->AdjustPosition(renderer->GetCamera()->GetRightVector() * MOVEMENT_GAIN * elapsedTime);
-  if (kb.R)
-      //gfx.GetGameModel()->AdjustPosition(gfx.GetGameModel()->GetForwardVector() * elapsedTime * MOVEMENT_GAIN);
-      renderer->GetCamera()->AdjustPosition(DirectX::SimpleMath::Vector3(0.0f, MOVEMENT_GAIN * elapsedTime, 0.0f));
-  if (kb.F)
-      //gfx.GetGameModel()->AdjustPosition(gfx.GetGameModel()->GetForwardVector() * elapsedTime * MOVEMENT_GAIN);
-      renderer->GetCamera()->AdjustPosition(DirectX::SimpleMath::Vector3(0.0f, -MOVEMENT_GAIN * elapsedTime, 0.0f));
+  //if (kb.W)
+  //    //gfx.GetGameModel()->AdjustPosition(gfx.GetGameModel()->GetForwardVector() * elapsedTime * MOVEMENT_GAIN);
+  //    renderer->GetCamera()->AdjustPosition(renderer->GetCamera()->GetForwardVector() * MOVEMENT_GAIN * elapsedTime);
+  //if (kb.S)
+  //    //gfx.GetGameModel()->AdjustPosition(gfx.GetGameModel()->GetBackwardVector() * elapsedTime * MOVEMENT_GAIN);
+  //    renderer->GetCamera()->AdjustPosition(renderer->GetCamera()->GetBackwardVector() * MOVEMENT_GAIN * elapsedTime);
+  //if (kb.A)
+  //    //gfx.GetGameModel()->AdjustPosition(gfx.GetGameModel()->GetLeftVector() * elapsedTime * MOVEMENT_GAIN);
+  //    renderer->GetCamera()->AdjustPosition(renderer->GetCamera()->GetLeftVector() * MOVEMENT_GAIN * elapsedTime);
+  //if (kb.D)
+  //    //gfx.GetGameModel()->AdjustPosition(gfx.GetGameModel()->GetRightVector() * elapsedTime * MOVEMENT_GAIN);
+  //    renderer->GetCamera()->AdjustPosition(renderer->GetCamera()->GetRightVector() * MOVEMENT_GAIN * elapsedTime);
+  //if (kb.R)
+  //    //gfx.GetGameModel()->AdjustPosition(gfx.GetGameModel()->GetForwardVector() * elapsedTime * MOVEMENT_GAIN);
+  //    renderer->GetCamera()->AdjustPosition(DirectX::SimpleMath::Vector3(0.0f, MOVEMENT_GAIN * elapsedTime, 0.0f));
+  //if (kb.F)
+  //    //gfx.GetGameModel()->AdjustPosition(gfx.GetGameModel()->GetForwardVector() * elapsedTime * MOVEMENT_GAIN);
+  //    renderer->GetCamera()->AdjustPosition(DirectX::SimpleMath::Vector3(0.0f, -MOVEMENT_GAIN * elapsedTime, 0.0f));
 
 
   if (kb.C)

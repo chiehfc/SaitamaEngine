@@ -46,7 +46,7 @@ public:
     MovementController(shared_ptr<SceneNode> object, float initialYaw, float initialPitch, bool rotateWhenLButtonDown, shared_ptr<DirectX::Keyboard> keyboard, shared_ptr<DirectX::Mouse> mouse);
     void SetObject(shared_ptr<SceneNode> newObject);
 
-    void OnUpdate(DWORD const elapsedMs);
+    void OnUpdate(const float elapsedMs);
 
 public:
     /*bool VOnPointerMove(const Point &mousePos, const int radius);

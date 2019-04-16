@@ -2,7 +2,7 @@
     
 	<TransformComponent>
 		<Position x="0" y="-10" z="20"/>
-		<YawPitchRoll x="90" y="0" z="0"/>
+		<YawPitchRoll x="0" y="0" z="0"/>
         <Scale x="0.5" y="0.5" z="0.5"/>
 	</TransformComponent>
 	

@@ -19,6 +19,14 @@ using namespace DirectX::SimpleMath;
 #include "FastDelegate.h"
 using fastdelegate::MakeDelegate;
 
+extern Vector3 g_Right;
+extern Vector3 g_Up;
+extern Vector3 g_Forward;
+
+
+extern Vector4 g_Up4;
+extern Vector4 g_Right4;
+extern Vector4 g_Forward4;
 
 class GameObject;
 class GameObjectComponent;
