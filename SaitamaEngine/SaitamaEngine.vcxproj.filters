@@ -99,6 +99,7 @@
     <ClInclude Include="Events.h">
       <Filter>EventManager</Filter>
     </ClInclude>
+    <ClInclude Include="MovementController.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -161,6 +162,7 @@
     <ClCompile Include="Events.cpp">
       <Filter>EventManager</Filter>
     </ClCompile>
+    <ClCompile Include="MovementController.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resource.rc" />

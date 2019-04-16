@@ -54,12 +54,17 @@ void Game::Initialize(HWND window, int width, int height)
         return;
     }
 
+    m_keyboard = std::make_shared<Keyboard>();
+    m_mouse = std::make_shared<Mouse>();
+    m_mouse->SetWindow(window);
+
     auto gameObject = renderer->GetGameObject();
     std::shared_ptr<ModelRenderComponent> pRenderComponent = MakeStrongPtr<ModelRenderComponent>(gameObject->GetComponent<ModelRenderComponent>(ModelRenderComponent::g_Name));
     
     auto light = renderer->GetLight();
     std::shared_ptr<LightRenderComponent> pLightComponent = MakeStrongPtr<LightRenderComponent>(light->GetComponent<LightRenderComponent>(LightRenderComponent::g_Name));
 
+    m_pObjectController.reset(new MovementController(pRenderComponent->VGetSceneNode(), 0, 0, false, m_keyboard, m_mouse));
     
     //scene->AddChild(gameObject->GetId(), pRenderComponent->VGetSceneNode());
     //scene->AddChild(light->GetId(), pLightComponent->VGetSceneNode());
@@ -82,9 +87,7 @@ void Game::Initialize(HWND window, int width, int height)
     m_timer.SetTargetElapsedSeconds(1.0 / 60);
     */
 
-    m_keyboard = std::make_unique<Keyboard>();
-    m_mouse = std::make_unique<Mouse>();
-    m_mouse->SetWindow(window);
+    
 
     Saitama::Vector3 v1(1, 2, 3);
     v1.Print();
@@ -119,7 +122,9 @@ void Game::Update(DX::StepTimer const& timer)
     Matrix rot;
     rot = rot.CreateFromYawPitchRoll(1.0f * ROTATION_GAIN, 0.0f, 0.0f);
     toWorld = rot * toWorld;
-    sceneNode->VSetTransform(&toWorld);
+    //sceneNode->VSetTransform(&toWorld);
+
+    m_pObjectController->OnUpdate(elapsedTime);
 
   // Keyboard input.
   auto kb = m_keyboard->GetState();
@@ -161,7 +166,7 @@ void Game::Update(DX::StepTimer const& timer)
   {
       DirectX::SimpleMath::Vector3 delta = DirectX::SimpleMath::Vector3(float(mouse.x), float(mouse.y), 0.f)
             * ROTATION_GAIN;
-      renderer->GetCamera()->AdjustRotation(DirectX::SimpleMath::Vector3(delta.y,delta.x, 0));
+      //renderer->GetCamera()->AdjustRotation(DirectX::SimpleMath::Vector3(delta.y,delta.x, 0));
   }
   m_mouse->SetMode(mouse.rightButton ? Mouse::MODE_RELATIVE : Mouse::MODE_ABSOLUTE);
 }
@@ -417,9 +422,6 @@ DirectX::SimpleMath::Matrix Game::CreateLookAtFunc(const SimpleMath::Vector3& ey
 void Game::OnDeviceLost()
 {
     // TODO: Add Direct3D resource cleanup here.
-	m_shape.reset();
-  m_room.reset();
-  m_roomTex.Reset();
 
    /* m_depthStencilView.Reset();
     m_renderTargetView.Reset();

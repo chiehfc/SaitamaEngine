@@ -11,6 +11,7 @@
 #include "GameObjectFactory.h"
 #include "D3DRenderer11.h"
 #include "Scene.h"
+#include "MovementController.h"
 
 class EventManager;
 
@@ -67,23 +68,17 @@ private:
     // Event manager
     EventManager *m_pEventManager;
     
+    shared_ptr<MovementController> m_pObjectController;
 
     // Rendering loop timer.
     DX::StepTimer                                   m_timer;
 
     Timer m_fpsTimer;
 
-	DirectX::SimpleMath::Matrix m_world;
-	DirectX::SimpleMath::Matrix m_view;
-	DirectX::SimpleMath::Matrix m_proj;
-	std::unique_ptr<DirectX::GeometricPrimitive> m_shape;
-  Camera *camera;
 
-  std::unique_ptr<DirectX::Keyboard> m_keyboard;
-  std::unique_ptr<DirectX::Mouse> m_mouse;
+  std::shared_ptr<DirectX::Keyboard> m_keyboard;
+  std::shared_ptr<DirectX::Mouse> m_mouse;
 
-  std::unique_ptr<DirectX::GeometricPrimitive> m_room;
-  Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_roomTex;
   float m_pitch;
   float m_yaw;
 };

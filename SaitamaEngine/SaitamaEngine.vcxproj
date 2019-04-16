@@ -202,6 +202,7 @@
     <ClInclude Include="Lights.h" />
     <ClInclude Include="MatrixStack.h" />
     <ClInclude Include="Mesh.h" />
+    <ClInclude Include="MovementController.h" />
     <ClInclude Include="RenderableGameObject.h" />
     <ClInclude Include="RenderComponent.h" />
     <ClInclude Include="Saitama.h" />
@@ -250,6 +251,7 @@
     <ClCompile Include="GameModel.cpp" />
     <ClCompile Include="MatrixStack.cpp" />
     <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="MovementController.cpp" />
     <ClCompile Include="MovingEntity.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
