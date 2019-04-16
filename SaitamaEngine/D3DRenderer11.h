@@ -6,7 +6,6 @@
 #include <SpriteBatch.h>
 #include <SpriteFont.h>
 #include <WICTextureLoader.h>
-#include "Camera.h"
 #include "Timer.h"
 #include "Imgui\\imgui.h"
 #include "Imgui\\imgui_impl_win32.h"
@@ -52,9 +51,7 @@ public:
     virtual void VSetProjectionTransform(const Matrix *m) {  }
 
     virtual void VDrawLine(const Vector3& from, const Vector3& to, const Color& color) {}
-
-
-    Camera *GetCamera();
+    
     //virtual shared_ptr<IRenderState> VPrepareAlphaPass();
     //virtual shared_ptr<IRenderState> VPrepareSkyBoxPass();
 
@@ -89,7 +86,6 @@ private:
     ConstantBuffer<CB_VS_vertexshader> m_constantBuffer;
     ConstantBuffer<CB_PS_light> m_cb_ps_light;
 
-    //RenderableGameObject m_gameObject;
 
     Microsoft::WRL::ComPtr<ID3D11RasterizerState> m_rasterizerState;
     Microsoft::WRL::ComPtr<ID3D11BlendState> m_blendState;
@@ -104,7 +100,6 @@ private:
     int m_windowWidth = 0;
     int m_windowHeight = 0;
 
-    Camera m_camera;
     Timer m_fpsTimer;
 
     StrongGameObjectPtr m_gameObject;

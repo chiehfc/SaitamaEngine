@@ -67,6 +67,8 @@ private:
 
     // Event manager
     EventManager *m_pEventManager;
+
+    shared_ptr<CameraNode> m_pCamera;
     
     shared_ptr<MovementController> m_pObjectController;
 

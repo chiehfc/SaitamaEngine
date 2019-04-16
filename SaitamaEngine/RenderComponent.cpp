@@ -5,6 +5,7 @@
 
 const char *ModelRenderComponent::g_Name = "ModelRenderComponent";
 const char *LightRenderComponent::g_Name = "LightRenderComponent";
+const char *GridRenderComponent::g_Name = "GridRenderComponent";
 
 bool BaseRenderComponent::VInit(tinyxml2::XMLElement *pData)
 {
@@ -45,7 +46,7 @@ shared_ptr<SceneNode> ModelRenderComponent::VCreateSceneNode(void)
     {
         WeakBaseRenderComponentPtr weakThis(this);
         Matrix rot90;
-        rot90 = rot90.CreateRotationY(-3.14f / 2.0f);
+        //rot90 = rot90.CreateRotationY(-3.14f / 2.0f);
         shared_ptr<SceneNode> parent(new SceneNode(m_pOwner->GetId(), weakThis, RenderPass_Actor, &pTransformComponent->GetTransform()));
         shared_ptr<SceneNode> teapot(new GameModelNode(INVALID_GAMEOBJECT_ID, weakThis, m_filePath, RenderPass_Actor, &rot90));
         parent->VAddChild(teapot);
@@ -94,5 +95,37 @@ shared_ptr<SceneNode> LightRenderComponent::VCreateSceneNode(void)
         return shared_ptr<SceneNode>(new D3DLightNode11(m_pOwner->GetId(), weakThis, m_lightProps, &(pTransformComponent->GetTransform())));
 
     }
+    return shared_ptr<SceneNode>();
+}
+
+
+
+
+bool GridRenderComponent::VDelegateInit(tinyxml2::XMLElement *pData)
+{
+    tinyxml2::XMLElement *pTexture = pData->FirstChildElement("Texture");
+    if (pTexture)
+    {
+        m_textureResource = pTexture->FirstChild()->Value();
+    }
+
+    tinyxml2::XMLElement *pDivision = pData->FirstChildElement("Division");
+    if (pDivision)
+    {
+        m_squares = atoi(pDivision->FirstChild()->Value());
+    }
+
+    return true;
+}
+
+shared_ptr<SceneNode> GridRenderComponent::VCreateSceneNode(void)
+{
+    shared_ptr<TransformComponent> pTransformComponent = MakeStrongPtr(m_pOwner->GetComponent<TransformComponent>(TransformComponent::g_Name));
+    if (pTransformComponent)
+    {
+        WeakBaseRenderComponentPtr weakThis(this);
+        return shared_ptr<SceneNode>(new D3DGrid(m_pOwner->GetId(), weakThis, &(pTransformComponent->GetTransform())));
+    }
+
     return shared_ptr<SceneNode>();
 }

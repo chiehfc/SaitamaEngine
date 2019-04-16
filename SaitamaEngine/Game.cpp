@@ -48,6 +48,13 @@ void Game::Initialize(HWND window, int width, int height)
 
     renderer = make_shared<D3DRenderer11>();
     scene = new Scene(renderer);
+    auto pos = Matrix::Identity;
+    pos.Translation(DirectX::SimpleMath::Vector3(0.0f, 0.0f, -20.0f));
+
+    m_pCamera.reset(new CameraNode(&pos, DirectX::XM_PI / 4.f,
+        800.0f, 600.0f, 0.1f, 1000.0f));
+    scene->AddChild(INVALID_GAMEOBJECT_ID, m_pCamera);
+    scene->SetCamera(m_pCamera);
 
     if (!renderer->Initialize(window, width, height))
     {
@@ -60,11 +67,13 @@ void Game::Initialize(HWND window, int width, int height)
 
     auto gameObject = renderer->GetGameObject();
     std::shared_ptr<ModelRenderComponent> pRenderComponent = MakeStrongPtr<ModelRenderComponent>(gameObject->GetComponent<ModelRenderComponent>(ModelRenderComponent::g_Name));
+    //m_pCamera->SetTarget(pRenderComponent->VGetSceneNode());
     
-    auto light = renderer->GetLight();
-    std::shared_ptr<LightRenderComponent> pLightComponent = MakeStrongPtr<LightRenderComponent>(light->GetComponent<LightRenderComponent>(LightRenderComponent::g_Name));
+    //auto light = renderer->GetLight();
+    //std::shared_ptr<LightRenderComponent> pLightComponent = MakeStrongPtr<LightRenderComponent>(light->GetComponent<LightRenderComponent>(LightRenderComponent::g_Name));
 
-    m_pObjectController.reset(new MovementController(pRenderComponent->VGetSceneNode(), 0, 0, false, m_keyboard, m_mouse));
+    //m_pObjectController.reset(new MovementController(pRenderComponent->VGetSceneNode(), 0, 0, false, m_keyboard, m_mouse));
+    m_pObjectController.reset(new MovementController(m_pCamera, 0, 0, false, m_keyboard, m_mouse));
     
     //scene->AddChild(gameObject->GetId(), pRenderComponent->VGetSceneNode());
     //scene->AddChild(light->GetId(), pLightComponent->VGetSceneNode());
@@ -130,42 +139,21 @@ void Game::Update(DX::StepTimer const& timer)
   auto kb = m_keyboard->GetState();
   if (kb.Escape)
       PostQuitMessage(0);
-  //if (kb.W)
-  //    //gfx.GetGameModel()->AdjustPosition(gfx.GetGameModel()->GetForwardVector() * elapsedTime * MOVEMENT_GAIN);
-  //    renderer->GetCamera()->AdjustPosition(renderer->GetCamera()->GetForwardVector() * MOVEMENT_GAIN * elapsedTime);
-  //if (kb.S)
-  //    //gfx.GetGameModel()->AdjustPosition(gfx.GetGameModel()->GetBackwardVector() * elapsedTime * MOVEMENT_GAIN);
-  //    renderer->GetCamera()->AdjustPosition(renderer->GetCamera()->GetBackwardVector() * MOVEMENT_GAIN * elapsedTime);
-  //if (kb.A)
-  //    //gfx.GetGameModel()->AdjustPosition(gfx.GetGameModel()->GetLeftVector() * elapsedTime * MOVEMENT_GAIN);
-  //    renderer->GetCamera()->AdjustPosition(renderer->GetCamera()->GetLeftVector() * MOVEMENT_GAIN * elapsedTime);
-  //if (kb.D)
-  //    //gfx.GetGameModel()->AdjustPosition(gfx.GetGameModel()->GetRightVector() * elapsedTime * MOVEMENT_GAIN);
-  //    renderer->GetCamera()->AdjustPosition(renderer->GetCamera()->GetRightVector() * MOVEMENT_GAIN * elapsedTime);
-  //if (kb.R)
-  //    //gfx.GetGameModel()->AdjustPosition(gfx.GetGameModel()->GetForwardVector() * elapsedTime * MOVEMENT_GAIN);
-  //    renderer->GetCamera()->AdjustPosition(DirectX::SimpleMath::Vector3(0.0f, MOVEMENT_GAIN * elapsedTime, 0.0f));
-  //if (kb.F)
-  //    //gfx.GetGameModel()->AdjustPosition(gfx.GetGameModel()->GetForwardVector() * elapsedTime * MOVEMENT_GAIN);
-  //    renderer->GetCamera()->AdjustPosition(DirectX::SimpleMath::Vector3(0.0f, -MOVEMENT_GAIN * elapsedTime, 0.0f));
 
-
-  if (kb.C)
+  if (kb.F)
   {
-      DirectX::SimpleMath::Vector3 lightPosition = renderer->GetCamera()->GetPositionVector();
-      lightPosition += renderer->GetCamera()->GetForwardVector();
-      //renderer->GetLight()->SetPosition(lightPosition);
+      DirectX::SimpleMath::Vector3 lightPosition = scene->GetCamera()->GetPosition();
+      lightPosition += scene->GetCamera()->GetDirection();
       std::shared_ptr<LightRenderComponent> pLightComponent = MakeStrongPtr<LightRenderComponent>(renderer->GetLight()->GetComponent<LightRenderComponent>(LightRenderComponent::g_Name));
       pLightComponent->VGetSceneNode()->SetPosition(lightPosition);
-      renderer->GetLight()->SetRotation(renderer->GetCamera()->GetRotationVector());
   }
 
   // Mouse input.
   auto mouse = m_mouse->GetState();
   if (mouse.positionMode == Mouse::MODE_RELATIVE)
   {
-      DirectX::SimpleMath::Vector3 delta = DirectX::SimpleMath::Vector3(float(mouse.x), float(mouse.y), 0.f)
-            * ROTATION_GAIN;
+      //DirectX::SimpleMath::Vector3 delta = DirectX::SimpleMath::Vector3(float(mouse.x), float(mouse.y), 0.f)
+      //      * ROTATION_GAIN;
       //renderer->GetCamera()->AdjustRotation(DirectX::SimpleMath::Vector3(delta.y,delta.x, 0));
   }
   m_mouse->SetMode(mouse.rightButton ? Mouse::MODE_RELATIVE : Mouse::MODE_ABSOLUTE);

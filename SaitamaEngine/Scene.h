@@ -12,7 +12,7 @@ using namespace DirectX::SimpleMath;
 typedef std::map<GameObjectId, shared_ptr<ISceneNode> > SceneGameObjectMap;
 
 class SceneNode;
-//class CameraNode;
+class CameraNode;
 //class SkyNode;
 //class LightNode;
 class LightManager;
@@ -21,7 +21,7 @@ class Scene
 {
 protected:
     shared_ptr<SceneNode> m_Root;
-    //shared_ptr<CameraNode> 	m_Camera;
+    shared_ptr<CameraNode> 	m_Camera;
     shared_ptr<IRenderer> m_Renderer;
     
     MatrixStack *m_MatrixStack;
@@ -50,8 +50,8 @@ public:
     //void DestroyActorDelegate(IEventDataPtr pEventData);
     //void MoveActorDelegate(IEventDataPtr pEventData);
 
-    //void SetCamera(shared_ptr<CameraNode> camera) { m_Camera = camera; }
-    //const shared_ptr<CameraNode> GetCamera() const { return m_Camera; }
+    void SetCamera(shared_ptr<CameraNode> camera) { m_Camera = camera; }
+    const shared_ptr<CameraNode> GetCamera() const { return m_Camera; }
 
     void PushAndSetMatrix(const DirectX::SimpleMath::Matrix &toWorld)
     {

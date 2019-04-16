@@ -56,3 +56,21 @@ protected:
 private:
     LightProperties m_lightProps;
 };
+
+class GridRenderComponent : public BaseRenderComponent
+{
+public:
+    static const char *g_Name;
+    virtual const char *VGetName() const { return g_Name; }
+
+    const char* GetTextureResource() { return m_textureResource.c_str(); }
+    const int GetDivision() { return m_squares; }
+
+protected:
+    virtual bool VDelegateInit(tinyxml2::XMLElement *pData) override;
+    virtual shared_ptr<SceneNode> VCreateSceneNode(void) override;  // factory method to create the appropriate scene node
+
+private:
+    std::string m_textureResource = "";
+    int m_squares = 0;
+};

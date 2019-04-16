@@ -409,12 +409,15 @@ bool D3DRenderer11::InitializeScene()
     m_gameObject->SetPosition(pTransformComponent->GetPosition());
     m_gameObject->SetRotation(pTransformComponent->GetRotation());
 
+    auto grid = m_factory.CreateGameObject("grid.xml", nullptr, nullptr, 0);
+    //std::shared_ptr<TransformComponent> pTransformComponent = MakeStrongPtr<TransformComponent>(grid->GetComponent<TransformComponent>(TransformComponent::g_Name));
+    //grid->SetPosition(pTransformComponent->GetPosition());
+    //grid->SetRotation(pTransformComponent->GetRotation());
+
     m_light = m_factory.CreateGameObject("light.xml", nullptr, nullptr, 0);
     std::shared_ptr<TransformComponent> pLightTransform = MakeStrongPtr<TransformComponent>(m_light->GetComponent<TransformComponent>(TransformComponent::g_Name));
     m_light->SetPosition(pLightTransform->GetPosition());
     m_light->SetRotation(pLightTransform->GetRotation());
-
-    m_camera.UpdateMatrix();
 
     return true;
 }
@@ -459,12 +462,6 @@ void D3DRenderer11::CreateDevice()
 
     DX::ThrowIfFailed(device.As(&m_d3dDevice));
     DX::ThrowIfFailed(context.As(&m_d3dContext));
-}
-
-
-Camera *D3DRenderer11::GetCamera()
-{
-    return &m_camera;
 }
 
 StrongGameObjectPtr D3DRenderer11::GetGameObject()

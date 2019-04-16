@@ -26,12 +26,13 @@ GameObjectFactory::GameObjectFactory(void)
     m_componentFactory.Register<TransformComponent>(GameObjectComponent::GetIdFromName(TransformComponent::g_Name));
     m_componentFactory.Register<ModelRenderComponent>(GameObjectComponent::GetIdFromName(ModelRenderComponent::g_Name));
     m_componentFactory.Register<LightRenderComponent>(GameObjectComponent::GetIdFromName(LightRenderComponent::g_Name));
+    m_componentFactory.Register<GridRenderComponent>(GameObjectComponent::GetIdFromName(GridRenderComponent::g_Name));
     /*
     m_componentFactory.Register<MeshRenderComponent>(GameObjectComponent::GetIdFromName(MeshRenderComponent::g_Name));
     m_componentFactory.Register<SphereRenderComponent>(GameObjectComponent::GetIdFromName(SphereRenderComponent::g_Name));
     m_componentFactory.Register<PhysicsComponent>(GameObjectComponent::GetIdFromName(PhysicsComponent::g_Name));
     
-    m_componentFactory.Register<GridRenderComponent>(GameObjectComponent::GetIdFromName(GridRenderComponent::g_Name));
+    
     
     m_componentFactory.Register<SkyRenderComponent>(GameObjectComponent::GetIdFromName(SkyRenderComponent::g_Name));
     m_componentFactory.Register<AudioComponent>(GameObjectComponent::GetIdFromName(AudioComponent::g_Name));

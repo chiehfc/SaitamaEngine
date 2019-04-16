@@ -3,18 +3,15 @@
 #include "SceneNode.h"
 
 static const float ROTATION_GAIN = 0.01f;
-static const float MOVEMENT_GAIN = 20.0f;
+static const float MOVEMENT_GAIN = 0.5f;
 
 MovementController::MovementController(shared_ptr<SceneNode> object, float initialYaw, float initialPitch, bool rotateWhenLButtonDown, shared_ptr<DirectX::Keyboard> keyboard, shared_ptr<DirectX::Mouse> mouse)
     : m_object(object)
 {
     m_object->VGet()->Transform(&m_matToWorld, &m_matFromWorld);
 
-    //m_fTargetYaw = m_fYaw = RADIANS_TO_DEGREES(-initialYaw);
-    //m_fTargetPitch = m_fPitch = RADIANS_TO_DEGREES(initialPitch);
-
-    m_maxSpeed = 30.0f;			// 30 meters per second
-    m_currentSpeed = 0.0f;
+    m_fTargetYaw = m_fYaw = (-initialYaw);
+    m_fTargetPitch = m_fPitch = (initialPitch);
 
     Vector3 pos = m_matToWorld.Translation();
 
@@ -118,55 +115,33 @@ void MovementController::OnUpdate(const float deltaMilliseconds)
         if (mouse.positionMode == DirectX::Mouse::MODE_RELATIVE)
         {
             DirectX::SimpleMath::Vector3 delta = DirectX::SimpleMath::Vector3(float(mouse.x), float(mouse.y), 0.f)
-                * ROTATION_GAIN;
+                ;
 
+            m_fTargetYaw = m_fTargetYaw - (delta.x);
+            m_fTargetPitch = m_fTargetPitch + (delta.y);
+            m_fYaw += (m_fTargetYaw - m_fYaw) * (.35f);
+            m_fTargetPitch = std::max(-90, std::min(90, (int)m_fTargetPitch));
+            m_fPitch += (m_fTargetPitch - m_fPitch) * (.35f);
 
             Matrix matRot;
-            matRot = matRot.CreateFromYawPitchRoll(delta.x, delta.y, 0);
+            matRot = matRot.CreateFromYawPitchRoll(DirectX::XMConvertToRadians(-m_fYaw), DirectX::XMConvertToRadians(m_fPitch), 0);
 
             // Create the new object-to-world matrix, and the
             // new world-to-object matrix. 
-
-            //m_matToWorld = matRot * m_matToWorld;
-            //m_matFromWorld = m_matToWorld.Invert();
-            //m_object->VSetTransform(&m_matToWorld, &m_matFromWorld);
+            m_matToWorld = matRot * m_matPosition;
+            m_matFromWorld = m_matToWorld.Invert();
+            m_object->VSetTransform(&m_matToWorld, &m_matFromWorld);
         }
-        //m_mouse->SetMode(mouse.rightButton ? DirectX::Mouse::MODE_RELATIVE : DirectX::Mouse::MODE_ABSOLUTE);
-
-
-        //// The secret formula!!! Don't give it away!
-        ////If you are seeing this now, then you must be some kind of elite hacker!
-        //m_fYaw += (m_fTargetYaw - m_fYaw) * (.35f);
-        //m_fTargetPitch = MAX(-90, MIN(90, m_fTargetPitch));
-        //m_fPitch += (m_fTargetPitch - m_fPitch) * (.35f);
-
-        //// Calculate the new rotation matrix from the camera
-        //// yaw and pitch.
-        //Mat4x4 matRot;
-        //matRot.BuildYawPitchRoll(DEGREES_TO_RADIANS(-m_fYaw), DEGREES_TO_RADIANS(m_fPitch), 0);
-
-        //// Create the new object-to-world matrix, and the
-        //// new world-to-object matrix. 
-
-        //m_matToWorld = matRot * m_matPosition;
-        //m_matFromWorld = m_matToWorld.Inverse();
-        //m_object->VSetTransform(&m_matToWorld, &m_matFromWorld);
+        m_mouse->SetMode(mouse.rightButton ? DirectX::Mouse::MODE_RELATIVE : DirectX::Mouse::MODE_ABSOLUTE);
     }
 
     if (bTranslating)
     {
-        //float elapsedTime = (float)deltaMilliseconds / 1000.0f;
 
         Vector3 direction = atWorld + rightWorld + upWorld;
         direction.Normalize();
 
-        // Ramp the acceleration by the elapsed time.
-        float numberOfSeconds = 5.f;
-        m_currentSpeed += m_maxSpeed * ((deltaMilliseconds*deltaMilliseconds) / numberOfSeconds);
-        if (m_currentSpeed > m_maxSpeed)
-            m_currentSpeed = m_maxSpeed;
-
-        direction *= m_currentSpeed;
+        direction *= MOVEMENT_GAIN;
 
         Vector3 pos = m_matPosition.Translation() + direction;
         m_matPosition = m_matPosition.CreateTranslation(pos);        
@@ -174,9 +149,6 @@ void MovementController::OnUpdate(const float deltaMilliseconds)
 
         m_matFromWorld = m_matToWorld.Invert();
         m_object->VSetTransform(&m_matToWorld, &m_matFromWorld);
-    } else
-    {
-        m_currentSpeed = 0.0f;
     }
 }
 

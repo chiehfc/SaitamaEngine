@@ -4,6 +4,7 @@
 #include "RenderComponent.h"
 #include "Scene.h"
 #include "D3DRenderer11.h"
+#include "StringHelper.h"
 
 SceneNodeProperties::SceneNodeProperties(void)
 {
@@ -424,9 +425,59 @@ HRESULT RootNode::VRenderChildren(Scene *pScene)
 }
 
 
+HRESULT CameraNode::VRender(Scene *pScene)
+{
+    if (m_DebugCamera)
+    {
+        pScene->PopMatrix();
+
+        //m_Frustum.Render();
+
+        pScene->PushAndSetMatrix(m_Props.ToWorld());
+    }
+
+    return S_OK;
+}
+
 //
-// D3DShaderMeshNode11::D3DShaderMeshNode11					- Chapter 16, page 562 
+// CameraNode::SetView					- Chapter 16, page 550
 //
+//    Note: this is incorrectly called CameraNode::SetView in the book
+//
+HRESULT CameraNode::SetViewTransform(Scene *pScene)
+{
+    //If there is a target, make sure the camera is
+    //rigidly attached right behind the target
+    if (m_pTarget)
+    {
+        Matrix mat = m_pTarget->VGet()->ToWorld();
+        Vector4 at = m_CamOffsetVector;
+        Vector4 atWorld = DirectX::XMVector4Transform(at, mat);
+        Vector3 pos = mat.Translation() + Vector3(atWorld);
+        mat.Translation(pos);
+        VSetTransform(&mat);
+    }
+
+    m_View = VGet()->FromWorld();
+
+    //pScene->GetRenderer()->VSetViewTransform(&m_View);
+    return S_OK;
+}
+
+//
+// CameraNode::GetWorldViewProjection			- not described in the book
+//
+//    Returns the concatenation of the world and view projection, which is generally sent into vertex shaders
+//
+Matrix CameraNode::GetWorldViewProjection(Scene *pScene)
+{
+    Matrix world = pScene->GetTopMatrix();
+    Matrix view = VGet()->FromWorld();
+    Matrix worldView = world * view;
+    return worldView * m_Projection;
+}
+
+
 GameModelNode::GameModelNode(const GameObjectId gameObjectId,
     WeakBaseRenderComponentPtr renderComponent,
     std::string filePath,
@@ -490,7 +541,7 @@ HRESULT GameModelNode::VRender(Scene *pScene)
     m_pixelShader.SetupRender(pScene, this);    
     auto scene = pScene->GetTopMatrix();
 
-    m_model.Draw(scene, D3DRenderer11::GetInstance()->GetCamera()->GetViewMatrix() * DirectX::XMMATRIX(D3DRenderer11::GetInstance()->GetCamera()->GetProjectionMatrix()));
+    m_model.Draw(scene, pScene->GetCamera()->GetView() * pScene->GetCamera()->GetProjection());
 
     return S_OK;
 }
@@ -531,3 +582,175 @@ HRESULT GameModelNode::VRender(Scene *pScene)
 //    }
 //    return radius;
 //}
+
+
+
+D3DGrid::D3DGrid(GameObjectId gameObjectId, WeakBaseRenderComponentPtr renderComponent, const Matrix *pMatrix)
+    : SceneNode(gameObjectId, renderComponent, RenderPass_0, pMatrix)
+{
+    m_bTextureHasAlpha = false;
+    m_numVerts = m_numPolys = 0;
+   
+    D3D11_INPUT_ELEMENT_DESC layout[] =
+    {
+        { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        { "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+    };
+    UINT numElements = ARRAYSIZE(layout);
+
+    m_vertexShader.Initialize(D3DRenderer11::GetInstance()->GetDevice(), L"..\\x64\\Debug\\vertexshader.cso", layout, numElements);
+
+    m_pixelShader.Initialize(D3DRenderer11::GetInstance()->GetDevice(), L"..\\x64\\Debug\\pixelshader.cso");
+    
+    m_pVertexBuffer = nullptr;
+    m_pIndexBuffer = nullptr;
+}
+
+D3DGrid::~D3DGrid()
+{
+    delete m_pVertexBuffer;
+    delete m_pIndexBuffer;
+}
+
+
+
+HRESULT D3DGrid::VOnRestore(Scene *pScene)
+{
+    HRESULT hr;
+
+    GridRenderComponent* grc = static_cast<GridRenderComponent*>(m_RenderComponent);
+
+    int squares = grc->GetDivision();
+
+    auto texture = grc->GetTextureResource();
+
+    hr = DirectX::CreateWICTextureFromFile(D3DRenderer11::GetInstance()->GetDevice(), StringHelper::StringToWide(texture).c_str(), nullptr, m_texture.GetAddressOf());
+
+    //SetRadius(sqrt(squares * squares / 2.0f));
+
+    // Create the vertex buffer - we'll need enough verts
+    // to populate the grid. If we want a 2x2 grid, we'll
+    // need 3x3 set of verts.
+    m_numVerts = (squares + 1)*(squares + 1);    // Create vertex buffer
+
+    // Fill the vertex buffer. We are setting the tu and tv texture
+    // coordinates, which range from 0.0 to 1.0
+    Vertex *pVerts = new Vertex[m_numVerts];
+    //GCC_ASSERT(pVerts && "Out of memory in D3DGrid11::VOnRestore()");
+    if (!pVerts)
+        return E_FAIL;
+
+    for (int j = 0; j < (squares + 1); j++)
+    {
+        for (int i = 0; i < (squares + 1); i++)
+        {
+            // Which vertex are we setting?
+            int index = i + (j * (squares + 1));
+            Vertex *vert = &pVerts[index];
+
+            // Default position of the grid is centered on the origin, flat on
+            // the XZ plane.
+            float x = (float)i - (squares / 2.0f);
+            float y = (float)j - (squares / 2.0f);
+            vert->pos = Vector3(x, 0.f, y);
+            vert->normal = Vector3(0.0f, 1.0f, 0.0f);
+
+            // The texture coordinates are set to x,y to make the
+            // texture tile along with units - 1.0, 2.0, 3.0, etc.
+            vert->texCoord.x = x;
+            vert->texCoord.y = y;
+        }
+    }
+
+    // The number of indicies equals the number of polygons times 3
+    // since there are 3 indicies per polygon. Each grid square contains
+    // two polygons. The indicies are 16 bit, since our grids won't
+    // be that big!
+
+    m_numPolys = squares * squares * 2;
+
+    WORD *pIndices = new WORD[m_numPolys * 3];
+
+    //GCC_ASSERT(pIndices && "Out of memory in D3DGrid11::VOnRestore()");
+    if (!pIndices)
+        return E_FAIL;
+
+    // Loop through the grid squares and calc the values
+    // of each index. Each grid square has two triangles:
+    //
+    //		A - B
+    //		| / |
+    //		C - D
+
+    WORD *current = pIndices;
+    for (int j = 0; j < squares; j++)
+    {
+        for (int i = 0; i < squares; i++)
+        {
+            // Triangle #1  ACB
+            *(current) = WORD(i + (j*(squares + 1)));
+            *(current + 1) = WORD(i + ((j + 1)*(squares + 1)));
+            *(current + 2) = WORD((i + 1) + (j*(squares + 1)));
+
+            // Triangle #2  BCD
+            *(current + 3) = WORD((i + 1) + (j*(squares + 1)));
+            *(current + 4) = WORD(i + ((j + 1)*(squares + 1)));
+            *(current + 5) = WORD((i + 1) + ((j + 1)*(squares + 1)));
+            current += 6;
+        }
+    }
+
+    D3D11_BUFFER_DESC bd;
+    ZeroMemory(&bd, sizeof(bd));
+    bd.Usage = D3D11_USAGE_DEFAULT;
+    bd.ByteWidth = sizeof(Vertex) * m_numVerts;
+    bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+    bd.CPUAccessFlags = 0;
+    D3D11_SUBRESOURCE_DATA InitData;
+    ZeroMemory(&InitData, sizeof(InitData));
+    InitData.pSysMem = pVerts;
+    hr = D3DRenderer11::GetInstance()->GetDevice()->CreateBuffer(&bd, &InitData, &m_pVertexBuffer);
+    if (SUCCEEDED(hr))
+    {
+        bd.Usage = D3D11_USAGE_DEFAULT;
+        bd.ByteWidth = sizeof(WORD) * m_numPolys * 3;        // 36 vertices needed for 12 triangles in a triangle list
+        bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
+        bd.CPUAccessFlags = 0;
+        InitData.pSysMem = pIndices;
+        hr = D3DRenderer11::GetInstance()->GetDevice()->CreateBuffer(&bd, &InitData, &m_pIndexBuffer);
+    }
+
+    delete[] pVerts;
+    delete[] pIndices;
+
+    return hr;
+}
+
+
+HRESULT D3DGrid::VRender(Scene *pScene)
+{
+    HRESULT hr;
+
+    GridRenderComponent* grc = static_cast<GridRenderComponent*>(m_RenderComponent);
+
+    m_vertexShader.SetupRender(pScene, this);
+    m_pixelShader.SetupRender(pScene, this);
+
+    D3DRenderer11::GetInstance()->GetDeviceContext()->PSSetShaderResources(0, 1, m_texture.GetAddressOf());
+
+    // Set vertex buffer
+    UINT stride = sizeof(Vertex);
+    UINT offset = 0;
+    D3DRenderer11::GetInstance()->GetDeviceContext()->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &stride, &offset);
+
+    // Set index buffer
+    D3DRenderer11::GetInstance()->GetDeviceContext()->IASetIndexBuffer(m_pIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
+
+    // Set primitive topology
+    D3DRenderer11::GetInstance()->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+    D3DRenderer11::GetInstance()->GetDeviceContext()->DrawIndexed(m_numPolys * 3, 0, 0);
+
+    return S_OK;
+}
