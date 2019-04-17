@@ -1,0 +1,34 @@
+<GameObject type="Teapot" resource="actors\ai_teapot.xml">
+    
+	<TransformComponent>
+		<Position x="0" y="0" z="-10"/>
+		<YawPitchRoll x="0" y="0" z="0"/>
+        <Scale x="1.0" y="1.0" z="1.0"/>
+	</TransformComponent>
+	
+	<SphereRenderComponent>
+        <Color r="0.4" g="0.4" b="0.4" a="1.0"/>
+        <Texture>Data\\Textures\\pikachu.jfif</Texture>
+		<Division>100</Division>
+    </SphereRenderComponent>
+
+
+    <!-- <PhysicsComponent> -->
+        <!-- <Shape>Box</Shape> -->
+        <!-- <Density>glass</Density> -->
+        <!-- <PhysicsMaterial>Normal</PhysicsMaterial> -->
+    <!-- </PhysicsComponent> -->
+
+	
+    <!-- <TeapotRenderComponent> -->
+        <!-- <Color r="1.0" g="0" b="0" a="1.0"/> -->
+    <!-- </TeapotRenderComponent> -->
+
+
+    <!-- <BaseScriptComponent> -->
+        <!-- <ScriptObject constructor="AddEnemy" destructor="RemoveEnemy" /> -->
+        <!-- <ScriptData actorType="Teapot" /> -->
+    <!-- </BaseScriptComponent> -->
+    
+	
+</GameObject>

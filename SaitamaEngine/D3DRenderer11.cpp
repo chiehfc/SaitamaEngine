@@ -414,6 +414,8 @@ bool D3DRenderer11::InitializeScene()
     //grid->SetPosition(pTransformComponent->GetPosition());
     //grid->SetRotation(pTransformComponent->GetRotation());
 
+    auto sphere = m_factory.CreateGameObject("sphere.xml", nullptr, nullptr, 0);
+
     m_light = m_factory.CreateGameObject("light.xml", nullptr, nullptr, 0);
     std::shared_ptr<TransformComponent> pLightTransform = MakeStrongPtr<TransformComponent>(m_light->GetComponent<TransformComponent>(TransformComponent::g_Name));
     m_light->SetPosition(pLightTransform->GetPosition());

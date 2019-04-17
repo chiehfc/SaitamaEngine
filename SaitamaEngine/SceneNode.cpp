@@ -508,10 +508,6 @@ GameModelNode::GameModelNode(const GameObjectId gameObjectId,
     //UpdateMatrix();
 }
 
-
-//
-// D3DShaderMeshNode11::VOnRestore							- Chapter 16, page 563
-//
 HRESULT GameModelNode::VOnRestore(Scene *pScene)
 {
     //HRESULT hr;
@@ -531,9 +527,6 @@ HRESULT GameModelNode::VOnRestore(Scene *pScene)
     return S_OK;
 }
 
-//
-// D3DShaderMeshNode11::VRender								- Chapter 16, page 564
-//
 HRESULT GameModelNode::VRender(Scene *pScene)
 {
 
@@ -751,6 +744,50 @@ HRESULT D3DGrid::VRender(Scene *pScene)
     D3DRenderer11::GetInstance()->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
     D3DRenderer11::GetInstance()->GetDeviceContext()->DrawIndexed(m_numPolys * 3, 0, 0);
+
+    return S_OK;
+}
+
+
+
+
+SphereNode::SphereNode(const GameObjectId gameObjectId,
+    WeakBaseRenderComponentPtr renderComponent,
+    RenderPass renderPass,
+    const Matrix *t)
+    : SceneNode(gameObjectId, renderComponent, renderPass, t)
+{
+    D3D11_INPUT_ELEMENT_DESC layout[] =
+    {
+        { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        { "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+    };
+    UINT numElements = ARRAYSIZE(layout);
+
+    //m_vertexShader.Initialize(D3DRenderer11::GetInstance()->GetDevice(), L"..\\x64\\Debug\\vertexshader.cso", layout, numElements);
+
+    //m_pixelShader.Initialize(D3DRenderer11::GetInstance()->GetDevice(), L"..\\x64\\Debug\\pixelshader.cso");
+
+    m_sphere = DirectX::GeometricPrimitive::CreateSphere(D3DRenderer11::GetInstance()->GetDeviceContext());
+
+    //m_model.Initialize(filePath, D3DRenderer11::GetInstance()->GetDevice(), D3DRenderer11::GetInstance()->GetDeviceContext(), m_constantBuffer);
+    //SetPosition(Vector3::Zero);
+    VSetTransform(&m_Props.ToWorld());
+}
+
+HRESULT SphereNode::VOnRestore(Scene *pScene)
+{
+    return S_OK;
+}
+
+HRESULT SphereNode::VRender(Scene *pScene)
+{
+    //m_vertexShader.SetupRender(pScene, this);
+    //m_pixelShader.SetupRender(pScene, this);
+    auto scene = pScene->GetTopMatrix();
+
+    m_sphere->Draw(scene, pScene->GetCamera()->GetView(), pScene->GetCamera()->GetProjection());
 
     return S_OK;
 }

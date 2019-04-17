@@ -220,3 +220,24 @@ public:
 
     bool VHasAlpha() const { return m_bTextureHasAlpha; }
 };
+
+class SphereNode : public SceneNode
+{
+public:
+    SphereNode(const GameObjectId gameObjectId,
+        WeakBaseRenderComponentPtr renderComponent,
+        RenderPass renderPass,
+        const Matrix *t);
+
+    virtual HRESULT VOnRestore(Scene *pScene);
+    virtual HRESULT VOnLostDevice(Scene *pScene) { return S_OK; }
+    virtual HRESULT VRender(Scene *pScene);
+    //virtual HRESULT VPick(Scene *pScene, RayCast *pRayCast);
+
+protected:
+    std::unique_ptr<DirectX::GeometricPrimitive> m_sphere;
+    VertexShader m_vertexShader;
+    PixelShader m_pixelShader;
+
+    //float CalcBoundingSphere(CDXUTSDKMesh *mesh11);			// this was added post press.
+};
