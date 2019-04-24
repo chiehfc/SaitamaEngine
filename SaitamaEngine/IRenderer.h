@@ -6,6 +6,12 @@ class LightNode;
 
 typedef std::list<std::shared_ptr<LightNode>> Lights;
 
+class IRenderState
+{
+public:
+    virtual std::string VToString() = 0;
+};
+
 class IRenderer
 {
 public:
@@ -19,6 +25,6 @@ public:
     virtual void VSetViewTransform(const Matrix *m) = 0;
     virtual void VSetProjectionTransform(const Matrix *m) = 0;
     //virtual shared_ptr<IRenderState> VPrepareAlphaPass() = 0;
-    //virtual shared_ptr<IRenderState> VPrepareSkyBoxPass() = 0;
+    virtual shared_ptr<IRenderState> VPrepareSkyBoxPass() = 0;
     virtual void VDrawLine(const Vector3& from, const Vector3& to, const Color& color) = 0;
 };
