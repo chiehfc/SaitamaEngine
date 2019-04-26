@@ -470,3 +470,41 @@ StrongGameObjectPtr D3DRenderer11::GetGameObject()
 {
     return m_gameObject;
 }
+
+shared_ptr<IRenderState> D3DRenderer11::VPrepareSkyBoxPass()
+{
+    return shared_ptr<IRenderState>(new D3DRendererSkyBoxPass11());
+}
+
+
+D3DRendererSkyBoxPass11::D3DRendererSkyBoxPass11()
+{
+    // Depth stencil state
+    D3D11_DEPTH_STENCIL_DESC DSDesc;
+    ZeroMemory(&DSDesc, sizeof(D3D11_DEPTH_STENCIL_DESC));
+    DSDesc.DepthEnable = TRUE;
+    DSDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
+    DSDesc.DepthFunc = D3D11_COMPARISON_LESS;
+    DSDesc.StencilEnable = FALSE;
+    D3DRenderer11::GetInstance()->GetDevice()->CreateDepthStencilState(&DSDesc, &m_pSkyboxDepthStencilState);
+    //DXUT_SetDebugName(m_pSkyboxDepthStencilState, "SkyboxDepthStencil");
+
+    UINT StencilRef;
+    D3DRenderer11::GetInstance()->GetDeviceContext()->OMGetDepthStencilState(&m_pOldDepthStencilState, &StencilRef);
+    D3DRenderer11::GetInstance()->GetDeviceContext()->OMSetDepthStencilState(m_pSkyboxDepthStencilState, 0);
+}
+
+D3DRendererSkyBoxPass11::~D3DRendererSkyBoxPass11()
+{
+    D3DRenderer11::GetInstance()->GetDeviceContext()->OMSetDepthStencilState(m_pOldDepthStencilState, 0);
+    if (m_pOldDepthStencilState)
+    {
+        m_pOldDepthStencilState->Release();
+        m_pOldDepthStencilState = nullptr;
+    }
+    if (m_pSkyboxDepthStencilState)
+    {
+        m_pSkyboxDepthStencilState->Release();
+        m_pSkyboxDepthStencilState = nullptr;
+    }
+}

@@ -7,6 +7,7 @@ const char *ModelRenderComponent::g_Name = "ModelRenderComponent";
 const char *LightRenderComponent::g_Name = "LightRenderComponent";
 const char *GridRenderComponent::g_Name = "GridRenderComponent";
 const char *SphereRenderComponent::g_Name = "SphereRenderComponent";
+const char *SphereRenderComponent::g_Name = "SphereRenderComponent";
 
 bool BaseRenderComponent::VInit(tinyxml2::XMLElement *pData)
 {
@@ -151,6 +152,29 @@ bool SphereRenderComponent::VDelegateInit(tinyxml2::XMLElement *pData)
 }
 
 shared_ptr<SceneNode> SphereRenderComponent::VCreateSceneNode(void)
+{
+    shared_ptr<TransformComponent> pTransformComponent = MakeStrongPtr(m_pOwner->GetComponent<TransformComponent>(TransformComponent::g_Name));
+    if (pTransformComponent)
+    {
+        WeakBaseRenderComponentPtr weakThis(this);
+        return shared_ptr<SceneNode>(new SphereNode(m_pOwner->GetId(), weakThis, RenderPass_Actor, &(pTransformComponent->GetTransform())));
+    }
+
+    return shared_ptr<SceneNode>();
+}
+
+
+bool SkyRenderComponent::VDelegateInit(tinyxml2::XMLElement *pData)
+{
+    tinyxml2::XMLElement *pTexture = pData->FirstChildElement("Texture");
+    if (pTexture)
+    {
+        m_textureResource = pTexture->FirstChild()->Value();
+    }
+    return true;
+}
+
+shared_ptr<SceneNode> SkyRenderComponent::VCreateSceneNode(void)
 {
     shared_ptr<TransformComponent> pTransformComponent = MakeStrongPtr(m_pOwner->GetComponent<TransformComponent>(TransformComponent::g_Name));
     if (pTransformComponent)

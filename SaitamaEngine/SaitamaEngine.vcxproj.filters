@@ -100,6 +100,7 @@
       <Filter>EventManager</Filter>
     </ClInclude>
     <ClInclude Include="MovementController.h" />
+    <ClInclude Include="SkyNode.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -163,6 +164,7 @@
       <Filter>EventManager</Filter>
     </ClCompile>
     <ClCompile Include="MovementController.cpp" />
+    <ClCompile Include="SkyNode.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resource.rc" />

@@ -53,7 +53,7 @@ public:
     virtual void VDrawLine(const Vector3& from, const Vector3& to, const Color& color) {}
     
     //virtual shared_ptr<IRenderState> VPrepareAlphaPass();
-    //virtual shared_ptr<IRenderState> VPrepareSkyBoxPass();
+    virtual shared_ptr<IRenderState> VPrepareSkyBoxPass();
 
     //HRESULT CompileShader(LPCSTR pSrcData, SIZE_T SrcDataLen, LPCSTR pFileName, LPCSTR szEntryPoint, LPCSTR szShaderModel, ID3DBlob** ppBlobOut);
     //HRESULT CompileShaderFromFile(WCHAR* szFileName, LPCSTR szEntryPoint, LPCSTR szShaderModel, ID3DBlob** ppBlobOut);
@@ -112,4 +112,14 @@ private:
 
 };
 
+class D3DRendererSkyBoxPass11 : public IRenderState
+{
+protected:
+    ID3D11DepthStencilState* m_pOldDepthStencilState;
+    ID3D11DepthStencilState* m_pSkyboxDepthStencilState;
 
+public:
+    D3DRendererSkyBoxPass11();
+    ~D3DRendererSkyBoxPass11();
+    std::string VToString() { return "D3DRendererSkyBoxPass11"; }
+};

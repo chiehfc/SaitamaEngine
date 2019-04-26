@@ -352,8 +352,8 @@ RootNode::RootNode()
     shared_ptr<SceneNode> actorGroup(new SceneNode(INVALID_GAMEOBJECT_ID, WeakBaseRenderComponentPtr(), RenderPass_Actor, &Matrix::Identity));
     m_Children.push_back(actorGroup);	// RenderPass_Actor = 1
 
-    //shared_ptr<SceneNode> skyGroup(GCC_NEW SceneNode(INVALID_GAMEOBJECT_ID, WeakRenderComponentPtr(), RenderPass_Sky, &Mat4x4::g_Identity));
-    //m_Children.push_back(skyGroup);	// RenderPass_Sky = 2
+    shared_ptr<SceneNode> skyGroup(new SceneNode(INVALID_GAMEOBJECT_ID, WeakBaseRenderComponentPtr(), RenderPass_Sky, &Matrix::Identity));
+    m_Children.push_back(skyGroup);	// RenderPass_Sky = 2
 
     //shared_ptr<SceneNode> invisibleGroup(GCC_NEW SceneNode(INVALID_GAMEOBJECT_ID, WeakRenderComponentPtr(), RenderPass_NotRendered, &Mat4x4::g_Identity));
     //m_Children.push_back(invisibleGroup);	// RenderPass_NotRendered = 3
@@ -412,12 +412,12 @@ HRESULT RootNode::VRenderChildren(Scene *pScene)
             m_Children[pass]->VRenderChildren(pScene);
             break;
 
-        /*case RenderPass_Sky:
+        case RenderPass_Sky:
         {
             shared_ptr<IRenderState> skyPass = pScene->GetRenderer()->VPrepareSkyBoxPass();
             m_Children[pass]->VRenderChildren(pScene);
             break;
-        }*/
+        }
         }
     }
 
@@ -488,8 +488,8 @@ GameModelNode::GameModelNode(const GameObjectId gameObjectId,
     D3D11_INPUT_ELEMENT_DESC layout[] =
     {
         { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-    { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-    { "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+        { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        { "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 }
     };
     UINT numElements = ARRAYSIZE(layout);
 
