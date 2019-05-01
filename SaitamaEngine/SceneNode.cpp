@@ -32,7 +32,7 @@ SceneNode::SceneNode(GameObjectId gameObjectId, WeakBaseRenderComponentPtr rende
     m_pParent = NULL;
     m_Props.m_GameObjectId = gameObjectId;
     m_Props.m_Name = (renderComponent) ? renderComponent->VGetName() : "SceneNode";
-    //m_Props.m_RenderPass = renderPass;
+    m_Props.m_RenderPass = renderPass;
     //m_Props.m_AlphaType = AlphaOpaque;
     m_RenderComponent = renderComponent;
     VSetTransform(to, from);

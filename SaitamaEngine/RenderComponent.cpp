@@ -2,12 +2,13 @@
 #include "RenderComponent.h"
 #include "TransformComponent.h"
 #include "Events.h"
+#include "SkyNode.h"
 
 const char *ModelRenderComponent::g_Name = "ModelRenderComponent";
 const char *LightRenderComponent::g_Name = "LightRenderComponent";
 const char *GridRenderComponent::g_Name = "GridRenderComponent";
 const char *SphereRenderComponent::g_Name = "SphereRenderComponent";
-const char *SphereRenderComponent::g_Name = "SphereRenderComponent";
+const char *SkyRenderComponent::g_Name = "SkyRenderComponent";
 
 bool BaseRenderComponent::VInit(tinyxml2::XMLElement *pData)
 {
@@ -166,22 +167,27 @@ shared_ptr<SceneNode> SphereRenderComponent::VCreateSceneNode(void)
 
 bool SkyRenderComponent::VDelegateInit(tinyxml2::XMLElement *pData)
 {
-    tinyxml2::XMLElement *pTexture = pData->FirstChildElement("Texture");
+    tinyxml2::XMLElement *pTexture = pData->FirstChildElement("TextureNorth");
     if (pTexture)
     {
-        m_textureResource = pTexture->FirstChild()->Value();
+        m_textureResource.push_back(pTexture->FirstChild()->Value());
+        m_textureResource.push_back(pTexture->FirstChild()->Value());
+        m_textureResource.push_back(pTexture->FirstChild()->Value());
+        m_textureResource.push_back(pTexture->FirstChild()->Value());
+        m_textureResource.push_back(pTexture->FirstChild()->Value());
+        m_textureResource.push_back(pTexture->FirstChild()->Value());
     }
     return true;
 }
 
 shared_ptr<SceneNode> SkyRenderComponent::VCreateSceneNode(void)
 {
-    shared_ptr<TransformComponent> pTransformComponent = MakeStrongPtr(m_pOwner->GetComponent<TransformComponent>(TransformComponent::g_Name));
-    if (pTransformComponent)
-    {
+    //shared_ptr<TransformComponent> pTransformComponent = MakeStrongPtr(m_pOwner->GetComponent<TransformComponent>(TransformComponent::g_Name));
+    //if (pTransformComponent)
+    //{
         WeakBaseRenderComponentPtr weakThis(this);
-        return shared_ptr<SceneNode>(new SphereNode(m_pOwner->GetId(), weakThis, RenderPass_Actor, &(pTransformComponent->GetTransform())));
-    }
+        return shared_ptr<SceneNode>(new D3DSkyNode11("", weakThis));
+    //}
 
-    return shared_ptr<SceneNode>();
+    //return shared_ptr<SceneNode>();
 }

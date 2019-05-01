@@ -1,0 +1,11 @@
+<Actor type="Sky" resource="actors\afternoon_sky.xml">
+    <SkyRenderComponent>
+        <Color r="1.0" g="1.0" b="1.0" a="1.0"/>
+        <TextureNorth>Data\\Textures\\DetectivePikachu.png</TextureNorth>
+        <TextureEast>Data\\Textures\\DetectivePikachu.png</TextureEast>
+        <TextureWest>Data\\Textures\\DetectivePikachu.png</TextureWest>
+        <TextureSouth>Data\\Textures\\DetectivePikachu.png</TextureSouth>
+        <TextureTop>Data\\Textures\\DetectivePikachu.png</TextureTop>
+        <TextureBottom>Data\\Textures\\DetectivePikachu.png</TextureBottom>
+    </SkyRenderComponent>
+</Actor>

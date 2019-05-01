@@ -307,7 +307,7 @@ bool D3DRenderer11::InitializeDirectX(HWND hwnd)
     depthStencilStateDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK::D3D11_DEPTH_WRITE_MASK_ALL;
     depthStencilStateDesc.DepthFunc = D3D11_COMPARISON_FUNC::D3D11_COMPARISON_LESS_EQUAL;
 
-    DX::ThrowIfFailed(m_d3dDevice->CreateDepthStencilState(&depthStencilStateDesc, m_depthStencilState.GetAddressOf()));
+    //DX::ThrowIfFailed(m_d3dDevice->CreateDepthStencilState(&depthStencilStateDesc, m_depthStencilState.GetAddressOf()));
 
     // Set the viewport. - Rasterizer
     CD3D11_VIEWPORT viewport(0.0f, 0.0f, static_cast<float>(m_windowWidth), static_cast<float>(m_windowHeight), 0.0f, 1.0f);
@@ -420,6 +420,8 @@ bool D3DRenderer11::InitializeScene()
     std::shared_ptr<TransformComponent> pLightTransform = MakeStrongPtr<TransformComponent>(m_light->GetComponent<TransformComponent>(TransformComponent::g_Name));
     m_light->SetPosition(pLightTransform->GetPosition());
     m_light->SetRotation(pLightTransform->GetRotation());
+
+    m_sky = m_factory.CreateGameObject("sky.xml", nullptr, nullptr, 0);
 
     return true;
 }

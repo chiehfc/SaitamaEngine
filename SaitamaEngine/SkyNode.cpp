@@ -5,9 +5,10 @@
 #include "Scene.h"
 #include "Shaders.h"
 #include "SkyNode.h"
+#include "RenderComponent.h"
 
-SkyNode::SkyNode(const char *pTextureBaseName)
-    : SceneNode(INVALID_GAMEOBJECT_ID, WeakBaseRenderComponentPtr(), RenderPass_Sky, &Matrix::Identity)
+SkyNode::SkyNode(const char *pTextureBaseName, WeakBaseRenderComponentPtr renderComponent)
+    : SceneNode(INVALID_GAMEOBJECT_ID, renderComponent, RenderPass_Sky, &Matrix::Identity)
     , m_bActive(true)
 {
     m_textureBaseName = pTextureBaseName;
@@ -23,8 +24,8 @@ HRESULT SkyNode::VPreRender(Scene *pScene)
     return SceneNode::VPreRender(pScene);
 }
 
-D3DSkyNode11::D3DSkyNode11(const char *pTextureBaseName)
-    : SkyNode(pTextureBaseName)
+D3DSkyNode11::D3DSkyNode11(const char *pTextureBaseName, WeakBaseRenderComponentPtr renderComponent)
+    : SkyNode(pTextureBaseName, renderComponent)
 {
     D3D11_INPUT_ELEMENT_DESC layout[] =
     {
@@ -38,13 +39,18 @@ D3DSkyNode11::D3DSkyNode11(const char *pTextureBaseName)
 
     m_pixelShader.Initialize(D3DRenderer11::GetInstance()->GetDevice(), L"..\\x64\\Debug\\pixelshader.cso");
 
+    m_constantBuffer.Initialize(D3DRenderer11::GetInstance()->GetDevice(), D3DRenderer11::GetInstance()->GetDeviceContext());
+
     m_pVertexBuffer = nullptr;
     m_pIndexBuffer = nullptr;
+    VSetTransform(&m_Props.ToWorld());
     //m_VertexShader.EnableLights(false);
 }
 
 D3DSkyNode11::~D3DSkyNode11()
 {
+    delete m_pVertexBuffer;
+    delete m_pIndexBuffer;
     //SAFE_RELEASE(m_pVertexBuffer);
     //SAFE_RELEASE(m_pIndexBuffer);
 }
@@ -56,6 +62,14 @@ HRESULT D3DSkyNode11::VOnRestore(Scene *pScene)
     SceneNode::VOnRestore(pScene);
 
     m_camera = pScene->GetCamera();
+
+    SkyRenderComponent *src = static_cast<SkyRenderComponent*>(m_RenderComponent);
+    
+    auto texture = src->GetTextureResources();
+    for (int i = 0; i < texture.size(); i++)
+    {
+        hr = DirectX::CreateWICTextureFromFile(D3DRenderer11::GetInstance()->GetDevice(), StringHelper::StringToWide(texture[i]).c_str(), nullptr, m_texture[i].GetAddressOf());
+    }
 
     //SAFE_RELEASE(m_pVertexBuffer);
     //SAFE_RELEASE(m_pIndexBuffer);
@@ -102,9 +116,9 @@ HRESULT D3DSkyNode11::VOnRestore(Scene *pScene)
     normal.Normalize();
 
     Matrix rotY;
-    rotY.CreateRotationY(DirectX::XM_PI / 2.0f);
+    rotY = rotY.CreateRotationY(DirectX::XM_PI / 2.0f);
     Matrix rotX;
-    rotX.CreateRotationX(-DirectX::XM_PI / 2.0f);
+    rotX = rotX.CreateRotationX(-DirectX::XM_PI / 2.0f);
 
     m_sides = 5;
 
@@ -120,9 +134,9 @@ HRESULT D3DSkyNode11::VOnRestore(Scene *pScene)
             } else
             {
                 skyVerts[0].texCoord = Vector2(1.0f, 1.0f);
-                skyVerts[1].texCoord = Vector2(1.0f, 1.0f);
-                skyVerts[2].texCoord = Vector2(1.0f, 1.0f);
-                skyVerts[3].texCoord = Vector2(1.0f, 1.0f);
+                skyVerts[1].texCoord = Vector2(1.0f, 0.0f);
+                skyVerts[2].texCoord = Vector2(0.0f, 1.0f);
+                skyVerts[3].texCoord = Vector2(0.0f, 0.0f);
 
                 temp = DirectX::XMVector4Transform(Vector3(skyVerts[v].pos), rotX);
             }
@@ -180,6 +194,8 @@ HRESULT D3DSkyNode11::VOnRestore(Scene *pScene)
     if (FAILED(hr))
         return hr;
 
+    delete[] pVertices;
+    delete[] pIndices;
 
     return S_OK;
 }
@@ -191,6 +207,15 @@ HRESULT D3DSkyNode11::VRender(Scene *pScene)
 {
     HRESULT hr;
 
+    m_constantBuffer.data.wvpMatrix = m_Props.ToWorld() * m_camera->GetWorldViewProjection(pScene);
+    m_constantBuffer.data.worldMatrix = m_Props.ToWorld();
+    
+    if (!m_constantBuffer.ApplyChanges())
+    {
+        return hr;
+    }
+
+    D3DRenderer11::GetInstance()->GetDeviceContext()->VSSetConstantBuffers(0, 1, m_constantBuffer.GetAddressOf());
     m_vertexShader.SetupRender(pScene, this);
     m_pixelShader.SetupRender(pScene, this);
 
@@ -220,9 +245,11 @@ HRESULT D3DSkyNode11::VRender(Scene *pScene)
         name += suffix[side];
         ****/
 
-        std::string name = GetTextureName(side);
-        m_pixelShader.SetTexture(name.c_str());
-        //D3DRenderer11::GetInstance()->GetDeviceContext()->PSSetShaderResources(0, 1, m_texture.GetAddressOf());
+
+
+        //std::string name = GetTextureName(side);
+        //m_pixelShader.SetTexture(name.c_str());
+        D3DRenderer11::GetInstance()->GetDeviceContext()->PSSetShaderResources(0, 1, m_texture[side].GetAddressOf());
 
         D3DRenderer11::GetInstance()->GetDeviceContext()->DrawIndexed(6, side * 6, 0);
     }

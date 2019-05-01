@@ -104,6 +104,7 @@ private:
 
     StrongGameObjectPtr m_gameObject;
     StrongGameObjectPtr m_light;
+    StrongGameObjectPtr m_sky;
     GameObjectFactory m_factory;
 
 
