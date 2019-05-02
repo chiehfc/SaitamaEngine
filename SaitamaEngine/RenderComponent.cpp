@@ -48,12 +48,15 @@ shared_ptr<SceneNode> ModelRenderComponent::VCreateSceneNode(void)
     if (pTransformComponent)
     {
         WeakBaseRenderComponentPtr weakThis(this);
-        Matrix rot90;
+        //Matrix rot90;
+        //Matrix tx;
+        //tx = tx.CreateTranslation(1.0f, 0.0f, 0.0f);
         //rot90 = rot90.CreateRotationY(-3.14f / 2.0f);
-        shared_ptr<SceneNode> parent(new SceneNode(m_pOwner->GetId(), weakThis, RenderPass_Actor, &pTransformComponent->GetTransform()));
-        shared_ptr<SceneNode> teapot(new GameModelNode(INVALID_GAMEOBJECT_ID, weakThis, m_filePath, RenderPass_Actor, &rot90));
-        parent->VAddChild(teapot);
-        return parent;        
+        //shared_ptr<SceneNode> parent(new SceneNode(m_pOwner->GetId(), weakThis, RenderPass_Actor, &tx));
+        shared_ptr<SceneNode> teapot(new GameModelNode(INVALID_GAMEOBJECT_ID, weakThis, m_filePath, RenderPass_Actor, &pTransformComponent->GetTransform()));
+        //parent->VAddChild(teapot);
+        //return parent;        
+        return teapot;
     }
 
     return shared_ptr<SceneNode>();

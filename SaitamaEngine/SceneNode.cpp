@@ -113,8 +113,7 @@ HRESULT SceneNode::VPreRender(Scene *pScene)
 {
     // TODO:
     // This was added post press! Is is always ok to read directly from the game logic.
-    //StrongGameObjectPtr pActor = MakeStrongPtr(g_pApp->GetGameLogic()->VGetActor(m_Props.m_ActorId));
-    StrongGameObjectPtr pActor;
+    StrongGameObjectPtr pActor = MakeStrongPtr(D3DRenderer11::GetInstance()->VGetGameObject(m_Props.m_GameObjectId));
     if (pActor)
     {
         shared_ptr<TransformComponent> pTc = MakeStrongPtr(pActor->GetComponent<TransformComponent>(TransformComponent::g_Name));
@@ -595,6 +594,8 @@ D3DGrid::D3DGrid(GameObjectId gameObjectId, WeakBaseRenderComponentPtr renderCom
     m_vertexShader.Initialize(D3DRenderer11::GetInstance()->GetDevice(), L"..\\x64\\Debug\\vertexshader.cso", layout, numElements);
 
     m_pixelShader.Initialize(D3DRenderer11::GetInstance()->GetDevice(), L"..\\x64\\Debug\\pixelshader.cso");
+
+    m_constantBuffer.Initialize(D3DRenderer11::GetInstance()->GetDevice(), D3DRenderer11::GetInstance()->GetDeviceContext());
     
     m_pVertexBuffer = nullptr;
     m_pIndexBuffer = nullptr;
@@ -724,6 +725,15 @@ HRESULT D3DGrid::VOnRestore(Scene *pScene)
 HRESULT D3DGrid::VRender(Scene *pScene)
 {
     HRESULT hr;
+
+    m_constantBuffer.data.wvpMatrix = m_Props.ToWorld() * pScene->GetCamera()->GetView() * pScene->GetCamera()->GetProjection();
+    m_constantBuffer.data.worldMatrix = m_Props.ToWorld();
+
+    if (!m_constantBuffer.ApplyChanges())
+    {
+        return hr;
+    }
+    D3DRenderer11::GetInstance()->GetDeviceContext()->VSSetConstantBuffers(0, 1, m_constantBuffer.GetAddressOf());
 
     GridRenderComponent* grc = static_cast<GridRenderComponent*>(m_RenderComponent);
 

@@ -101,6 +101,7 @@
     </ClInclude>
     <ClInclude Include="MovementController.h" />
     <ClInclude Include="SkyNode.h" />
+    <ClInclude Include="GameLogic.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -165,6 +166,7 @@
     </ClCompile>
     <ClCompile Include="MovementController.cpp" />
     <ClCompile Include="SkyNode.cpp" />
+    <ClCompile Include="GameLogic.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resource.rc" />

@@ -14,7 +14,7 @@
 #include "Light.h"
 #include "GameObjectFactory.h"
 
-
+typedef std::map<GameObjectId, StrongGameObjectPtr> GameObjectMap;
 
 class D3DRenderer11 : public IRenderer
 {
@@ -57,6 +57,8 @@ public:
 
     //HRESULT CompileShader(LPCSTR pSrcData, SIZE_T SrcDataLen, LPCSTR pFileName, LPCSTR szEntryPoint, LPCSTR szShaderModel, ID3DBlob** ppBlobOut);
     //HRESULT CompileShaderFromFile(WCHAR* szFileName, LPCSTR szEntryPoint, LPCSTR szShaderModel, ID3DBlob** ppBlobOut);
+
+    WeakGameObjectPtr VGetGameObject(const GameObjectId gameObjectId);
 
 protected:
     float m_backgroundColor[4];
@@ -110,7 +112,7 @@ private:
 
     static D3DRenderer11 *m_instance;
 
-
+    GameObjectMap m_gameObjects;
 };
 
 class D3DRendererSkyBoxPass11 : public IRenderState

@@ -128,7 +128,7 @@ public:
         m_bActive(true),
         m_DebugCamera(false),
         m_pTarget(shared_ptr<SceneNode>()),
-        m_CamOffsetVector(0.0f, 10.0f, -30.0f, 0.0f)
+        m_CamOffsetVector(0.0f, 20.0f, -60.0f, 0.0f)
     {
         m_View = Matrix::Identity;
         m_Projection = DirectX::XMMatrixPerspectiveFovLH(angle, client_width / client_height, nearest, farthest);
@@ -207,6 +207,8 @@ protected:
     PixelShader m_pixelShader;
 
     Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_texture;
+
+    ConstantBuffer<CB_VS_vertexshader> m_constantBuffer;
 
 public:
     bool m_bTextureHasAlpha;

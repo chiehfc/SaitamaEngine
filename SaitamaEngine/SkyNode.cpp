@@ -96,7 +96,7 @@ HRESULT D3DSkyNode11::VOnRestore(Scene *pScene)
 
     Vertex skyVerts[4];
     Color skyVertColor = Color(1.0f, 1.0f, 1.0f, 1.0f);
-    float dim = 50.0f;
+    float dim = 100.0f;
 
     skyVerts[0].pos = Vector3(dim, dim, dim); skyVerts[0].texCoord = Vector2(1.0f, 0.0f);
     skyVerts[1].pos = Vector3(-dim, dim, dim); skyVerts[1].texCoord = Vector2(0.0f, 0.0f);
@@ -207,7 +207,7 @@ HRESULT D3DSkyNode11::VRender(Scene *pScene)
 {
     HRESULT hr;
 
-    m_constantBuffer.data.wvpMatrix = m_Props.ToWorld() * m_camera->GetWorldViewProjection(pScene);
+    m_constantBuffer.data.wvpMatrix = m_camera->GetWorldViewProjection(pScene);
     m_constantBuffer.data.worldMatrix = m_Props.ToWorld();
     
     if (!m_constantBuffer.ApplyChanges())

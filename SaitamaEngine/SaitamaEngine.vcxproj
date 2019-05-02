@@ -181,6 +181,7 @@
     <ClInclude Include="FastDelegate.h" />
     <ClInclude Include="FastDelegateBind.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="GameLogic.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GameObjectComponent.h" />
     <ClInclude Include="GameObjectFactory.h" />
@@ -234,6 +235,7 @@
     <ClCompile Include="EventManagerImpl.cpp" />
     <ClCompile Include="Events.cpp" />
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="GameLogic.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="GameObjectFactory.cpp" />
     <ClCompile Include="Graphics\Graphics.cpp" />

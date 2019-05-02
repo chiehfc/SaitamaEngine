@@ -48,8 +48,10 @@ void Game::Initialize(HWND window, int width, int height)
 
     renderer = make_shared<D3DRenderer11>();
     scene = new Scene(renderer);
+    // camera
     auto pos = Matrix::Identity;
     pos.Translation(DirectX::SimpleMath::Vector3(0.0f, 0.0f, -20.0f));
+    
 
     m_pCamera.reset(new CameraNode(&pos, DirectX::XM_PI / 4.f,
         800.0f, 600.0f, 0.1f, 1000.0f));
@@ -67,23 +69,15 @@ void Game::Initialize(HWND window, int width, int height)
 
     auto gameObject = renderer->GetGameObject();
     std::shared_ptr<ModelRenderComponent> pRenderComponent = MakeStrongPtr<ModelRenderComponent>(gameObject->GetComponent<ModelRenderComponent>(ModelRenderComponent::g_Name));
-    //m_pCamera->SetTarget(pRenderComponent->VGetSceneNode());
+    m_pCamera->SetTarget(pRenderComponent->VGetSceneNode());
     
     //auto light = renderer->GetLight();
     //std::shared_ptr<LightRenderComponent> pLightComponent = MakeStrongPtr<LightRenderComponent>(light->GetComponent<LightRenderComponent>(LightRenderComponent::g_Name));
 
-    //m_pObjectController.reset(new MovementController(pRenderComponent->VGetSceneNode(), 0, 0, false, m_keyboard, m_mouse));
-    m_pObjectController.reset(new MovementController(m_pCamera, 0, 0, false, m_keyboard, m_mouse));
+    m_pObjectController.reset(new MovementController(pRenderComponent->VGetSceneNode(), 0, 0, false, m_keyboard, m_mouse));
+    //m_pObjectController.reset(new MovementController(m_pCamera, 0, 0, false, m_keyboard, m_mouse));
     
-    //scene->AddChild(gameObject->GetId(), pRenderComponent->VGetSceneNode());
-    //scene->AddChild(light->GetId(), pLightComponent->VGetSceneNode());
 
-    //auto gameObject = factory.CreateGameObject(nullptr, nullptr, nullptr, 0);
-
-
-    //camera = new Camera();
-    //camera->SetAngle(XM_PI / 4.f);
-      //InitProjMatrix(camera->GetAngle(), m_outputWidth,m_outputHeight,1.0f,10.0f);
 
     //CreateDevice();
 
@@ -98,8 +92,6 @@ void Game::Initialize(HWND window, int width, int height)
 
     
 
-    Saitama::Vector3 v1(1, 2, 3);
-    v1.Print();
 }
 
 // Executes the basic game loop.
