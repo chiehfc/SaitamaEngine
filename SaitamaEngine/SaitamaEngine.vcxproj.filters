@@ -14,6 +14,9 @@
     <Filter Include="EventManager">
       <UniqueIdentifier>{671a501b-091c-4e87-addb-9bc1bd283782}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Physics">
+      <UniqueIdentifier>{b402680c-de7d-4f91-846f-8d852495f32b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -102,6 +105,7 @@
     <ClInclude Include="MovementController.h" />
     <ClInclude Include="SkyNode.h" />
     <ClInclude Include="GameLogic.h" />
+    <ClInclude Include="Particles.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -167,6 +171,7 @@
     <ClCompile Include="MovementController.cpp" />
     <ClCompile Include="SkyNode.cpp" />
     <ClCompile Include="GameLogic.cpp" />
+    <ClCompile Include="Particles.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resource.rc" />
