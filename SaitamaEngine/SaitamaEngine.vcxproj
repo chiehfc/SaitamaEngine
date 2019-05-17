@@ -205,6 +205,8 @@
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="MovementController.h" />
     <ClInclude Include="Particles.h" />
+    <ClInclude Include="PhysicsComponent.h" />
+    <ClInclude Include="PhysicsSystem.h" />
     <ClInclude Include="RenderableGameObject.h" />
     <ClInclude Include="RenderComponent.h" />
     <ClInclude Include="Saitama.h" />
@@ -264,6 +266,8 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="PhysicsComponent.cpp" />
+    <ClCompile Include="PhysicsSystem.cpp" />
     <ClCompile Include="RenderableGameObject.cpp" />
     <ClCompile Include="RenderComponent.cpp" />
     <ClCompile Include="Saitama.cpp" />

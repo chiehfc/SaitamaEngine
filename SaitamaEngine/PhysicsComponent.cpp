@@ -31,15 +31,17 @@ void PhysicsComponent::ApplyForce(const Vector3 & direction, float forceNewtons)
 
 void PhysicsComponent::ApplyAcceleration(float acceleration)
 {
+    m_acceleration = acceleration;
 }
 
 Vector3 PhysicsComponent::GetVelocity(void)
 {
-    return Vector3();
+    return m_velocity;
 }
 
 void PhysicsComponent::SetVelocity(const Vector3 & velocity)
 {
+    m_velocity = velocity;
 }
 
 void PhysicsComponent::SetPosition(float x, float y, float z)

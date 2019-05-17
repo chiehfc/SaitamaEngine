@@ -52,16 +52,16 @@ public:
 
 protected:
     
-    double inverseMass;
+    double m_inverseMass;
 
-    double damping;
+    double m_damping;
 
-    Vector3 position;
+    Vector3 m_position;
 
-    Vector3 velocity;
+    Vector3 m_velocity;
 
-    Vector3 forceAccum;
+    Vector3 m_forceAccum;
 
-    Vector3 acceleration;
+    Vector3 m_acceleration;
 };
 

@@ -6,7 +6,7 @@
 //#include "AudioComponent.h"
 #include "TransformComponent.h"
 #include "RenderComponent.h"
-//#include "PhysicsComponent.h"
+#include "PhysicsComponent.h"
 //#include "AmmoPickup.h"
 //#include "HealthPickup.h"
 //#include "BaseScriptComponent.h"
@@ -29,10 +29,11 @@ GameObjectFactory::GameObjectFactory(void)
     m_componentFactory.Register<GridRenderComponent>(GameObjectComponent::GetIdFromName(GridRenderComponent::g_Name));
     m_componentFactory.Register<SphereRenderComponent>(GameObjectComponent::GetIdFromName(SphereRenderComponent::g_Name));
     m_componentFactory.Register<SkyRenderComponent>(GameObjectComponent::GetIdFromName(SkyRenderComponent::g_Name));
+    m_componentFactory.Register<PhysicsComponent>(GameObjectComponent::GetIdFromName(PhysicsComponent::g_Name));
     /*
     m_componentFactory.Register<MeshRenderComponent>(GameObjectComponent::GetIdFromName(MeshRenderComponent::g_Name));
     
-    m_componentFactory.Register<PhysicsComponent>(GameObjectComponent::GetIdFromName(PhysicsComponent::g_Name));
+    
     
     
     

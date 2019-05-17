@@ -16,7 +16,7 @@ public:
     void VApplyForce(const Vector3 &dir, float newtons, GameObjectId gameObjectId);
 
     // Temporarily for particle physics
-    void VAddParticle(WeakGameObjectPtr pGameObject);
+    void VAddParticle(StrongGameObjectPtr pGameObject);
     void VRemoveGameObject(GameObjectId id);
 
 
@@ -32,7 +32,8 @@ public:
 private:
     typedef std::map<GameObjectId, Particles*> GameObjectIDToParticleMap;
     GameObjectIDToParticleMap m_gameObjectIdToParticle;
-
+    Particles *FindParticle(GameObjectId id) const;
+    std::vector<Particles *> m_particles;
 
 };
 
