@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Saitama.h"
 #include "GameObjectComponent.h"
 #include "PhysicsSystem.h"
 

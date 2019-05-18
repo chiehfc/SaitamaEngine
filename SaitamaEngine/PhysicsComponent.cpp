@@ -36,7 +36,7 @@ void PhysicsComponent::ApplyAcceleration(float acceleration)
 
 Vector3 PhysicsComponent::GetVelocity(void)
 {
-    return m_velocity;
+    return m_pGamePhysics->VGetVelocity(m_pOwner->GetId());
 }
 
 void PhysicsComponent::SetVelocity(const Vector3 & velocity)
