@@ -140,6 +140,14 @@ void GameObject::Destroy(void)
     m_components.clear();
 }
 
+void GameObject::Update(int deltaMs)
+{
+    for (GameObjectComponents::iterator it = m_components.begin(); it != m_components.end(); ++it)
+    {
+        it->second->VUpdate(deltaMs);
+    }
+}
+
 void GameObject::AddComponent(StrongGameObjectComponentPtr pComponent)
 {
     std::pair<GameObjectComponents::iterator, bool> success = m_components.insert(std::make_pair(pComponent->VGetId(), pComponent));

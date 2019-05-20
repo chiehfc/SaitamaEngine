@@ -14,7 +14,7 @@ extern void ExitGame();
 
 using namespace DirectX;
 using namespace DirectX::SimpleMath;
-using namespace Saitama;
+//using namespace Saitama;
 
 using Microsoft::WRL::ComPtr;
 
@@ -23,11 +23,22 @@ static const XMVECTORF32 ROOM_BOUNDS = { 8.f, 6.f, 12.f, 0.f };
 static const float ROTATION_GAIN = 0.01f;
 static const float MOVEMENT_GAIN = 20.0f;
 
+Game *Game::m_instance = nullptr;
+
+Game *Game::GetInstance() 
+{
+    return m_instance;
+}
+
 Game::Game() :
     m_window(nullptr),
     m_outputWidth(800),
     m_outputHeight(600)
 {
+    if (m_instance) {
+        delete m_instance;
+    }
+    m_instance = this;
 }
 
 // Initialize the Direct3D resources required to run.
@@ -57,6 +68,8 @@ void Game::Initialize(HWND window, int width, int height)
         800.0f, 600.0f, 0.1f, 1000.0f));
     scene->AddChild(INVALID_GAMEOBJECT_ID, m_pCamera);
     scene->SetCamera(m_pCamera);
+
+    physics = make_shared<PhysicsSystem>();
 
     if (!renderer->Initialize(window, width, height))
     {
@@ -124,6 +137,13 @@ void Game::Update(DX::StepTimer const& timer)
     rot = rot.CreateFromYawPitchRoll(1.0f * ROTATION_GAIN, 0.0f, 0.0f);
     toWorld = rot * toWorld;
     //sceneNode->VSetTransform(&toWorld);
+
+    if (physics)
+    {
+        physics->OnUpdate(elapsedTime);
+        physics->VSyncVisibleScene();
+    }
+
 
     m_pObjectController->OnUpdate(elapsedTime);
 

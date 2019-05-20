@@ -15,6 +15,9 @@ public:
 
     void VApplyForce(const Vector3 &dir, float newtons, GameObjectId gameObjectId);
 
+
+    void VSyncVisibleScene();
+
     // Temporarily for particle physics
     void VAddParticle(StrongGameObjectPtr pGameObject);
     void VRemoveGameObject(GameObjectId id);

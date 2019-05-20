@@ -12,6 +12,7 @@ class IEventData;
 enum EventType
 {
     EvtType_New_Render_Component,
+    EvtType_Move_GameObject,
 };
 
 //typedef unsigned long EventType;

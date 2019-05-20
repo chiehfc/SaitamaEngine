@@ -14,8 +14,9 @@ Scene::Scene(shared_ptr<IRenderer> renderer)
     // [mrmike] - event delegates were added post-press
     IEventManager* pEventMgr = IEventManager::Get();
     pEventMgr->VAddListener(MakeDelegate(this, &Scene::NewRenderComponentDelegate), EvtData_New_Render_Component::sk_EventType);
+    pEventMgr->VAddListener(MakeDelegate(this, &Scene::MoveActorDelegate), EvtData_Move_GameObject::sk_EventType);
     /*pEventMgr->VAddListener(MakeDelegate(this, &Scene::DestroyActorDelegate), EvtData_Destroy_Actor::sk_EventType);
-    pEventMgr->VAddListener(MakeDelegate(this, &Scene::MoveActorDelegate), EvtData_Move_Actor::sk_EventType);
+    
     pEventMgr->VAddListener(MakeDelegate(this, &Scene::ModifiedRenderComponentDelegate), EvtData_Modified_Render_Component::sk_EventType);*/
 }
 
@@ -27,8 +28,9 @@ Scene::~Scene()
     // [mrmike] - event delegates were added post-press!
     IEventManager* pEventMgr = IEventManager::Get();
     pEventMgr->VRemoveListener(MakeDelegate(this, &Scene::NewRenderComponentDelegate), EvtData_New_Render_Component::sk_EventType);
+    pEventMgr->VRemoveListener(MakeDelegate(this, &Scene::MoveActorDelegate), EvtData_Move_GameObject::sk_EventType);
     /*pEventMgr->VRemoveListener(MakeDelegate(this, &Scene::DestroyActorDelegate), EvtData_Destroy_Actor::sk_EventType);
-    pEventMgr->VRemoveListener(MakeDelegate(this, &Scene::MoveActorDelegate), EvtData_Move_Actor::sk_EventType);
+    
 
     pEventMgr->VRemoveListener(MakeDelegate(this, &Scene::ModifiedRenderComponentDelegate), EvtData_Modified_Render_Component::sk_EventType);*/
 
@@ -174,19 +176,19 @@ void Scene::NewRenderComponentDelegate(IEventDataPtr pEventData)
 //    RemoveChild(pCastEventData->GetId());
 //}
 //
-//void Scene::MoveActorDelegate(IEventDataPtr pEventData)
-//{
-//    shared_ptr<EvtData_Move_Actor> pCastEventData = static_pointer_cast<EvtData_Move_Actor>(pEventData);
-//
-//    ActorId id = pCastEventData->GetId();
-//    Mat4x4 transform = pCastEventData->GetMatrix();
-//
-//    shared_ptr<ISceneNode> pNode = FindActor(id);
-//    if (pNode)
-//    {
-//        pNode->VSetTransform(&transform);
-//    }
-//}
+void Scene::MoveActorDelegate(IEventDataPtr pEventData)
+{
+    shared_ptr<EvtData_Move_GameObject> pCastEventData = static_pointer_cast<EvtData_Move_GameObject>(pEventData);
+
+    GameObjectId id = pCastEventData->GetId();
+    Matrix transform = pCastEventData->GetMatrix();
+
+    shared_ptr<ISceneNode> pNode = FindGameObject(id);
+    if (pNode)
+    {
+        pNode->VSetTransform(&transform);
+    }
+}
 
 
 

@@ -31,6 +31,7 @@ public:
     bool Init(tinyxml2::XMLElement* pData);
     void PostInit(void);
     void Destroy(void);
+    void Update(int deltaMs);
 
     // accessors
     GameObjectId GetId(void) const { return m_id; }

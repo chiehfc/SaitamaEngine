@@ -50,6 +50,10 @@ public:
 
     void addForce(const Vector3 &force);
 
+    Matrix getTransform() const { return m_transform; }
+
+    void setTransform(Matrix &transform) { m_transform = transform; }
+
 protected:
     
     double m_inverseMass;
@@ -63,5 +67,7 @@ protected:
     Vector3 m_forceAccum;
 
     Vector3 m_acceleration;
+
+    Matrix m_transform;
 };
 

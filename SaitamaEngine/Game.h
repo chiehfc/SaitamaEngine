@@ -12,8 +12,12 @@
 #include "D3DRenderer11.h"
 #include "Scene.h"
 #include "MovementController.h"
+#include "PhysicsSystem.h"
 
 class EventManager;
+
+// TODO: This is in D3DRenderer11 for now, need to move it to GameLogic
+//typedef std::map<GameObjectId, StrongGameObjectPtr> GameObjectMap;
 
 // A basic game implementation that creates a D3D11 device and
 // provides a game loop.
@@ -22,6 +26,8 @@ class Game
 public:
 
     Game();
+
+    static Game *GetInstance();
 
     // Initialization and management
     void Initialize(HWND window, int width, int height);
@@ -38,6 +44,8 @@ public:
 
     // Properties
     void GetDefaultSize( int& width, int& height ) const;
+
+    shared_ptr<PhysicsSystem> GetPhysics() { return physics; }
 
 private:
 
@@ -62,6 +70,7 @@ private:
    
     //Graphics gfx;
     std::shared_ptr<D3DRenderer11> renderer;
+    std::shared_ptr<PhysicsSystem> physics;
 
     Scene *scene;
 
@@ -77,6 +86,7 @@ private:
 
     Timer m_fpsTimer;
 
+    static Game *m_instance;
 
   std::shared_ptr<DirectX::Keyboard> m_keyboard;
   std::shared_ptr<DirectX::Mouse> m_mouse;

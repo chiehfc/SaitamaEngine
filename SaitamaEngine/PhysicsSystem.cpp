@@ -2,7 +2,9 @@
 #include "PhysicsSystem.h"
 #include "Particles.h"
 #include "GameObject.h"
-
+#include "TransformComponent.h"
+#include "Events.h"
+#include "D3DRenderer11.h"
 
 PhysicsSystem::PhysicsSystem()
 {
@@ -36,7 +38,7 @@ void PhysicsSystem::VAddParticle(StrongGameObjectPtr pGameObject)
         
     Particles *p = new Particles();
     p->setMass(2.0f); // 2.0kg
-    p->setVelocity(0.0f, 0.0f, 35.0f); // 35m/s
+    p->setVelocity(0.0f, 0.0f, 2.0f); // 35m/s
     p->setAcceleration(0.0f, -1.0f, 0.0f);
     p->setDamping(0.99f);
 
@@ -89,4 +91,35 @@ Particles *PhysicsSystem::FindParticle(GameObjectId id) const
         return it->second;
     }
     return nullptr;
+}
+
+void PhysicsSystem::VSyncVisibleScene()
+{
+    // Keep physics & graphics in sync
+
+    // check all the existing actor's bodies for changes. 
+    //  If there is a change, send the appropriate event for the game system.
+    for (GameObjectIDToParticleMap::const_iterator it = m_gameObjectIdToParticle.begin();
+        it != m_gameObjectIdToParticle.end();
+        ++it)
+    {
+        const GameObjectId id = it->first;
+        
+        StrongGameObjectPtr pGameActor = MakeStrongPtr(D3DRenderer11::GetInstance()->VGetGameObject(id));
+        if (pGameActor)
+        {
+            shared_ptr<TransformComponent> pTransformComponent = MakeStrongPtr(pGameActor->GetComponent<TransformComponent>(TransformComponent::g_Name));
+            if (pTransformComponent)
+            {
+                if (pTransformComponent->GetPosition() != it->second->getPosition())
+                {                    
+                    Matrix m = pTransformComponent->GetTransform();
+                    m.Translation(it->second->getPosition());
+                    pTransformComponent->SetTransform(m);
+                    shared_ptr<EvtData_Move_GameObject> pEvent(new EvtData_Move_GameObject(id, m));
+                    IEventManager::Get()->VQueueEvent(pEvent);
+                }
+            }
+        }
+    }
 }

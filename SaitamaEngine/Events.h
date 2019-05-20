@@ -56,3 +56,74 @@ public:
         return m_pSceneNode;
     }
 };
+
+
+
+class EvtData_Move_GameObject : public BaseEventData
+{
+    GameObjectId m_id;
+    Matrix m_matrix;
+
+public:
+    static const EventType sk_EventType;
+
+    virtual const EventType& VGetEventType(void) const
+    {
+        return sk_EventType;
+    }
+
+    EvtData_Move_GameObject(void)
+    {
+        m_id = INVALID_GAMEOBJECT_ID;
+    }
+
+    EvtData_Move_GameObject(GameObjectId id, const Matrix& matrix)
+        : m_id(id), m_matrix(matrix)
+    {
+        //
+    }
+
+    /*virtual void VSerialize(std::ostrstream &out) const
+    {
+        out << m_id << " ";
+        for (int i = 0; i < 4; ++i)
+        {
+            for (int j = 0; j < 4; ++j)
+            {
+                out << m_matrix.m[i][j] << " ";
+            }
+        }
+    }
+
+    virtual void VDeserialize(std::istrstream& in)
+    {
+        in >> m_id;
+        for (int i = 0; i < 4; ++i)
+        {
+            for (int j = 0; j < 4; ++j)
+            {
+                in >> m_matrix.m[i][j];
+            }
+        }
+    }*/
+
+    virtual IEventDataPtr VCopy() const
+    {
+        return IEventDataPtr(new EvtData_Move_GameObject(m_id, m_matrix));
+    }
+
+    virtual const char* GetName(void) const
+    {
+        return "EvtData_Move_GameObject";
+    }
+
+    GameObjectId GetId(void) const
+    {
+        return m_id;
+    }
+
+    const Matrix& GetMatrix(void) const
+    {
+        return m_matrix;
+    }
+};

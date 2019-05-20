@@ -48,7 +48,7 @@ public:
     void NewRenderComponentDelegate(IEventDataPtr pEventData);
     //void ModifiedRenderComponentDelegate(IEventDataPtr pEventData);			// added post-press!
     //void DestroyActorDelegate(IEventDataPtr pEventData);
-    //void MoveActorDelegate(IEventDataPtr pEventData);
+    void MoveActorDelegate(IEventDataPtr pEventData);
 
     void SetCamera(shared_ptr<CameraNode> camera) { m_Camera = camera; }
     const shared_ptr<CameraNode> GetCamera() const { return m_Camera; }

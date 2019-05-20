@@ -13,11 +13,11 @@
     </SphereRenderComponent>
 
 
-    <!-- <PhysicsComponent> -->
+    <PhysicsComponent>
         <!-- <Shape>Box</Shape> -->
         <!-- <Density>glass</Density> -->
         <!-- <PhysicsMaterial>Normal</PhysicsMaterial> -->
-    <!-- </PhysicsComponent> -->
+    </PhysicsComponent>
 
 	
     <!-- <TeapotRenderComponent> -->
