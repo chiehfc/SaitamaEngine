@@ -105,7 +105,18 @@
     <ClInclude Include="MovementController.h" />
     <ClInclude Include="SkyNode.h" />
     <ClInclude Include="GameLogic.h" />
-    <ClInclude Include="Particles.h" />
+    <ClInclude Include="PhysicsComponent.h">
+      <Filter>Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="PhysicsSystem.h">
+      <Filter>Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="Particles.h">
+      <Filter>Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="ParticleContact.h">
+      <Filter>Physics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -171,7 +182,18 @@
     <ClCompile Include="MovementController.cpp" />
     <ClCompile Include="SkyNode.cpp" />
     <ClCompile Include="GameLogic.cpp" />
-    <ClCompile Include="Particles.cpp" />
+    <ClCompile Include="PhysicsComponent.cpp">
+      <Filter>Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="PhysicsSystem.cpp">
+      <Filter>Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="Particles.cpp">
+      <Filter>Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="ParticleContact.cpp">
+      <Filter>Physics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resource.rc" />

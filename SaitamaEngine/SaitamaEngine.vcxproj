@@ -204,6 +204,7 @@
     <ClInclude Include="MatrixStack.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="MovementController.h" />
+    <ClInclude Include="ParticleContact.h" />
     <ClInclude Include="Particles.h" />
     <ClInclude Include="PhysicsComponent.h" />
     <ClInclude Include="PhysicsSystem.h" />
@@ -259,6 +260,7 @@
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="MovementController.cpp" />
     <ClCompile Include="MovingEntity.cpp" />
+    <ClCompile Include="ParticleContact.cpp" />
     <ClCompile Include="Particles.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

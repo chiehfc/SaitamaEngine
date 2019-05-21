@@ -39,7 +39,7 @@ void PhysicsSystem::VAddParticle(StrongGameObjectPtr pGameObject)
     Particles *p = new Particles();
     p->setMass(2.0f); // 2.0kg
     p->setVelocity(0.0f, 0.0f, 2.0f); // 35m/s
-    p->setAcceleration(0.0f, -1.0f, 0.0f);
+    p->setAcceleration(0.0f, 0.0f, 0.0f);
     p->setDamping(0.99f);
 
     m_particles.push_back(p);
