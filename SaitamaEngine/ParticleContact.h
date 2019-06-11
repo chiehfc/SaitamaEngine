@@ -21,6 +21,8 @@ public:
 
     /**
      * Holds the depth of penetration at the contact.
+     negative penetration means no interpenetration
+     zero penetration means merely touching
      */
     double penetration;
 
