@@ -22,9 +22,9 @@ void PhysicsSystem::Initialize()
 
 void PhysicsSystem::OnUpdate(double delta)
 {
-    for (auto p : m_particles) 
+    for (auto r : m_rigidBodies) 
     {
-        p->integrate(delta);
+        r->integrate(delta);
     }    
 }
 
@@ -45,6 +45,21 @@ void PhysicsSystem::VAddParticle(StrongGameObjectPtr pGameObject)
     m_particles.push_back(p);
 
     m_gameObjectIdToParticle[gameObjectId] = p;
+}
+
+void PhysicsSystem::VAddRigidBody(StrongGameObjectPtr pGameObject)
+{
+    GameObjectId gameObjectId = pGameObject->GetId();
+
+    RigidBody *r = new RigidBody();
+    r->setMass(2.0f); // 2.0kg
+    r->setVelocity(0.0f, 0.0f, 2.0f); // 35m/s
+    r->setAcceleration(0.0f, 0.0f, 0.0f);
+    r->setDamping(0.99f, 0.99f);
+
+    m_rigidBodies.push_back(r);
+
+    m_gameObjectIdToRigidBody[gameObjectId] = r;
 }
 
 void PhysicsSystem::VRemoveGameObject(GameObjectId id)
@@ -93,14 +108,24 @@ Particles *PhysicsSystem::FindParticle(GameObjectId id) const
     return nullptr;
 }
 
+RigidBody *PhysicsSystem::FindRigidBody(GameObjectId id) const
+{
+    GameObjectIDToRigidBodyMap::const_iterator it = m_gameObjectIdToRigidBody.find(id);
+    if (it != m_gameObjectIdToRigidBody.end())
+    {
+        return it->second;
+    }
+    return nullptr;
+}
+
 void PhysicsSystem::VSyncVisibleScene()
 {
     // Keep physics & graphics in sync
 
     // check all the existing actor's bodies for changes. 
     //  If there is a change, send the appropriate event for the game system.
-    for (GameObjectIDToParticleMap::const_iterator it = m_gameObjectIdToParticle.begin();
-        it != m_gameObjectIdToParticle.end();
+    for (GameObjectIDToRigidBodyMap::const_iterator it = m_gameObjectIdToRigidBody.begin();
+        it != m_gameObjectIdToRigidBody.end();
         ++it)
     {
         const GameObjectId id = it->first;

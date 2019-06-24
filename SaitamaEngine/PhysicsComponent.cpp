@@ -28,7 +28,7 @@ bool PhysicsComponent::VInit(tinyxml2::XMLElement * pData)
 void PhysicsComponent::VPostInit(void)
 {
 
-    m_pGamePhysics->VAddParticle(m_pOwner);
+    m_pGamePhysics->VAddRigidBody(m_pOwner);
 
     // Create actual rigidbody for physics system to use
     if (m_pOwner)

@@ -1,6 +1,7 @@
 #pragma once
 #include "Saitama.h"
 #include "Particles.h"
+#include "RigidBody.h"
 
 class PhysicsSystem
 {
@@ -20,6 +21,7 @@ public:
 
     // Temporarily for particle physics
     void VAddParticle(StrongGameObjectPtr pGameObject);
+    void VAddRigidBody(StrongGameObjectPtr pGameObject);
     void VRemoveGameObject(GameObjectId id);
 
 
@@ -34,9 +36,13 @@ public:
 
 private:
     typedef std::map<GameObjectId, Particles*> GameObjectIDToParticleMap;
+    typedef std::map<GameObjectId, RigidBody*> GameObjectIDToRigidBodyMap;
     GameObjectIDToParticleMap m_gameObjectIdToParticle;
+    GameObjectIDToRigidBodyMap m_gameObjectIdToRigidBody;
     Particles *FindParticle(GameObjectId id) const;
+    RigidBody *FindRigidBody(GameObjectId id) const;
     std::vector<Particles *> m_particles;
+    std::vector<RigidBody *> m_rigidBodies;
 
 };
 
