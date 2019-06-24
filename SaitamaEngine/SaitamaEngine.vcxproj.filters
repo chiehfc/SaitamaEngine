@@ -117,6 +117,10 @@
     <ClInclude Include="ParticleContact.h">
       <Filter>Physics</Filter>
     </ClInclude>
+    <ClInclude Include="RigidBody.h">
+      <Filter>Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="ForceGenerator.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -194,6 +198,10 @@
     <ClCompile Include="ParticleContact.cpp">
       <Filter>Physics</Filter>
     </ClCompile>
+    <ClCompile Include="RigidBody.cpp">
+      <Filter>Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="ForceGenerator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resource.rc" />
