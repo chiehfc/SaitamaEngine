@@ -121,6 +121,7 @@
       <Filter>Physics</Filter>
     </ClInclude>
     <ClInclude Include="ForceGenerator.h" />
+    <ClInclude Include="CollisionBroad.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -202,6 +203,7 @@
       <Filter>Physics</Filter>
     </ClCompile>
     <ClCompile Include="ForceGenerator.cpp" />
+    <ClCompile Include="CollisionBroad.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resource.rc" />
