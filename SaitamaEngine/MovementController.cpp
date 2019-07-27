@@ -17,6 +17,11 @@ MovementController::MovementController(shared_ptr<SceneNode> object, float initi
 
     m_matPosition = m_matPosition.CreateTranslation(pos);
 
+    Vector3 scale;
+    Quaternion rot;
+    m_matToWorld.Decompose(scale, rot, pos);
+    m_matScale = Matrix::CreateScale(scale);
+
     m_keyboard = keyboard;
     m_mouse = mouse;
     //POINT ptCursor;
@@ -127,8 +132,8 @@ void MovementController::OnUpdate(const float deltaMilliseconds)
             matRot = matRot.CreateFromYawPitchRoll(DirectX::XMConvertToRadians(-m_fYaw), DirectX::XMConvertToRadians(m_fPitch), 0);
 
             // Create the new object-to-world matrix, and the
-            // new world-to-object matrix. 
-            m_matToWorld = matRot * m_matPosition;
+            // new world-to-object matrix.             
+            m_matToWorld = m_matScale * matRot * m_matPosition;
             m_matFromWorld = m_matToWorld.Invert();
             m_object->VSetTransform(&m_matToWorld, &m_matFromWorld);
         }

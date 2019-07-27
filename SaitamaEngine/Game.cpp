@@ -68,6 +68,17 @@ void Game::Initialize(HWND window, int width, int height)
         800.0f, 600.0f, 0.1f, 1000.0f));
     scene->AddChild(INVALID_GAMEOBJECT_ID, m_pCamera);
     scene->SetCamera(m_pCamera);
+    Matrix to, from;
+    m_pCamera->VGet()->Transform(&to, &from);
+    Vector3 s, t;
+    Quaternion r;
+    to.Decompose(s, r, t);
+    Matrix rot = Matrix::CreateFromYawPitchRoll(0, -45, 0);
+    Matrix scale = Matrix::CreateScale(s);
+    Matrix translate = Matrix::CreateTranslation(t);
+    to = scale * rot*translate;
+    from = to.Invert();
+    m_pCamera->VSetTransform(&to, &from);
 
     physics = make_shared<PhysicsSystem>();
 
@@ -82,7 +93,7 @@ void Game::Initialize(HWND window, int width, int height)
 
     auto gameObject = renderer->GetGameObject();
     std::shared_ptr<ModelRenderComponent> pRenderComponent = MakeStrongPtr<ModelRenderComponent>(gameObject->GetComponent<ModelRenderComponent>(ModelRenderComponent::g_Name));
-    m_pCamera->SetTarget(pRenderComponent->VGetSceneNode());
+    //m_pCamera->SetTarget(pRenderComponent->VGetSceneNode());
     
     //auto light = renderer->GetLight();
     //std::shared_ptr<LightRenderComponent> pLightComponent = MakeStrongPtr<LightRenderComponent>(light->GetComponent<LightRenderComponent>(LightRenderComponent::g_Name));

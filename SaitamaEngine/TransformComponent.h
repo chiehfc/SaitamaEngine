@@ -11,6 +11,7 @@ public:
 
     DirectX::SimpleMath::Vector3 GetPosition() const { return m_posVector; }
     DirectX::SimpleMath::Vector3 GetRotation() const { return m_rotVector; }
+    DirectX::SimpleMath::Vector3 GetScale() const { return m_scale; }
 
     DirectX::SimpleMath::Matrix GetTransform(void) const { return m_transform; }
     void SetTransform(const DirectX::SimpleMath::Matrix& newTransform) { m_transform = newTransform; }

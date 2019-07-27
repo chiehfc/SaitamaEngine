@@ -20,6 +20,8 @@ protected:
     Matrix	m_matToWorld;
     Matrix  m_matPosition;
 
+    Matrix m_matScale;
+
     //Point					m_lastMousePos;
     //bool					m_bKey[256];			// Which keys are up and down
 

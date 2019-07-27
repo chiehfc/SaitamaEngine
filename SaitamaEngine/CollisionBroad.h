@@ -10,6 +10,7 @@ struct BoundingSphere
 public:
     BoundingSphere(const Vector3 &center, double radius);
 
+    // Creates a bounding sphere to enclose the two given bounding spheres
     BoundingSphere(const BoundingSphere &one, const BoundingSphere &two);
 
     // check if this BS overlayps with other BS.
@@ -98,10 +99,100 @@ void BVHNode<BoundingVolumeClass>::insert(RigidBody *newBody, const BoundingVolu
     }
 }
 
-class CollisionBroad
+template<class BoundingVolumeClass>
+BVHNode<BoundingVolumeClass>::~BVHNode()
 {
-public:
-    CollisionBroad();
-    ~CollisionBroad();
-};
+    if (parent)
+    {
+        BVHNode<BoundingVolumeClass> *sibling;
+        if (parent->children[0] == this)
+        {
+            sibling = parent->children[1];
+        }
+        else
+        {
+            sibling = parent->children[0];
+        }
 
+        parent->volume = sibling->volume;
+        parent->body = sibling->body;
+        parent->children[0] = sibling->children[0];
+        parent->children[1] = sibling->children[1];
+
+        sibling->parent = nullptr;
+        sibling->body = nullptr;
+        sibling->children[0] = nullptr;
+        sibling->children[1] = nullptr;
+        delete sibling;
+
+        parent->recalculateBoundingVolume();
+    }
+    if (children[0])
+    {
+        children[0] = nullptr;
+        delete children[0];
+    }
+    if (children[1])
+    {
+        children[1] = nullptr;
+        delete children[1];
+    }
+}
+
+template<class BoundingVolumeClass>
+void BVHNode<BoundingVolumeClass>::recalculateBoundingVolume(bool recurse)
+{
+    if (isLeaf()) return;
+
+    volume = BoundingVolumeClass(children[0]->volume, children[1]->volume);
+
+    if (parent)
+    {
+        parent->recalculateBoundingVolume();
+    }
+}
+
+template<class BoundingVolumeClass>
+unsigned BVHNode<BoundingVolumeClass>::getPotentialContacts(PotentialContact *contacts, unsigned limit) const
+{
+    if (isLeaf() || limit == 0) return 0;
+    return children[0]->getPotentialContactsWith(children[1], contacts, limit);
+}
+
+template<class BoundingVolumeClass>
+unsigned BVHNode<BoundingVolumeClass>::GetPotentialContactsWith(const BVHNode<BoundingVolumeClass> *other, PotentialContact *contacts, unsigned limit) const
+{
+    if (!overlaps(other) || limit == 0) return 0;
+    if (isLeaf() && other->isLeaf())
+    {
+        contacts->body[0] = body;
+        contacts->body[1] = other->body;
+        return 1;
+    }
+
+    if (other->isLeaf() || (!isLeaf() && volume->getSize() >= other->volume->getSize()))
+    {
+        unsigned count = children[0]->getPotentialContactsWith(other, contacts, limit);
+
+        if (limit > count) 
+        {
+            return count + children[1]->getPotentialContactsWith(other, contacts + count, limit - count);
+        }
+        else
+        {
+            return count;
+        }
+    }
+    else
+    {
+        unsigned count = getPotentialContactsWith(other->children[0], contacts, limit);
+        if (limit > count)
+        {
+            return count + GetPotentialContactsWith(other->children[1], contacts + count, limit - count);
+        }
+        else
+        {
+            return count;
+        }
+    }
+}
