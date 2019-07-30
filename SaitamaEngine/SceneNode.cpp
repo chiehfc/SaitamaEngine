@@ -454,31 +454,13 @@ HRESULT CameraNode::SetViewTransform(Scene *pScene)
         Vector4 atWorld = DirectX::XMVector4Transform(at, mat);
         Vector3 pos = mat.Translation() + Vector3(atWorld);
         mat.Translation(pos);
-        Matrix rot = Matrix::CreateFromYawPitchRoll(0, 40, 0);
-        //mat = rot * mat;
+        Matrix rot = Matrix::CreateFromYawPitchRoll(0, DirectX::XMConvertToRadians(30), 0);
+        
+        mat = rot * mat;
         VSetTransform(&mat);
-
-        //Matrix to, from;
-        //VGet()->Transform(&to, &from);
-        //Vector3 s, t;
-        //Quaternion r;
-        //to.Decompose(s, r, t);
-        //Matrix rot = Matrix::CreateFromYawPitchRoll(0, 45, 0);
-        //Matrix scale = Matrix::CreateScale(s);
-        ////Matrix translate = Matrix::CreateTranslation(t);
-        //Vector4 at = m_CamOffsetVector;
-        //Vector4 atWorld = DirectX::XMVector4Transform(at, m_pTarget->VGet()->ToWorld());
-        //Vector3 pos = m_pTarget->VGet()->ToWorld().Translation() + Vector3(atWorld);
-        //
-        //to = scale * rot;
-        //to.Translation(pos);
-        //from = to.Invert();
-        //VSetTransform(&to, &from);
     }
 
     m_View = VGet()->FromWorld();
-
-    //pScene->GetRenderer()->VSetViewTransform(&m_View);
     return S_OK;
 }
 

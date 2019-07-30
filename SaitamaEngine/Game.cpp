@@ -62,7 +62,8 @@ void Game::Initialize(HWND window, int width, int height)
     // camera
     auto pos = Matrix::Identity;
     pos.Translation(DirectX::SimpleMath::Vector3(0.0f, 0.0f, -20.0f));
-    
+    Matrix camRot = Matrix::CreateFromYawPitchRoll(0, DirectX::XMConvertToRadians(30), 0);
+    //pos = camRot * pos;
 
     m_pCamera.reset(new CameraNode(&pos, DirectX::XM_PI / 4.f,
         800.0f, 600.0f, 0.1f, 1000.0f));
@@ -93,7 +94,7 @@ void Game::Initialize(HWND window, int width, int height)
 
     auto gameObject = renderer->GetGameObject();
     std::shared_ptr<ModelRenderComponent> pRenderComponent = MakeStrongPtr<ModelRenderComponent>(gameObject->GetComponent<ModelRenderComponent>(ModelRenderComponent::g_Name));
-    //m_pCamera->SetTarget(pRenderComponent->VGetSceneNode());
+    m_pCamera->SetTarget(pRenderComponent->VGetSceneNode());
     
     //auto light = renderer->GetLight();
     //std::shared_ptr<LightRenderComponent> pLightComponent = MakeStrongPtr<LightRenderComponent>(light->GetComponent<LightRenderComponent>(LightRenderComponent::g_Name));
