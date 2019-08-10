@@ -122,6 +122,8 @@
     </ClInclude>
     <ClInclude Include="ForceGenerator.h" />
     <ClInclude Include="CollisionBroad.h" />
+    <ClInclude Include="CollisionNarrow.h" />
+    <ClInclude Include="CollisionPrimitive.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -204,6 +206,8 @@
     </ClCompile>
     <ClCompile Include="ForceGenerator.cpp" />
     <ClCompile Include="CollisionBroad.cpp" />
+    <ClCompile Include="CollisionNarrow.cpp" />
+    <ClCompile Include="CollisionPrimitive.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resource.rc" />

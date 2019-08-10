@@ -172,6 +172,8 @@
     <ClInclude Include="Bot.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CollisionBroad.h" />
+    <ClInclude Include="CollisionNarrow.h" />
+    <ClInclude Include="CollisionPrimitive.h" />
     <ClInclude Include="ConstantBuffer.h" />
     <ClInclude Include="ConstantBufferTypes.h" />
     <ClInclude Include="D3DRenderer11.h" />
@@ -237,6 +239,8 @@
     <ClCompile Include="Bot.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CollisionBroad.cpp" />
+    <ClCompile Include="CollisionNarrow.cpp" />
+    <ClCompile Include="CollisionPrimitive.cpp" />
     <ClCompile Include="D3DRenderer11.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="EventManager.cpp" />

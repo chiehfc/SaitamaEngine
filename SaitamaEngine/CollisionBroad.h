@@ -1,6 +1,53 @@
 #pragma once
 #include "Saitama.h"
 #include "RigidBody.h"
+#include <list>
+
+typedef std::pair<RigidBody *, RigidBody*>ColliderPair;
+typedef std::list<ColliderPair> ColliderPairList;
+typedef std::list<AABB *> AABBList;
+
+struct AABB
+{
+    Vector3 lowerBound;
+    Vector3 upperBound;
+
+
+};
+
+struct Ray3
+{
+    Vector3 pos;
+    Vector3 dir;
+};
+
+struct RayCastResult
+{
+    bool hit;
+    RigidBody *collider;
+    Vector3 position;
+    Vector3 normal;
+};
+
+struct ContactData
+{
+
+};
+
+class Broadphase
+{
+public:
+    virtual void Add(AABB *aabb) = 0;
+    virtual void Update(void) = 0;
+    virtual const ColliderPairList &ComputePairs(void) = 0;
+    virtual RigidBody *Pick(const Vector3 &point) const = 0;
+    typedef std::vector<RigidBody *> ColliderList;
+
+    virtual void Query(const AABB &aabb, ColliderList &output) const = 0;
+    virtual RayCastResult RayCast(const Ray3 &ray) const = 0;
+};
+
+
 
 struct BoundingSphere
 {
@@ -86,8 +133,8 @@ void BVHNode<BoundingVolumeClass>::insert(RigidBody *newBody, const BoundingVolu
 
         recalculateBoundingVolume();
     }
-    else
     {
+    else
         if (children[0]->volume.getGrowth(newVolume) < children[1]->volume.getGrowth(newVolume))
         {
             children[0]->insert(newBody, newVolume);
