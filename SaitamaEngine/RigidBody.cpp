@@ -123,6 +123,7 @@ void RigidBody::calculateDerivedData()
         inverseInertiaTensor,
         transformMatrix);
 
+    collider->pos = position;
 }
 
 void RigidBody::integrate(double duration)

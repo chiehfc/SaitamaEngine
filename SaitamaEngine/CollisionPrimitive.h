@@ -1,5 +1,6 @@
 #pragma once
 #include "Saitama.h"
+
 class CollisionPrimitive
 {
 public:
@@ -16,7 +17,7 @@ public:
 
     Matrix    matRS;          //rotation/scale component of model matrix
     Matrix    matRS_inverse;
-    virtual Vector3 getFarthestPointInDirection(Vector3 dir) { return Vector3::Zero; }
+    virtual Vector3 getFarthestPointInDirection(Vector3 dir) = 0;
 
 protected:
 
@@ -44,6 +45,6 @@ public:
         result.y = (dir.y>0) ? max.y : min.y;
         result.z = (dir.z>0) ? max.z : min.z;
 
-        return Vector3::Transform(result, matRS_inverse); + pos; //convert support to world space
+        return Vector3::Transform(result, matRS_inverse) + pos; //convert support to world space
     }
 };

@@ -879,10 +879,10 @@ public:
 
     /*@}*/
 
-    void AddCollider(CollisionPrimitive &colliderPrimitive)
+    void AddCollider(CollisionPrimitive *colliderPrimitive)
     {
         collider = colliderPrimitive;
     }
 
-    CollisionPrimitive collider;
+    CollisionPrimitive *collider;
 };

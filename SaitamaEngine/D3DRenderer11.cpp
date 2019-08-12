@@ -428,6 +428,10 @@ bool D3DRenderer11::InitializeScene()
 
     m_gameObjects.insert(std::make_pair(sphere->GetId(), sphere));
 
+    auto sphere2 = m_factory.CreateGameObject("sphere2.xml", nullptr, nullptr, 0);
+
+    m_gameObjects.insert(std::make_pair(sphere2->GetId(), sphere2));
+
     m_light = m_factory.CreateGameObject("light.xml", nullptr, nullptr, 0);
     std::shared_ptr<TransformComponent> pLightTransform = MakeStrongPtr<TransformComponent>(m_light->GetComponent<TransformComponent>(TransformComponent::g_Name));
     m_light->SetPosition(pLightTransform->GetPosition());

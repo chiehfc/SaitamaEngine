@@ -28,7 +28,7 @@ void PhysicsSystem::OnUpdate(double delta)
     {
         for (int j = i + 1; j < m_rigidBodies.size(); j++)
         {
-            if (gjk.CollisionDetection(&m_rigidBodies[i]->collider, &m_rigidBodies[j]->collider))
+            if (gjk.CollisionDetection(m_rigidBodies[i]->collider, m_rigidBodies[j]->collider))
             {
                 std::cout << "BLAHBLAHBLAH" << std::endl;
             }
@@ -70,20 +70,36 @@ void PhysicsSystem::VAddRigidBody(StrongGameObjectPtr pGameObject)
 
     RigidBody *r = new RigidBody();
     r->setMass(2.0f); // 2.0kg
-    r->setVelocity(0.0f, 0.0f, 2.0f); // 35m/s
+    
     r->setAcceleration(0.0f, 0.0f, 0.0f);
     r->setDamping(0.99f, 0.99f);
 
-    CollisionBox cb;
-    cb.pos = r->getPosition();
-    cb.min = Vector3(0, 0, 0);
-    cb.max = Vector3(1, 1, 1);
+    std::shared_ptr<TransformComponent> pTransformComponent = MakeStrongPtr<TransformComponent>(pGameObject->GetComponent<TransformComponent>(TransformComponent::g_Name));
+    if (pTransformComponent->GetPosition().z > 0)
+    {
+        r->setVelocity(0.0f, 0.0f, -2.0f);
+    } else
+    {
+        r->setVelocity(0.0f, 0.0f, 2.0f);
+    }
+    r->setPosition(pTransformComponent->GetPosition());
+    
+
+    CollisionBox *cb = new CollisionBox();
+    cb->pos = r->getPosition();
+    cb->min = Vector3(0, 0, 0);
+    cb->max = Vector3(1, 1, 1);
 
     r->AddCollider(cb);
 
     m_rigidBodies.push_back(r);
 
     m_gameObjectIdToRigidBody[gameObjectId] = r;
+}
+
+void PhysicsSystem::VAddCollider(StrongGameObjectPtr pGameObject)
+{
+
 }
 
 void PhysicsSystem::VRemoveGameObject(GameObjectId id)

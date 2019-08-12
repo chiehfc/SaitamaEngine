@@ -5,10 +5,10 @@ bool GJK::CollisionDetection(CollisionPrimitive *col1, CollisionPrimitive *col2)
 {
     Vector3 a, b, c, d;
     Vector3 searchDirection = col1->pos - col2->pos;
-    c = Support(col2, col1, searchDirection);
+    c = Support(col1, col2, searchDirection);
 
     searchDirection = -c;
-    b = Support(col2, col1, searchDirection);
+    b = Support(col1, col2, searchDirection);
 
     if (b.Dot(searchDirection) < 0)
     {
@@ -29,7 +29,7 @@ bool GJK::CollisionDetection(CollisionPrimitive *col1, CollisionPrimitive *col2)
 
     for (int i = 0; i < iterations; i++)
     {
-        a = Support(col2, col1, searchDirection);
+        a = Support(col1, col2, searchDirection);
         if (a.Dot(searchDirection) < 0)
         {
             return false;
@@ -73,7 +73,7 @@ void GJK::UpdateSimplex3(Vector3 &a, Vector3 &b, Vector3 &c, Vector3 &d, int &si
         return;
     }
     // close to edge ac
-    if (((c - a).Cross(n)).Dot(ao) > 0)
+    if (((n).Cross(c - a)).Dot(ao) > 0)
     {
         b = a;
         searchDirection = ((c - a).Cross(ao)).Cross(c - a);

@@ -26,6 +26,8 @@ public:
     void VAddRigidBody(StrongGameObjectPtr pGameObject);
     void VRemoveGameObject(GameObjectId id);
 
+    void VAddCollider(StrongGameObjectPtr pGameObject);
+
 
     Vector3 VGetVelocity(GameObjectId gameObjectId);
     void VSetVelocity(GameObjectId gameObjectId, const Vector3& vel);
