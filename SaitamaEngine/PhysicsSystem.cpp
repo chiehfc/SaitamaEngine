@@ -22,8 +22,25 @@ void PhysicsSystem::Initialize()
 
 void PhysicsSystem::OnUpdate(double delta)
 {
+    //Broad Phase Collision Detection
+    
+    for (int i = 0; i < m_rigidBodies.size(); i++)
+    {
+        for (int j = i + 1; j < m_rigidBodies.size(); j++)
+        {
+            if (gjk.CollisionDetection(&m_rigidBodies[i]->collider, &m_rigidBodies[j]->collider))
+            {
+                std::cout << "BLAHBLAHBLAH" << std::endl;
+            }
+
+        }
+    }
+    
+
     for (auto r : m_rigidBodies) 
     {
+        
+
         r->integrate(delta);
     }    
 }
@@ -56,6 +73,13 @@ void PhysicsSystem::VAddRigidBody(StrongGameObjectPtr pGameObject)
     r->setVelocity(0.0f, 0.0f, 2.0f); // 35m/s
     r->setAcceleration(0.0f, 0.0f, 0.0f);
     r->setDamping(0.99f, 0.99f);
+
+    CollisionBox cb;
+    cb.pos = r->getPosition();
+    cb.min = Vector3(0, 0, 0);
+    cb.max = Vector3(1, 1, 1);
+
+    r->AddCollider(cb);
 
     m_rigidBodies.push_back(r);
 

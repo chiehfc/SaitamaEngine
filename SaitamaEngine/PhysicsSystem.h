@@ -2,6 +2,8 @@
 #include "Saitama.h"
 #include "Particles.h"
 #include "RigidBody.h"
+#include "CollisionNarrow.h"
+#include "CollisionPrimitive.h"
 
 class PhysicsSystem
 {
@@ -44,5 +46,7 @@ private:
     std::vector<Particles *> m_particles;
     std::vector<RigidBody *> m_rigidBodies;
 
+
+    GJK gjk;
 };
 

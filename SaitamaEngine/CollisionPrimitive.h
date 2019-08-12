@@ -1,12 +1,9 @@
 #pragma once
 #include "Saitama.h"
-#include "RigidBody.h"
-
 class CollisionPrimitive
 {
 public:
-
-    RigidBody *body;
+    Vector3 pos;
 
     //Matrix offset;
 
@@ -17,7 +14,9 @@ public:
         return transform;
     }
 
-    
+    Matrix    matRS;          //rotation/scale component of model matrix
+    Matrix    matRS_inverse;
+    virtual Vector3 getFarthestPointInDirection(Vector3 dir) { return Vector3::Zero; }
 
 protected:
 
@@ -36,10 +35,15 @@ public:
     Vector3 max;
     Vector3 min;
 
-    Vector3 getFarthestPointInDirection(const Vector3 &direction)
+    virtual Vector3 getFarthestPointInDirection(Vector3 direction) override
     {
-        Vector3 returnVector;
+        auto dir = Vector3::Transform(direction, matRS_inverse); //find support in model space
 
-        body->getTransform();
+        Vector3 result;
+        result.x = (dir.x>0) ? max.x : min.x;
+        result.y = (dir.y>0) ? max.y : min.y;
+        result.z = (dir.z>0) ? max.z : min.z;
+
+        return Vector3::Transform(result, matRS_inverse); + pos; //convert support to world space
     }
 };

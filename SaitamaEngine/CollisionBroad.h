@@ -5,7 +5,7 @@
 
 typedef std::pair<RigidBody *, RigidBody*>ColliderPair;
 typedef std::list<ColliderPair> ColliderPairList;
-typedef std::list<AABB *> AABBList;
+
 
 struct AABB
 {
@@ -14,6 +14,8 @@ struct AABB
 
 
 };
+
+typedef std::list<AABB *> AABBList;
 
 struct Ray3
 {

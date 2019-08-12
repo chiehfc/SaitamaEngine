@@ -1,5 +1,6 @@
 #pragma once
 #include "Saitama.h"
+#include "CollisionPrimitive.h"
 class RigidBody
 {
 public:    
@@ -878,4 +879,10 @@ public:
 
     /*@}*/
 
+    void AddCollider(CollisionPrimitive &colliderPrimitive)
+    {
+        collider = colliderPrimitive;
+    }
+
+    CollisionPrimitive collider;
 };

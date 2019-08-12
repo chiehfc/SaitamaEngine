@@ -3,6 +3,7 @@
 #include "tinyxml2/tinyxml2.h"
 #include "templates.h"
 #include <memory>
+#include <iostream>
 
 enum RenderPass
 {
