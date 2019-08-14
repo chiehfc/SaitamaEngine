@@ -28,14 +28,14 @@ void PhysicsSystem::OnUpdate(double delta)
     {
         for (int j = i + 1; j < m_rigidBodies.size(); j++)
         {
-            if (gjk.CollisionDetection(m_rigidBodies[i]->collider, m_rigidBodies[j]->collider))
+            Vector3 mtv;
+            if (gjk.CollisionDetection(m_rigidBodies[i]->collider, m_rigidBodies[j]->collider, &mtv))
             {
-                std::cout << "BLAHBLAHBLAH" << std::endl;
+                std::cout << mtv.x << " " << mtv.y << " " <<  mtv.z << " " << std::endl;
             }
 
         }
     }
-    
 
     for (auto r : m_rigidBodies) 
     {

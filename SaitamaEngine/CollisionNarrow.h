@@ -7,7 +7,7 @@ class GJK
 {
 public:
     
-    bool CollisionDetection(CollisionPrimitive *a, CollisionPrimitive *b);
+    bool CollisionDetection(CollisionPrimitive *a, CollisionPrimitive *b, Vector3 *mtv);
 
 private:    
 
@@ -19,4 +19,8 @@ private:
 
     void UpdateSimplex3(Vector3 &a, Vector3 &b, Vector3 &c, Vector3 &d, int &simplex, Vector3 &searchDirection);
     bool UpdateSimplex4(Vector3 &a, Vector3 &b, Vector3 &c, Vector3 &d, int &simplex, Vector3 &searchDirection);
+
+    Vector3 EPA(Vector3 &a, Vector3 &b, Vector3 &c, Vector3 &d, CollisionPrimitive *collider1, CollisionPrimitive *collider2);
+
+
 };
