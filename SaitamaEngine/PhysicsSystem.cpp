@@ -23,6 +23,12 @@ void PhysicsSystem::Initialize()
 void PhysicsSystem::OnUpdate(double delta)
 {
     //Broad Phase Collision Detection
+
+    // Integrate forces
+    for (auto r : m_rigidBodies)
+    {
+        r->integrate(delta);
+    }
     
     for (int i = 0; i < m_rigidBodies.size(); i++)
     {
@@ -32,17 +38,13 @@ void PhysicsSystem::OnUpdate(double delta)
             if (gjk.CollisionDetection(m_rigidBodies[i]->collider, m_rigidBodies[j]->collider, &mtv))
             {
                 std::cout << mtv.x << " " << mtv.y << " " <<  mtv.z << " " << std::endl;
+                // Contact resolve!
             }
 
         }
     }
 
-    for (auto r : m_rigidBodies) 
-    {
-        
-
-        r->integrate(delta);
-    }    
+     
 }
 
 void PhysicsSystem::VApplyForce(const Vector3 &dir, float newtons, GameObjectId gameObjectId)
@@ -77,10 +79,10 @@ void PhysicsSystem::VAddRigidBody(StrongGameObjectPtr pGameObject)
     std::shared_ptr<TransformComponent> pTransformComponent = MakeStrongPtr<TransformComponent>(pGameObject->GetComponent<TransformComponent>(TransformComponent::g_Name));
     if (pTransformComponent->GetPosition().z > 0)
     {
-        r->setVelocity(0.0f, 0.0f, -2.0f);
+        //r->setVelocity(0.0f, 0.0f, -2.0f);
     } else
     {
-        r->setVelocity(0.0f, 0.0f, 2.0f);
+        //r->setVelocity(0.0f, 0.0f, 2.0f);
     }
     r->setPosition(pTransformComponent->GetPosition());
     

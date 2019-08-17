@@ -49,7 +49,8 @@ bool GJK::CollisionDetection(CollisionPrimitive *col1, CollisionPrimitive *col2,
         else if(UpdateSimplex4(a, b, c, d, simplex, searchDirection))
         {
             if (mtv) {
-                *mtv = EPA(a, b, c, d, col1, col2);
+                //*mtv = EPA(a, b, c, d, col1, col2);
+                ContactData contact = EPA(a, b, c, d, col1, col2);
             }
             return true;
         }
@@ -140,8 +141,9 @@ bool GJK::UpdateSimplex4(Vector3 &a, Vector3 &b, Vector3 &c, Vector3 &d, int &si
     return true;
 }
 
-Vector3 GJK::EPA(Vector3 &a, Vector3 &b, Vector3 &c, Vector3 &d, CollisionPrimitive *collider1, CollisionPrimitive *collider2)
+ContactData GJK::EPA(Vector3 &a, Vector3 &b, Vector3 &c, Vector3 &d, CollisionPrimitive *collider1, CollisionPrimitive *collider2)
 {
+    ContactData result;
     Vector3 faces[EPA_MAX_FACES][4]; // 3 vertex and 1 normal facing out
 
     faces[0][0] = a;
@@ -185,12 +187,19 @@ Vector3 GJK::EPA(Vector3 &a, Vector3 &b, Vector3 &c, Vector3 &d, CollisionPrimit
 
         if ((p.Dot(searchDirection) - minDistance) < EPA_TOLERANCE)
         {
-            float P_dot_searchDirection = p.Dot(searchDirection);
             // Convergence
-            return Vector3(faces[closestFace][3].x * P_dot_searchDirection,
+            float P_dot_searchDirection = p.Dot(searchDirection);
+            Vector3 mtv = Vector3(faces[closestFace][3].x * P_dot_searchDirection,
                 faces[closestFace][3].y * P_dot_searchDirection,
                 faces[closestFace][3].z * P_dot_searchDirection
-                );
+            );
+            /*return Vector3(faces[closestFace][3].x * P_dot_searchDirection,
+                faces[closestFace][3].y * P_dot_searchDirection,
+                faces[closestFace][3].z * P_dot_searchDirection
+            );*/
+            result.normal = searchDirection;
+            result.depth = minDistance;
+            break;
         }
 
         Vector3 looseEdges[EPA_MAX_LOOSE_EDGES][2]; // keep track of loose that need to fix after removing faces
@@ -268,11 +277,36 @@ Vector3 GJK::EPA(Vector3 &a, Vector3 &b, Vector3 &c, Vector3 &d, CollisionPrimit
 
     std::cout<< "EPA did not converge\n" << std::endl;
     //Return most recent closest point
-
     float projection = faces[closestFace][0].Dot(faces[closestFace][3]);
-    // Convergence
-    return Vector3(faces[closestFace][3].x * projection,
+    Vector3 mtv = Vector3(faces[closestFace][3].x * projection,
         faces[closestFace][3].y * projection,
         faces[closestFace][3].z * projection
     );
+
+    Vector3 originProjectionPlane = -mtv;
+
+    Vector3 v0 = faces[closestFace][1] - faces[closestFace][0];
+    Vector3 v1 = faces[closestFace][2] - faces[closestFace][0];
+    Vector3 v2 = originProjectionPlane - faces[closestFace][0];
+    float d00 = v0.Dot(v0);
+    float d01 = v0.Dot(v1);
+    float d11 = v1.Dot(v1);
+    float d20 = v2.Dot(v0);
+    float d21 = v2.Dot(v1);
+    float denom = d00 * d11 - d01 * d01;
+    float v = (d11 * d20 - d01 * d21) / denom;
+    float w = (d00 * d21 - d01 * d20) / denom;
+    float u = 1.0f - v - w;
+
+    result.globalPositionA = u * (collider1->pos - collider1->getFarthestPointInDirection(faces[closestFace][0])) + v * (collider1->pos - collider1->getFarthestPointInDirection(faces[closestFace][1])) + w * (collider1->pos - collider1->getFarthestPointInDirection(faces[closestFace][2]));
+    result.globalPositionB = u * (collider2->pos - collider2->getFarthestPointInDirection(faces[closestFace][0])) + v * (collider2->pos - collider2->getFarthestPointInDirection(faces[closestFace][1])) + w * (collider2->pos - collider2->getFarthestPointInDirection(faces[closestFace][2]));
+
+    result.localPositionA = bodyAtoWorld.Inverse() * result.worldPointA;
+    result.localPositionB = bodyBtoWorld.Inverse() * result.worldPointB;
+
+    result.worldPos = f.a.position;
+    // From "Game Physics", pg. 531
+    //ecb()
+    //float test = glm::length(result.worldPointB - result.worldPointA);
+    return result;
 }

@@ -3,6 +3,14 @@
 #include "CollisionBroad.h"
 #include "CollisionPrimitive.h"
 
+struct SupportPoint
+{
+    Vector3 position;
+    Vector3 pointA;
+    Vector3 pointB;
+    Vector3 direction;
+};
+
 class GJK
 {
 public:
@@ -20,7 +28,7 @@ private:
     void UpdateSimplex3(Vector3 &a, Vector3 &b, Vector3 &c, Vector3 &d, int &simplex, Vector3 &searchDirection);
     bool UpdateSimplex4(Vector3 &a, Vector3 &b, Vector3 &c, Vector3 &d, int &simplex, Vector3 &searchDirection);
 
-    Vector3 EPA(Vector3 &a, Vector3 &b, Vector3 &c, Vector3 &d, CollisionPrimitive *collider1, CollisionPrimitive *collider2);
+    ContactData EPA(Vector3 &a, Vector3 &b, Vector3 &c, Vector3 &d, CollisionPrimitive *collider1, CollisionPrimitive *collider2);
 
 
 };

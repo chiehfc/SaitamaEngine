@@ -123,6 +123,8 @@ void RigidBody::calculateDerivedData()
         inverseInertiaTensor,
         transformMatrix);
 
+    // Update collider position
+    // TODO: Not sure if this is the right way to do, do we really need to update collider?
     collider->pos = position;
 }
 
