@@ -2,6 +2,7 @@
 #include <DirectXMath.h>
 #include "SimpleMath.h"
 #include <list>
+#include "Transform.h"
 
 class CollisionPrimitive;
 class RigidBody;
@@ -26,8 +27,6 @@ namespace PhysicsDef
 
     struct ContactData
     {
-        //Contact point in global space
-        Vector3 worldPos;
 
         // contact point data
         Vector3 globalPositionA;
@@ -77,6 +76,8 @@ namespace PhysicsDef
         bool enableGravity;
 
         CollisionPrimitive* collisionShape = 0;
+
+        
     };
 
     typedef std::pair<RigidBody *, RigidBody *> CollisionPair;

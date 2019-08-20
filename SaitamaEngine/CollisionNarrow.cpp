@@ -55,6 +55,8 @@ bool GJK::CollisionDetection(RigidBody *body1, RigidBody *body2, Vector3 *mtv)
             if (mtv) {
                 //*mtv = EPA(a, b, c, d, col1, col2);
                 ContactData contact = EPA(a, b, c, d, body1, body2);
+
+                std::cout << contact.normal.x << " " << std::endl;
             }
             return true;
         }
@@ -65,8 +67,8 @@ bool GJK::CollisionDetection(RigidBody *body1, RigidBody *body2, Vector3 *mtv)
 SupportPoint GJK::Support(RigidBody *body1, RigidBody *body2, const Vector3 &dir)
 {
     SupportPoint result;
-    result.originA = body1->getTransform() * body1->getSupportPoint(dir);
-    result.originB = body2->getTransform() * body2->getSupportPoint(-dir);
+    result.originA = body1->getPointInWorldSpace(body1->getSupportPoint(dir));
+    result.originB = body2->getPointInWorldSpace(body2->getSupportPoint(-dir));
     result.position = result.originA - result.originB;
     result.direction = dir;
 
@@ -197,10 +199,11 @@ ContactData GJK::EPA(SupportPoint &a, SupportPoint &b, SupportPoint &c, SupportP
                 faces[closestFace].normal.y * P_dot_searchDirection,
                 faces[closestFace].normal.z * P_dot_searchDirection
             );
-            /*return Vector3(faces[closestFace][3].x * P_dot_searchDirection,
-                faces[closestFace][3].y * P_dot_searchDirection,
-                faces[closestFace][3].z * P_dot_searchDirection
+            /*result.normal = Vector3(faces[closestFace].normal.x * P_dot_searchDirection,
+                faces[closestFace].normal.y * P_dot_searchDirection,
+                faces[closestFace].normal.z * P_dot_searchDirection
             );*/
+            
             result.normal = searchDirection;
             result.depth = minDistance;
             break;
@@ -288,8 +291,7 @@ ContactData GJK::EPA(SupportPoint &a, SupportPoint &b, SupportPoint &c, SupportP
             num_faces++;
         }
     }
-
-    std::cout<< "EPA did not converge\n" << std::endl;
+        
     //Return most recent closest point
     float projection = faces[closestFace].a.position.Dot(faces[closestFace].normal);
     Vector3 mtv = Vector3(faces[closestFace].normal.x * projection,
@@ -299,9 +301,9 @@ ContactData GJK::EPA(SupportPoint &a, SupportPoint &b, SupportPoint &c, SupportP
 
     Vector3 originProjectionPlane = -mtv;
 
-    Vector3 v0 = faces[closestFace][1] - faces[closestFace][0];
-    Vector3 v1 = faces[closestFace][2] - faces[closestFace][0];
-    Vector3 v2 = originProjectionPlane - faces[closestFace][0];
+    Vector3 v0 = faces[closestFace].b.position - faces[closestFace].a.position;
+    Vector3 v1 = faces[closestFace].c.position - faces[closestFace].a.position;
+    Vector3 v2 = originProjectionPlane - faces[closestFace].a.position;
     float d00 = v0.Dot(v0);
     float d01 = v0.Dot(v1);
     float d11 = v1.Dot(v1);
@@ -312,15 +314,11 @@ ContactData GJK::EPA(SupportPoint &a, SupportPoint &b, SupportPoint &c, SupportP
     float w = (d00 * d21 - d01 * d20) / denom;
     float u = 1.0f - v - w;
 
-    result.globalPositionA = u * faces[closestFace][0]. + v * (collider1->pos - collider1->getFarthestPointInDirection(faces[closestFace][1])) + w * (collider1->pos - collider1->getFarthestPointInDirection(faces[closestFace][2]));
-    result.globalPositionB = u * (collider2->pos - collider2->getFarthestPointInDirection(faces[closestFace][0])) + v * (collider2->pos - collider2->getFarthestPointInDirection(faces[closestFace][1])) + w * (collider2->pos - collider2->getFarthestPointInDirection(faces[closestFace][2]));
+    result.globalPositionA = u * faces[closestFace].a.originA + v * faces[closestFace].b.originA + w * faces[closestFace].c.originA;
+    result.globalPositionB = u * faces[closestFace].a.originB + v * faces[closestFace].b.originB + w * faces[closestFace].c.originB;
 
-    result.localPositionA = bodyAtoWorld.Inverse() * result.worldPointA;
-    result.localPositionB = bodyBtoWorld.Inverse() * result.worldPointB;
+    result.localPositionA = body1->getPointInLocalSpace(result.globalPositionA);
+    result.localPositionB = body2->getPointInLocalSpace(result.globalPositionB);
 
-    result.worldPos = f.a.position;
-    // From "Game Physics", pg. 531
-    //ecb()
-    //float test = glm::length(result.worldPointB - result.worldPointA);
     return result;
 }

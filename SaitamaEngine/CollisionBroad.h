@@ -2,9 +2,7 @@
 #include "Saitama.h"
 #include "RigidBody.h"
 #include <list>
-
-
-
+#include "PhysicsDef.h"
 
 struct AABB
 {
@@ -36,7 +34,7 @@ class Broadphase
 public:
     virtual void Add(AABB *aabb) = 0;
     virtual void Update(void) = 0;
-    virtual const ColliderPairList &ComputePairs(void) = 0;
+    virtual const PhysicsDef::ColliderPairList &ComputePairs(void) = 0;
     virtual RigidBody *Pick(const Vector3 &point) const = 0;
     typedef std::vector<RigidBody *> ColliderList;
 

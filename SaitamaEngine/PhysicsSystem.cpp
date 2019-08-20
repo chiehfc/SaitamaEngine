@@ -5,6 +5,10 @@
 #include "TransformComponent.h"
 #include "Events.h"
 #include "D3DRenderer11.h"
+#include "PhysicsDef.h"
+#include "Transform.h"
+
+using namespace PhysicsDef;
 
 PhysicsSystem::PhysicsSystem()
 {
@@ -27,7 +31,7 @@ void PhysicsSystem::OnUpdate(double delta)
     // Integrate forces
     for (auto r : m_rigidBodies)
     {
-        r->integrate(delta);
+        //r->integrate(delta);
     }
     
     for (int i = 0; i < m_rigidBodies.size(); i++)
@@ -37,7 +41,7 @@ void PhysicsSystem::OnUpdate(double delta)
             Vector3 mtv;
             if (gjk.CollisionDetection(m_rigidBodies[i], m_rigidBodies[j], &mtv))
             {
-                std::cout << mtv.x << " " << mtv.y << " " <<  mtv.z << " " << std::endl;
+                //std::cout << mtv.x << " " << mtv.y << " " <<  mtv.z << " " << std::endl;
                 // Contact resolve!
             }
 
@@ -70,13 +74,19 @@ void PhysicsSystem::VAddRigidBody(StrongGameObjectPtr pGameObject)
 {
     GameObjectId gameObjectId = pGameObject->GetId();
 
-    RigidBody *r = new RigidBody();
-    r->setMass(2.0f); // 2.0kg
+    RigidBodyConstructionInfo rbci;
     
-    r->setAcceleration(0.0f, 0.0f, 0.0f);
-    r->setDamping(0.99f, 0.99f);
-
     std::shared_ptr<TransformComponent> pTransformComponent = MakeStrongPtr<TransformComponent>(pGameObject->GetComponent<TransformComponent>(TransformComponent::g_Name));
+    rbci.transform.setPosition(pTransformComponent->GetPosition());
+    rbci.collisionShape = new CollisionBox(Vector3(1.0f, 1.0f, 1.0f));
+
+    RigidBody *r = new RigidBody(rbci);
+    
+    
+    ///r->setAcceleration(0.0f, 0.0f, 0.0f);
+    //r->setDamping(0.99f, 0.99f);
+
+    //std::shared_ptr<TransformComponent> pTransformComponent = MakeStrongPtr<TransformComponent>(pGameObject->GetComponent<TransformComponent>(TransformComponent::g_Name));
     if (pTransformComponent->GetPosition().z > 0)
     {
         //r->setVelocity(0.0f, 0.0f, -2.0f);
@@ -84,15 +94,15 @@ void PhysicsSystem::VAddRigidBody(StrongGameObjectPtr pGameObject)
     {
         //r->setVelocity(0.0f, 0.0f, 2.0f);
     }
-    r->setPosition(pTransformComponent->GetPosition());
+    //r->setPosition(pTransformComponent->GetPosition());
     
 
-    CollisionBox *cb = new CollisionBox();
+    /*CollisionBox *cb = new CollisionBox();
     cb->pos = r->getPosition();
     cb->min = Vector3(0, 0, 0);
     cb->max = Vector3(1, 1, 1);
 
-    r->AddCollider(cb);
+    r->AddCollider(cb);*/
 
     m_rigidBodies.push_back(r);
 
@@ -178,10 +188,10 @@ void PhysicsSystem::VSyncVisibleScene()
             shared_ptr<TransformComponent> pTransformComponent = MakeStrongPtr(pGameActor->GetComponent<TransformComponent>(TransformComponent::g_Name));
             if (pTransformComponent)
             {
-                if (pTransformComponent->GetPosition() != it->second->getPosition())
+                if (pTransformComponent->GetPosition() != it->second->getTransform().getPosition())
                 {                    
                     Matrix m = pTransformComponent->GetTransform();
-                    m.Translation(it->second->getPosition());
+                    m.Translation(it->second->getTransform().getPosition());
                     pTransformComponent->SetTransform(m);
                     shared_ptr<EvtData_Move_GameObject> pEvent(new EvtData_Move_GameObject(id, m));
                     IEventManager::Get()->VQueueEvent(pEvent);

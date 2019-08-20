@@ -186,7 +186,8 @@ Vector3 RigidBody::getPointInLocalSpace(const Vector3 &worldPoint) const
 
 Vector3 RigidBody::getPointInWorldSpace(const Vector3 &localPoint) const
 {
-    return transformMatrix * localPoint;
+    Vector3 result = transformMatrix * localPoint;
+    return result;
 }
 
 Vector3 RigidBody::getDirectionInLocalSpace(const Vector3 &worldDirection) const

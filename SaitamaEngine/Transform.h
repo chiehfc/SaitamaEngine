@@ -129,7 +129,18 @@ inline void Transform::setToIdentity() {
 inline Transform Transform::getInverse() const {
     Quaternion invQuaternion;
     mOrientation.Inverse(invQuaternion);
-    return Transform(invQuaternion * (-mPosition), invQuaternion);
+
+    const float prodX = invQuaternion.w * -mPosition.x + invQuaternion.y * -mPosition.z - invQuaternion.z * -mPosition.y;
+    const float prodY = invQuaternion.w * -mPosition.y + invQuaternion.z * -mPosition.x - invQuaternion.x * -mPosition.z;
+    const float prodZ = invQuaternion.w * -mPosition.z + invQuaternion.x * -mPosition.y - invQuaternion.y * -mPosition.x;
+    const float prodW = -invQuaternion.x * -mPosition.x - invQuaternion.y * -mPosition.y - invQuaternion.z * -mPosition.z;
+    Vector3 pos = Vector3(invQuaternion.w * prodX - prodY * invQuaternion.z + prodZ * invQuaternion.y - prodW * invQuaternion.x,
+        invQuaternion.w * prodY - prodZ * invQuaternion.x + prodX * invQuaternion.z - prodW * invQuaternion.y,
+        invQuaternion.w * prodZ - prodX * invQuaternion.y + prodY * invQuaternion.x - prodW * invQuaternion.z);
+
+
+
+    return Transform(pos, invQuaternion);
 }
 
 // Return an interpolated transform
@@ -153,8 +164,16 @@ inline Transform Transform::identity() {
 }
 
 // Return the transformed vector
-inline Vector3 Transform::operator*(const Vector3& vector) const {
-    return Vector3(mOrientation * vector) + mPosition;
+inline Vector3 Transform::operator*(const Vector3& point) const {
+
+    const float prodX = mOrientation.w * point.x + mOrientation.y * point.z - mOrientation.z * point.y;
+    const float prodY = mOrientation.w * point.y + mOrientation.z * point.x - mOrientation.x * point.z;
+    const float prodZ = mOrientation.w * point.z + mOrientation.x * point.y - mOrientation.y * point.x;
+    const float prodW = -mOrientation.x * point.x - mOrientation.y * point.y - mOrientation.z * point.z;
+    return Vector3(mOrientation.w * prodX - prodY * mOrientation.z + prodZ * mOrientation.y - prodW * mOrientation.x,
+        mOrientation.w * prodY - prodZ * mOrientation.x + prodX * mOrientation.z - prodW * mOrientation.y,
+        mOrientation.w * prodZ - prodX * mOrientation.y + prodY * mOrientation.x - prodW * mOrientation.z)
+        + mPosition;
 }
 
 // Operator of multiplication of a transform with another one
