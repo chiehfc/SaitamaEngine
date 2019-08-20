@@ -35,7 +35,7 @@ void PhysicsSystem::OnUpdate(double delta)
         for (int j = i + 1; j < m_rigidBodies.size(); j++)
         {
             Vector3 mtv;
-            if (gjk.CollisionDetection(m_rigidBodies[i]->collider, m_rigidBodies[j]->collider, &mtv))
+            if (gjk.CollisionDetection(m_rigidBodies[i], m_rigidBodies[j], &mtv))
             {
                 std::cout << mtv.x << " " << mtv.y << " " <<  mtv.z << " " << std::endl;
                 // Contact resolve!

@@ -211,6 +211,7 @@
     <ClInclude Include="ParticleContact.h" />
     <ClInclude Include="Particles.h" />
     <ClInclude Include="PhysicsComponent.h" />
+    <ClInclude Include="PhysicsDef.h" />
     <ClInclude Include="PhysicsSystem.h" />
     <ClInclude Include="RenderableGameObject.h" />
     <ClInclude Include="RenderComponent.h" />
@@ -223,6 +224,7 @@
     <ClInclude Include="templates.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Timer.h" />
+    <ClInclude Include="Transform.h" />
     <ClInclude Include="TransformComponent.h" />
     <ClInclude Include="VertexBuffer.h" />
     <ClInclude Include="Keyboard\KeyboardClass.h" />
@@ -290,6 +292,7 @@
     <ClCompile Include="StringHelper.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Timer.cpp" />
+    <ClCompile Include="Transform.cpp" />
     <ClCompile Include="TransformComponent.cpp" />
     <ClCompile Include="Vertex.cpp" />
     <ClCompile Include="XMLLoader.cpp" />

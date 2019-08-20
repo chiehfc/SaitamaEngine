@@ -1,34 +1,42 @@
 #pragma once
 #include "Saitama.h"
+#include "PhysicsDef.h"
 #include "CollisionBroad.h"
-#include "CollisionPrimitive.h"
+#include "RigidBody.h"
 
-struct SupportPoint
+
+struct Face
 {
-    Vector3 position;
-    Vector3 pointA;
-    Vector3 pointB;
-    Vector3 direction;
+    PhysicsDef::SupportPoint a;
+    PhysicsDef::SupportPoint b;
+    PhysicsDef::SupportPoint c;
+    Vector3 normal;
+};
+
+struct Edge
+{
+    PhysicsDef::SupportPoint a;
+    PhysicsDef::SupportPoint b;
 };
 
 class GJK
 {
 public:
     
-    bool CollisionDetection(CollisionPrimitive *a, CollisionPrimitive *b, Vector3 *mtv);
+    bool CollisionDetection(RigidBody *a, RigidBody *b, Vector3 *mtv);
 
 private:    
 
-    Vector3 Support(CollisionPrimitive *a, CollisionPrimitive *b, const Vector3 &dir);
+    PhysicsDef::SupportPoint Support(RigidBody *a, RigidBody *b, const Vector3 &dir);
     //Vector3 a, b, c, d;
 
     //int simplex;
     int iterations = 50;
 
-    void UpdateSimplex3(Vector3 &a, Vector3 &b, Vector3 &c, Vector3 &d, int &simplex, Vector3 &searchDirection);
-    bool UpdateSimplex4(Vector3 &a, Vector3 &b, Vector3 &c, Vector3 &d, int &simplex, Vector3 &searchDirection);
+    void UpdateSimplex3(PhysicsDef::SupportPoint &a, PhysicsDef::SupportPoint &b, PhysicsDef::SupportPoint &c, PhysicsDef::SupportPoint &d, int &simplex, Vector3 &searchDirection);
+    bool UpdateSimplex4(PhysicsDef::SupportPoint &a, PhysicsDef::SupportPoint &b, PhysicsDef::SupportPoint &c, PhysicsDef::SupportPoint &d, int &simplex, Vector3 &searchDirection);
 
-    ContactData EPA(Vector3 &a, Vector3 &b, Vector3 &c, Vector3 &d, CollisionPrimitive *collider1, CollisionPrimitive *collider2);
+    PhysicsDef::ContactData EPA(PhysicsDef::SupportPoint &a, PhysicsDef::SupportPoint &b, PhysicsDef::SupportPoint &c, PhysicsDef::SupportPoint &d, RigidBody *collider1, RigidBody *collider2);
 
 
 };

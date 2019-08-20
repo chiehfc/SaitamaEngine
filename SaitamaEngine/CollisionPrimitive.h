@@ -1,32 +1,33 @@
 #pragma once
 #include "Saitama.h"
+#include "PhysicsDef.h"
+
+
 
 class CollisionPrimitive
 {
 public:
     Vector3 pos;
 
-    //Matrix offset;
-
-    //void calculateInternals();
-
-    const Matrix &getTransform() const
-    {
-        return transform;
-    }
-
     Matrix    matRS;          //rotation/scale component of model matrix
     Matrix    matRS_inverse;
     virtual Vector3 getFarthestPointInDirection(Vector3 dir) = 0;
 
-protected:
+    virtual Matrix getTensor(float mass) = 0;
+    
 
-    Matrix transform;
+    PhysicsDef::CollisionType getType() const;
+    virtual Vector3 getSupportPoint(const Vector3 &dir) const = 0;
+
+protected:
+    PhysicsDef::CollisionType m_type;
 };
 
 class CollisionBox : public CollisionPrimitive
 {
 public:
+
+    CollisionBox(const Vector3 &extents);
     /**
      * Holds the half-sizes of the box along each of its local axes.
      */
@@ -36,15 +37,13 @@ public:
     Vector3 max;
     Vector3 min;
 
-    virtual Vector3 getFarthestPointInDirection(Vector3 direction) override
-    {
-        auto dir = Vector3::Transform(direction, matRS_inverse); //find support in model space
+    virtual Matrix getTensor(float mass) override;
 
-        Vector3 result;
-        result.x = (dir.x>0) ? max.x : min.x;
-        result.y = (dir.y>0) ? max.y : min.y;
-        result.z = (dir.z>0) ? max.z : min.z;
+    virtual Vector3 getFarthestPointInDirection(Vector3 direction) override;
+    
 
-        return Vector3::Transform(result, matRS_inverse) + pos; //convert support to world space
-    }
+    Vector3 getSupportPoint(const Vector3 &dir) const override;
+
+private:
+    Vector3 m_extents;
 };

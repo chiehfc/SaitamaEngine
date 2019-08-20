@@ -124,6 +124,8 @@
     <ClInclude Include="CollisionBroad.h" />
     <ClInclude Include="CollisionNarrow.h" />
     <ClInclude Include="CollisionPrimitive.h" />
+    <ClInclude Include="PhysicsDef.h" />
+    <ClInclude Include="Transform.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -208,6 +210,7 @@
     <ClCompile Include="CollisionBroad.cpp" />
     <ClCompile Include="CollisionNarrow.cpp" />
     <ClCompile Include="CollisionPrimitive.cpp" />
+    <ClCompile Include="Transform.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resource.rc" />
