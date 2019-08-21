@@ -83,4 +83,31 @@ namespace PhysicsDef
     typedef std::pair<RigidBody *, RigidBody *> CollisionPair;
     typedef std::list<CollisionPair> ColliderPairList;
     typedef std::pair<CollisionPair, ContactData> CollPairContactInfo;
+
+
+    inline float DistanceToLineSq(const Vector3 &start, const Vector3 &end, const Vector3 &p)
+    {
+        Vector3 pStart = p - start;
+        Vector3 line = end - start;
+        Vector3 proj = line * pStart.Dot(line) / line.Dot(line);
+        Vector3 projP = p - proj;
+
+        return projP.Dot(projP);
+    }
+
+
+    inline float DistanceToTriangleSq(const Vector3 &a, const Vector3 &b, const Vector3 &c, const Vector3 &p)
+    {
+        Vector3 normal;
+        (b - a).Cross(c - a).Normalize(normal);
+        Vector3 pa = p - a;
+        float dotp = pa.Dot(normal);
+        //Point projected onto normal
+        Vector3 projN = dotp * normal;
+        Vector3 diff = p - projN;
+        //Point projected onto triangle, relative to A
+        Vector3 projA = pa - projN;
+
+        return dotp * dotp;
+    }
 }

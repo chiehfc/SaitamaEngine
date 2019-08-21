@@ -176,6 +176,7 @@
     <ClInclude Include="CollisionPrimitive.h" />
     <ClInclude Include="ConstantBuffer.h" />
     <ClInclude Include="ConstantBufferTypes.h" />
+    <ClInclude Include="ConstraintSolverSeqImpulse.h" />
     <ClInclude Include="D3DRenderer11.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="EventManager.h" />
@@ -244,6 +245,7 @@
     <ClCompile Include="CollisionBroad.cpp" />
     <ClCompile Include="CollisionNarrow.cpp" />
     <ClCompile Include="CollisionPrimitive.cpp" />
+    <ClCompile Include="ConstraintSolverSeqImpulse.cpp" />
     <ClCompile Include="D3DRenderer11.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="EventManager.cpp" />

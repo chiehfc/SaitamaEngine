@@ -7,6 +7,7 @@
 #include "D3DRenderer11.h"
 #include "PhysicsDef.h"
 #include "Transform.h"
+#include "Manifold.h"
 
 using namespace PhysicsDef;
 
@@ -38,9 +39,11 @@ void PhysicsSystem::OnUpdate(double delta)
     {
         for (int j = i + 1; j < m_rigidBodies.size(); j++)
         {
-            Vector3 mtv;
-            if (gjk.CollisionDetection(m_rigidBodies[i], m_rigidBodies[j], &mtv))
+            std::vector<Manifold> result;
+            Manifold manifold(m_rigidBodies[i], m_rigidBodies[j]);
+            if (gjk.CollisionDetection(m_rigidBodies[i], m_rigidBodies[j], manifold))
             {
+                result.push_back(manifold);
                 //std::cout << mtv.x << " " << mtv.y << " " <<  mtv.z << " " << std::endl;
                 // Contact resolve!
             }

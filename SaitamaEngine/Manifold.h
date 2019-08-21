@@ -9,6 +9,7 @@ public:
 
     void solve();
     void update(PhysicsDef::ContactData *newContacts, int newContactCount);
+    void reduce();
 
     static const int MIN_POINTS = 4;
     std::vector<PhysicsDef::ContactData> m_contacts;

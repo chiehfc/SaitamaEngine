@@ -127,6 +127,7 @@
     <ClInclude Include="PhysicsDef.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="Manifold.h" />
+    <ClInclude Include="ConstraintSolverSeqImpulse.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -213,6 +214,7 @@
     <ClCompile Include="CollisionPrimitive.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="Manifold.cpp" />
+    <ClCompile Include="ConstraintSolverSeqImpulse.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="resource.rc" />

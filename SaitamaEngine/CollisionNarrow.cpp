@@ -8,7 +8,7 @@ static const int EPA_MAX_FACES = 64;
 static const int EPA_MAX_LOOSE_EDGES = 32;
 static const int EPA_MAX_ITERATIONS = 64;
 
-bool GJK::CollisionDetection(RigidBody *body1, RigidBody *body2, Vector3 *mtv)
+bool GJK::CollisionDetection(RigidBody *body1, RigidBody *body2, Manifold &manifold)
 {
     SupportPoint a, b, c, d;
     Vector3 searchDirection = body1->getTransform().getPosition() - body2->getTransform().getPosition();
@@ -52,12 +52,9 @@ bool GJK::CollisionDetection(RigidBody *body1, RigidBody *body2, Vector3 *mtv)
         }
         else if(UpdateSimplex4(a, b, c, d, simplex, searchDirection))
         {
-            if (mtv) {
-                //*mtv = EPA(a, b, c, d, col1, col2);
-                ContactData contact = EPA(a, b, c, d, body1, body2);
-
-                std::cout << contact.normal.x << " " << std::endl;
-            }
+            ContactData contact = EPA(a, b, c, d, body1, body2);
+            manifold.update(&contact, 1);
+            
             return true;
         }
     }

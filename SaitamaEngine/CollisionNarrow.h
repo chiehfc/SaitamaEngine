@@ -3,7 +3,7 @@
 #include "PhysicsDef.h"
 #include "CollisionBroad.h"
 #include "RigidBody.h"
-
+#include "Manifold.h"
 
 struct Face
 {
@@ -23,7 +23,7 @@ class GJK
 {
 public:
     
-    bool CollisionDetection(RigidBody *a, RigidBody *b, Vector3 *mtv);
+    bool CollisionDetection(RigidBody *a, RigidBody *b, Manifold &manifold);
 
 private:    
 
