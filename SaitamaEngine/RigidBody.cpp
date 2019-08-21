@@ -11,12 +11,12 @@ RigidBody::RigidBody(const PhysicsDef::RigidBodyConstructionInfo& rbci)
         inverseMass = 1 / mass;
     linearDamping = rbci.linearDamping;
     angularDamping = rbci.angularDamping;
-    //friction = rbci.friction;
-    //m_rollingFriction = rbci.rollingFriction;
-    //m_restitution = rbci.resititution;
+    friction = rbci.friction;
+    //rollingFriction = rbci.rollingFriction;
+    restitution = rbci.resititution;
 
     transformMatrix = rbci.transform;
-    //m_localInertia = rbci.localInertia;
+    //localInertia = rbci.localInertia;
     collider = rbci.collisionShape;
 
     //m_enableGravity = rbci.enableGravity;
@@ -144,6 +144,16 @@ Matrix RigidBody::getInverseInertiaTensor() const
 Matrix RigidBody::getInverseInertiaTensorWorld() const
 {
     return inverseInertiaTensorWorld;
+}
+
+float RigidBody::getFriction() const
+{
+    return friction;
+}
+
+float RigidBody::getRestitution() const
+{
+    return restitution;
 }
 
 void RigidBody::setDamping(const double linearDamping,
@@ -290,4 +300,14 @@ Vector3 RigidBody::getAcceleration() const
 Vector3 RigidBody::getSupportPoint(Vector3 direction) const
 {
     return collider->getSupportPoint(direction);
+}
+
+void RigidBody::applyImpulse(const Vector3 &impulse)
+{
+    setLinearVelocity(linearVelocity + impulse * inverseMass);
+}
+
+void RigidBody::applyTorqueImpulse(const Vector3 &torque)
+{
+    setAngularVelocity(angularVelocity + Vector3(DirectX::XMVector3Transform(torque, inverseInertiaTensor)));
 }

@@ -136,3 +136,14 @@ void Manifold::reduce()
 {
 
 }
+
+//
+//void PersistentManifold::addContactManifold(Manifold *manifold)
+//{
+//    m_manifolds.insert(manifold);
+//}
+//
+//void PersistentManifold::clearAllManifolds()
+//{
+//    m_manifolds.clear();
+//}

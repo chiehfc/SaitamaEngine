@@ -52,6 +52,11 @@ namespace PhysicsDef
             , tangentImpulseSum2(0.0f)
         { }
 
+        //TODO: Maybe move it out
+        float prevNormalImp = 0.f;
+        float prevTangImp1 = 0.f;
+        float prevTangImp2 = 0.f;
+
         //Calculated in prestep
         float massNormal;
         float massTangent1;
@@ -81,7 +86,7 @@ namespace PhysicsDef
     };
 
     typedef std::pair<RigidBody *, RigidBody *> CollisionPair;
-    typedef std::list<CollisionPair> ColliderPairList;
+    typedef std::vector<CollisionPair> ColliderPairList;
     typedef std::pair<CollisionPair, ContactData> CollPairContactInfo;
 
 
@@ -109,5 +114,15 @@ namespace PhysicsDef
         Vector3 projA = pa - projN;
 
         return dotp * dotp;
+    }
+
+    inline float Clamp(float val, float minVal, float maxVal)
+    {
+        if (val < minVal)
+            val = minVal;
+        else if (val > maxVal)
+            val = maxVal;
+
+        return val;
     }
 }

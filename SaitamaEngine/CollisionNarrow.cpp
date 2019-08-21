@@ -54,7 +54,7 @@ bool GJK::CollisionDetection(RigidBody *body1, RigidBody *body2, Manifold &manif
         {
             ContactData contact = EPA(a, b, c, d, body1, body2);
             manifold.update(&contact, 1);
-            
+            std::cout << "DETECT!" << std::endl;
             return true;
         }
     }

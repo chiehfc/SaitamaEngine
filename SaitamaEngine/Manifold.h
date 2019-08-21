@@ -13,6 +13,7 @@ public:
 
     static const int MIN_POINTS = 4;
     std::vector<PhysicsDef::ContactData> m_contacts;
+    bool m_isPersistent = false;
 
     RigidBody *m_bodyA = nullptr;
     RigidBody *m_bodyB = nullptr;
@@ -50,3 +51,14 @@ inline bool operator <(const ManifoldKey& m1, const ManifoldKey& m2)
 
     return false;
 }
+
+class PersistentManifold
+{
+public:
+
+    typedef std::map<ManifoldKey, Manifold> ManifoldMap;
+    ManifoldMap m_manifolds;
+    void addContactManifold(Manifold *manifold);
+
+    void clearAllManifolds();
+};

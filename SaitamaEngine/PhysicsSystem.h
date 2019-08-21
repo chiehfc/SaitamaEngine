@@ -4,6 +4,8 @@
 #include "RigidBody.h"
 #include "CollisionNarrow.h"
 #include "CollisionPrimitive.h"
+#include "Manifold.h"
+#include "ConstraintSolverSeqImpulse.h"
 
 class PhysicsSystem
 {
@@ -48,6 +50,14 @@ private:
     std::vector<Particles *> m_particles;
     std::vector<RigidBody *> m_rigidBodies;
 
+    PhysicsDef::ColliderPairList m_colliderPairList;
+
+    //PersistentManifold m_persistentManifold;
+    // Manifold map data structure
+    typedef std::map<ManifoldKey, Manifold> ManifoldMap;
+    typedef ManifoldMap::iterator ManifoldMapIter;
+    ManifoldMap m_manifolds;
+    ConstraintSolverSeqImpulse m_constraintSolver;
 
     GJK gjk;
 };

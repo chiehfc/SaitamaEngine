@@ -39,6 +39,10 @@ protected:
 
     Vector3 acceleration;
 
+    float friction;
+    //float rollingFriction;
+    float restitution;
+
 public:
 
     /**
@@ -68,6 +72,10 @@ public:
     Matrix getInverseInertiaTensor() const;
 
     Matrix getInverseInertiaTensorWorld() const;
+
+    float getFriction() const;
+
+    float getRestitution() const;
 
     void setDamping(const double linearDamping, const double angularDamping);
     void setLinearDamping(const double linearDamping);
@@ -109,4 +117,9 @@ public:
     Vector3 getSupportPoint(Vector3 direction) const;
 
     CollisionPrimitive *collider;
+
+
+    void applyImpulse(const Vector3 &impulse);
+    void applyTorqueImpulse(const Vector3 &torque);
+    void updateTransform(Transform &transform) { transformMatrix = transform; }
 };
