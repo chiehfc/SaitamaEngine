@@ -281,6 +281,11 @@ void RigidBody::addForce(const Vector3 &force)
     //isAwake = true;
 }
 
+Vector3 RigidBody::getForce() const
+{
+    return forceAccum;
+}
+
 void RigidBody::addTorque(const Vector3 &torque)
 {
     torqueAccum += torque;

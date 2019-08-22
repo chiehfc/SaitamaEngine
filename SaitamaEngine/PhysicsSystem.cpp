@@ -28,6 +28,105 @@ void PhysicsSystem::Initialize()
 
 void PhysicsSystem::OnUpdate(double delta)
 {
+    StepSimulation(delta);
+     
+}
+
+void PhysicsSystem::StepSimulation(float timeStep, int maxSubSteps, float fixedTimeStep)
+{
+    int numSimulationSubSteps = 0;
+
+    if (maxSubSteps)
+    {
+        //fixed timestep with interpolation
+        m_fixedTimeStep = fixedTimeStep;
+        m_localTime += timeStep;
+        if (m_localTime >= fixedTimeStep)
+        {
+            numSimulationSubSteps = int(m_localTime / fixedTimeStep);
+            m_localTime -= numSimulationSubSteps * fixedTimeStep;
+        }
+    }
+    else
+    {
+        //variable timestep
+        fixedTimeStep = timeStep;
+        m_localTime = timeStep;
+        m_fixedTimeStep = 0;
+        if (std::fabsf(timeStep) < FLT_EPSILON)
+        {
+            numSimulationSubSteps = 0;
+            maxSubSteps = 0;
+        }
+        else
+        {
+            numSimulationSubSteps = 1;
+            maxSubSteps = 1;
+        }
+    }
+
+    //process some debugging flags
+    if (numSimulationSubSteps)
+    {
+
+        //clamp the number of substeps, to prevent simulation grinding spiralling down to a halt
+        int clampedSimulationSteps = (numSimulationSubSteps > maxSubSteps) ? maxSubSteps : numSimulationSubSteps;
+
+        //saveKinematicState(fixedTimeStep*clampedSimulationSteps);
+
+        //ApplyGravity();
+
+
+
+        for (int i = 0; i<clampedSimulationSteps; i++)
+        {
+            SingleSimulationStep(fixedTimeStep);
+
+            //internalSingleStepSimulation(fixedTimeStep);
+            //synchronizeMotionStates();
+        }
+
+    }
+}
+
+void PhysicsSystem::SingleSimulationStep(float fixedTimeStep)
+{
+    //Predict Motion
+
+    float angMag;
+    Vector3 linVel, angVel, totalF, pos;
+    Transform trans, finalTrans;
+    Quaternion rot;
+    for (unsigned int i = 0; i < m_rigidBodies.size(); ++i)
+    {
+        linVel = m_rigidBodies[i]->getLinearVelocity();
+        angVel = m_rigidBodies[i]->getAngularVelocity();
+        totalF = m_rigidBodies[i]->getForce();
+        angMag = angVel.Length();
+
+        if (m_rigidBodies[i]->getMass() != 0)
+        {
+            Vector3 accel = totalF / m_rigidBodies[i]->getMass();
+            linVel += accel * fixedTimeStep;
+        }
+            
+
+        trans = m_rigidBodies[i]->getTransform();
+        rot = trans.getOrientation();
+        pos = trans.getPosition();
+
+        rot *= Quaternion(Vector4(angVel.x, angVel.y, angVel.z, 1.0f) * fixedTimeStep);
+        pos += linVel * fixedTimeStep;
+        rot.Normalize(rot);
+        trans.setPosition(pos);
+        trans.setOrientation(rot);
+
+        m_rigidBodies[i]->updateTransform(trans);
+        m_rigidBodies[i]->setLinearVelocity(linVel);
+
+    }
+
+
     //Broad Phase Collision Detection
     m_colliderPairList.clear();
     for (int i = 0; i < m_rigidBodies.size(); i++)
@@ -43,10 +142,10 @@ void PhysicsSystem::OnUpdate(double delta)
     {
         //r->integrate(delta);
     }
-    
+
     std::vector<Manifold> newManifolds;
 
-    for (int i = 0; i < m_colliderPairList.size();i++)
+    for (int i = 0; i < m_colliderPairList.size(); i++)
     {
         Manifold manifold(m_colliderPairList[i].first, m_colliderPairList[i].second);
         if (gjk.CollisionDetection(m_colliderPairList[i].first, m_colliderPairList[i].second, manifold))
@@ -80,23 +179,23 @@ void PhysicsSystem::OnUpdate(double delta)
                 newManifolds[i].m_contacts = it->second.m_contacts;
             }
             m_manifolds = manifoldMap;
-            m_constraintSolver.SolveConstraints2(newManifolds, delta);
+            m_constraintSolver.SolveConstraints2(newManifolds, fixedTimeStep);
 
-        } else
+        }
+        else
         {
             m_manifolds.clear();
         }
 
-        
+
     }
 
 
     //Perform Movement
 
-    float angMag;
-    Vector3 linVel, angVel, pos;
-    Transform trans, finalTrans;
-    Quaternion rot;
+    //Vector3 linVel, angVel, pos;
+    //Transform trans, finalTrans;
+    //Quaternion rot;
     for (unsigned int i = 0; i < m_rigidBodies.size(); ++i)
     {
         linVel = m_rigidBodies[i]->getLinearVelocity();
@@ -109,8 +208,8 @@ void PhysicsSystem::OnUpdate(double delta)
         rot = trans.getOrientation();
         pos = trans.getPosition();
 
-        rot *= Quaternion(Vector4(angVel.x, angVel.y, angVel.z, 1.0f) * delta);
-        pos += linVel * delta;
+        rot *= Quaternion(Vector4(angVel.x, angVel.y, angVel.z, 1.0f) * fixedTimeStep);
+        pos += linVel * fixedTimeStep;
         rot.Normalize(rot);
         trans.setPosition(pos);
         trans.setOrientation(rot);
@@ -127,7 +226,6 @@ void PhysicsSystem::OnUpdate(double delta)
 
         m_rigidBodies[i]->updateTransform(trans);
     }
-     
 }
 
 void PhysicsSystem::VApplyForce(const Vector3 &dir, float newtons, GameObjectId gameObjectId)
@@ -180,7 +278,7 @@ void PhysicsSystem::VAddRigidBody(StrongGameObjectPtr pGameObject)
         //r->setVelocity(0.0f, 0.0f, -2.0f);
     } else
     {
-        r->setLinearVelocity(Vector3(0.0f, 0.0f, 1.0f));
+        //r->setLinearVelocity(Vector3(0.0f, 0.0f, 1.0f));
         //r->setVelocity(0.0f, 0.0f, 2.0f);
     }
     //r->setPosition(pTransformComponent->GetPosition());

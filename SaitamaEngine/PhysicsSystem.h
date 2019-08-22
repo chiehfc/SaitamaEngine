@@ -17,6 +17,9 @@ public:
 
     void OnUpdate(double delta);
 
+    void StepSimulation(float timeStep, int maxSubStep = 1, float fixedTimeStep = 1.0f / 60.0f);
+
+    void SingleSimulationStep(float fixedTimeStep);
 
     void VApplyForce(const Vector3 &dir, float newtons, GameObjectId gameObjectId);
 
@@ -60,5 +63,8 @@ private:
     ConstraintSolverSeqImpulse m_constraintSolver;
 
     GJK gjk;
+
+    float m_fixedTimeStep = 0;
+    float m_localTime = 0;
 };
 
