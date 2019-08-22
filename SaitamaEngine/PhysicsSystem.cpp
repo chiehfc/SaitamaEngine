@@ -157,6 +157,7 @@ void PhysicsSystem::VAddRigidBody(StrongGameObjectPtr pGameObject)
     
     std::shared_ptr<TransformComponent> pTransformComponent = MakeStrongPtr<TransformComponent>(pGameObject->GetComponent<TransformComponent>(TransformComponent::g_Name));
     rbci.transform.setPosition(pTransformComponent->GetPosition());
+    //rbci.collisionShape = new CollisionBox(Vector3(1.0f, 1.0f, 1.0f));
     rbci.collisionShape = new CollisionBox(Vector3(1.0f, 1.0f, 1.0f));
     rbci.mass = 2.0f;
     rbci.linearDamping = 0.f;

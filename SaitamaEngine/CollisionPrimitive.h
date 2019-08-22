@@ -47,3 +47,20 @@ public:
 private:
     Vector3 m_extents;
 };
+
+class CollisionSphere : public CollisionPrimitive
+{
+public:
+
+    CollisionSphere(float radius);
+
+    virtual Matrix getTensor(float mass) override;
+
+    virtual Vector3 getFarthestPointInDirection(Vector3 direction) override { return Vector3::Zero; }
+
+
+    Vector3 getSupportPoint(const Vector3 &dir) const override;
+
+private:
+    float m_radius;
+};

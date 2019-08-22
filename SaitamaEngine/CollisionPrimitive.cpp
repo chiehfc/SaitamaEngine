@@ -67,3 +67,21 @@ Vector3 CollisionBox::getSupportPoint(const Vector3 &dir) const
     // result is in local space
     return result;
 }
+
+CollisionSphere::CollisionSphere(float radius)
+{
+    m_radius = radius;
+    m_type = PhysicsDef::CollisionType::Sphere;
+}
+
+Matrix CollisionSphere::getTensor(float mass)
+{
+    Matrix result;
+    result._11 = result._22 = result._33 = ((2.f / 5.f) * mass * m_radius * m_radius);
+    return result;
+}
+
+Vector3 CollisionSphere::getSupportPoint(const Vector3 &dir) const
+{
+    return dir * m_radius;
+}
