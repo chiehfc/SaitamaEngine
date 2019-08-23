@@ -7,7 +7,9 @@ using namespace PhysicsDef;
 
 Manifold::Manifold(RigidBody *a, RigidBody *b)
 {
-    if (a < b)
+    m_bodyA = a;
+    m_bodyB = b;
+    /*if (a < b)
     {
         m_bodyA = a;
         m_bodyB = b;
@@ -16,7 +18,7 @@ Manifold::Manifold(RigidBody *a, RigidBody *b)
         m_bodyA = b;
         m_bodyB = a;
     }
-
+*/
 }
 
 void Manifold::update(ContactData *newContacts, int newContactCount)

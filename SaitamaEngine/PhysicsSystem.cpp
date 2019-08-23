@@ -170,6 +170,7 @@ void PhysicsSystem::CollisionDetection(float fixedTimeStep)
         } else
         {
             m_manifolds.clear();
+            return;
         }
     }
     newManifolds = result;
