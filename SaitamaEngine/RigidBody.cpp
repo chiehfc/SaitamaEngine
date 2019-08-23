@@ -286,6 +286,11 @@ Vector3 RigidBody::getForce() const
     return forceAccum;
 }
 
+void RigidBody::setForce(const Vector3 &force)
+{
+    forceAccum = force;
+}
+
 void RigidBody::addTorque(const Vector3 &torque)
 {
     torqueAccum += torque;

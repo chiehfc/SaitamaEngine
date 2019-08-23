@@ -108,6 +108,8 @@ public:
 
     Vector3 getForce() const;
 
+    void setForce(const Vector3 &force);
+
     void addTorque(const Vector3 &torque);
 
     void setAcceleration(const Vector3 &acceleration);

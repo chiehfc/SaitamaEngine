@@ -39,12 +39,13 @@ float CalcJV(const Vector3 &normal,
 void ConstraintSolverSeqImpulse::PreStep(std::vector<Manifold>& manifolds, float dt)
 {
     ContactData *contact;
-    float invM1, invM2, totalInvMass, minRest, friction;
+    float invM1 = 0.0f, invM2 = 0.0f, totalInvMass = 0.0f, minRest = 0.0f, friction = 0.0f;
     Vector3 localANorm, localBNorm, localATangent, localBTangent, vel1, vel2, aVel1, aVel2, impulse, torque1, torque2;
     Matrix invTensor1, invTensor2;
-    float JV;
+    float JV = 0.0f;
     for (int i = 0; i < manifolds.size(); ++i)
     {
+        std::cout << "PreStep" << std::endl;
         invM1 = manifolds[i].m_bodyA->getInverseMass();
         invM2 = manifolds[i].m_bodyB->getInverseMass();
         invTensor1 = manifolds[i].m_bodyA->getInverseInertiaTensor();
@@ -113,8 +114,8 @@ void ConstraintSolverSeqImpulse::PreStep(std::vector<Manifold>& manifolds, float
                 torque2 = contact->localPositionB.Cross(impulse);
                 manifolds[i].m_bodyA->applyImpulse(-impulse);
                 manifolds[i].m_bodyB->applyImpulse(impulse);
-                manifolds[i].m_bodyA->applyTorqueImpulse(torque1);
-                manifolds[i].m_bodyB->applyTorqueImpulse(-torque2);
+                manifolds[i].m_bodyA->applyTorqueImpulse(-torque1);
+                manifolds[i].m_bodyB->applyTorqueImpulse(torque2);
 
                 impulse = Vector3(contact->tangent1.x * contact->prevTangImp1,
                     contact->tangent1.y * contact->prevTangImp1,
@@ -123,8 +124,8 @@ void ConstraintSolverSeqImpulse::PreStep(std::vector<Manifold>& manifolds, float
                 torque2 = contact->localPositionB.Cross(impulse);
                 manifolds[i].m_bodyA->applyImpulse(-impulse);
                 manifolds[i].m_bodyB->applyImpulse(impulse);
-                manifolds[i].m_bodyA->applyTorqueImpulse(torque1);
-                manifolds[i].m_bodyB->applyTorqueImpulse(-torque2);
+                manifolds[i].m_bodyA->applyTorqueImpulse(-torque1);
+                manifolds[i].m_bodyB->applyTorqueImpulse(torque2);
 
                 impulse = Vector3(contact->tangent2.x * contact->prevTangImp2,
                     contact->tangent2.y * contact->prevTangImp2,
@@ -133,8 +134,8 @@ void ConstraintSolverSeqImpulse::PreStep(std::vector<Manifold>& manifolds, float
                 torque2 = contact->localPositionB.Cross(impulse);
                 manifolds[i].m_bodyA->applyImpulse(-impulse);
                 manifolds[i].m_bodyB->applyImpulse(impulse);
-                manifolds[i].m_bodyA->applyTorqueImpulse(torque1);
-                manifolds[i].m_bodyB->applyTorqueImpulse(-torque2);
+                manifolds[i].m_bodyA->applyTorqueImpulse(-torque1);
+                manifolds[i].m_bodyB->applyTorqueImpulse(torque2);
             }
         }
     }
@@ -142,7 +143,7 @@ void ConstraintSolverSeqImpulse::PreStep(std::vector<Manifold>& manifolds, float
 
 void ConstraintSolverSeqImpulse::SolveContact(RigidBody *body1, RigidBody *body2, ContactData &contact, float dt)
 {
-
+    std::cout << "Solve Contact" << std::endl;
     //TODO: FIND ERROR
     //glm::vec3 normal = contact.normal;
 
@@ -150,14 +151,14 @@ void ConstraintSolverSeqImpulse::SolveContact(RigidBody *body1, RigidBody *body2
     //body1->SetLinearVelocity(glm::vec3(0.f));
     //body2->SetLinearVelocity(glm::vec3(0.f));
 
-    float massNormal, massTangent, invM1, invM2, f;
+    float massNormal = 0.0f, massTangent = 0.0f, invM1 = 0.0f, invM2 = 0.0f, f = 0.0f;
     Vector3 localANorm, localBNorm, localATang, localBTang;
     //glm::mat4 interpolationTrans1;
     //glm::mat4 interpolationTrans2;
 
-    float friction, invDt = 1.f / dt;
-    float JV;
-    float lambda, oldLambda;
+    float friction = 0.0f, invDt = 1.f / dt;
+    float JV = 0.0f;
+    float lambda = 0.0f, oldLambda = 0.0f;
 
     Vector3 invMJ;
     Vector3 impulse1, impulse2, torque1, torque2;
@@ -184,7 +185,7 @@ void ConstraintSolverSeqImpulse::SolveContact(RigidBody *body1, RigidBody *body2
         lambda = contact.prevNormalImp - oldLambda;
     }
 
-
+    std::cout << "Normal: " << lambda << std::endl;
     impulse = Vector3(contact.normal.x * lambda,
         contact.normal.y * lambda,
         contact.normal.z * lambda);
@@ -192,8 +193,8 @@ void ConstraintSolverSeqImpulse::SolveContact(RigidBody *body1, RigidBody *body2
     torque2 = contact.localPositionB.Cross(impulse);
     body1->applyImpulse(-impulse);
     body2->applyImpulse(impulse);
-    body1->applyTorqueImpulse(torque1);
-    body2->applyTorqueImpulse(-torque2);
+    body1->applyTorqueImpulse(-torque1);
+    body2->applyTorqueImpulse(torque2);
 
     float coeff = contact.prevNormalImp * contact.friction;
     vel1 = body1->getLinearVelocity();
@@ -210,6 +211,9 @@ void ConstraintSolverSeqImpulse::SolveContact(RigidBody *body1, RigidBody *body2
         contact.prevTangImp1 = Clamp(oldLambda + lambda, -coeff, coeff);
         lambda = contact.prevTangImp1 - oldLambda;
     }
+
+    std::cout << "T1: " << lambda << std::endl;
+
     impulse = Vector3(contact.tangent1.x * lambda,
         contact.tangent1.y * lambda,
         contact.tangent1.z * lambda);
@@ -217,8 +221,8 @@ void ConstraintSolverSeqImpulse::SolveContact(RigidBody *body1, RigidBody *body2
     torque2 = contact.localPositionB.Cross(impulse);
     body1->applyImpulse(-impulse);
     body2->applyImpulse(impulse);
-    body1->applyTorqueImpulse(torque1);
-    body2->applyTorqueImpulse(-torque2);
+    body1->applyTorqueImpulse(-torque1);
+    body2->applyTorqueImpulse(torque2);
 
     //Apply friction for tangent2
     //vel1 = body1->GetLinearVelocity();
@@ -234,6 +238,9 @@ void ConstraintSolverSeqImpulse::SolveContact(RigidBody *body1, RigidBody *body2
         contact.prevTangImp2 = Clamp(oldLambda + lambda, -coeff, coeff);
         lambda = contact.prevTangImp2 - oldLambda;
     }
+
+    std::cout << "T2: " << lambda << std::endl;
+
     impulse = Vector3(contact.tangent2.x * lambda,
         contact.tangent2.y * lambda,
         contact.tangent2.z * lambda);
@@ -241,6 +248,6 @@ void ConstraintSolverSeqImpulse::SolveContact(RigidBody *body1, RigidBody *body2
     torque2 = contact.localPositionB.Cross(impulse);
     body1->applyImpulse(-impulse);
     body2->applyImpulse(impulse);
-    body1->applyTorqueImpulse(torque1);
-    body2->applyTorqueImpulse(-torque2);
+    body1->applyTorqueImpulse(-torque1);
+    body2->applyTorqueImpulse(torque2);
 }

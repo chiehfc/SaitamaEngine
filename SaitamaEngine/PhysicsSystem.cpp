@@ -87,6 +87,11 @@ void PhysicsSystem::StepSimulation(float timeStep, int maxSubSteps, float fixedT
         }
 
     }
+
+    for (unsigned int i = 0; i < m_rigidBodies.size(); ++i)
+    {
+        m_rigidBodies[i]->clearAccumulators();
+    }
 }
 
 void PhysicsSystem::SingleSimulationStep(float fixedTimeStep)
@@ -127,6 +132,14 @@ void PhysicsSystem::SingleSimulationStep(float fixedTimeStep)
     }
 
 
+    CollisionDetection(fixedTimeStep);
+
+    CollisionMovementUpdate(fixedTimeStep);
+    
+}
+
+void PhysicsSystem::CollisionDetection(float fixedTimeStep)
+{
     //Broad Phase Collision Detection
     m_colliderPairList.clear();
     for (int i = 0; i < m_rigidBodies.size(); i++)
@@ -145,57 +158,64 @@ void PhysicsSystem::SingleSimulationStep(float fixedTimeStep)
 
     std::vector<Manifold> newManifolds;
 
+    std::vector<Manifold> result;
+
     for (int i = 0; i < m_colliderPairList.size(); i++)
     {
         Manifold manifold(m_colliderPairList[i].first, m_colliderPairList[i].second);
         if (gjk.CollisionDetection(m_colliderPairList[i].first, m_colliderPairList[i].second, manifold))
         {
-            newManifolds.push_back(manifold);
+            result.push_back(manifold);
             //m_persistentManifold.addContactManifold(&manifold);
-
-            ManifoldMap manifoldMap;
-            ManifoldMapIter it;
-
-            for (int i = 0; i < newManifolds.size(); ++i)
-            {
-                ManifoldKey key(newManifolds[i].m_bodyA, newManifolds[i].m_bodyB);
-
-                it = m_manifolds.find(key);
-
-                //If no manifold is found, add it and move on
-                if (it == m_manifolds.end())
-                {
-                    manifoldMap.emplace(key, newManifolds[i]);
-
-                    continue;
-                }
-
-                //Otherwise we need to merge
-                it->second.update(newManifolds[i].m_contacts.data(), newManifolds[i].m_contacts.size());// , newManifolds[i].m_contactCount);
-                it->second.m_isPersistent = true;
-                //Add it to the new map, this step needs to be improved
-                manifoldMap.emplace(it->first, it->second);
-                newManifolds[i].m_isPersistent = true;
-                newManifolds[i].m_contacts = it->second.m_contacts;
-            }
-            m_manifolds = manifoldMap;
-            m_constraintSolver.SolveConstraints2(newManifolds, fixedTimeStep);
-
-        }
-        else
+        } else
         {
             m_manifolds.clear();
         }
-
-
     }
+    newManifolds = result;
 
+    ManifoldMap manifoldMap;
+    ManifoldMapIter it;
 
+    for (int i = 0; i < newManifolds.size(); ++i)
+    {
+        if (newManifolds.size() > 1)
+        {
+            std::cout << "ASD" << std::endl;
+        }
+        ManifoldKey key(newManifolds[i].m_bodyA, newManifolds[i].m_bodyB);
+
+        it = m_manifolds.find(key);
+
+        //If no manifold is found, add it and move on
+        if (it == m_manifolds.end())
+        {
+            manifoldMap.emplace(key, newManifolds[i]);
+
+            continue;
+        }
+
+        //Otherwise we need to merge
+        it->second.update(newManifolds[i].m_contacts.data(), newManifolds[i].m_contacts.size());// , newManifolds[i].m_contactCount);
+        it->second.m_isPersistent = true;
+        //Add it to the new map, this step needs to be improved
+        manifoldMap.emplace(it->first, it->second);
+        newManifolds[i].m_isPersistent = true;
+        newManifolds[i].m_contacts = it->second.m_contacts;
+    }
+    m_manifolds = manifoldMap;
+    m_constraintSolver.SolveConstraints2(newManifolds, fixedTimeStep);
+}
+
+void PhysicsSystem::CollisionMovementUpdate(float fixedTimeStep)
+{
     //Perform Movement
 
-    //Vector3 linVel, angVel, pos;
-    //Transform trans, finalTrans;
-    //Quaternion rot;
+    Vector3 linVel, angVel, pos;
+    Transform trans, finalTrans;
+    Quaternion rot;
+    float angMag;
+
     for (unsigned int i = 0; i < m_rigidBodies.size(); ++i)
     {
         linVel = m_rigidBodies[i]->getLinearVelocity();

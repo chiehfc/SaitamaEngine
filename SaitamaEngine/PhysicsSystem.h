@@ -43,6 +43,10 @@ public:
     Matrix VGetTransform(const GameObjectId id);
 
 
+    void CollisionDetection(float fixedTimeStep);
+
+    void CollisionMovementUpdate(float fixedTimeStep);
+
 private:
     typedef std::map<GameObjectId, Particles*> GameObjectIDToParticleMap;
     typedef std::map<GameObjectId, RigidBody*> GameObjectIDToRigidBodyMap;
