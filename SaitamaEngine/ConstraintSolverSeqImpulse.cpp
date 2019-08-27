@@ -30,8 +30,10 @@ float CalcJV(const Vector3 &normal,
     float lComp2 = normal.Dot(lVel2);
     float aComp1 = aVel1.Dot(normal.Cross(r1));
     float aComp2 = aVel2.Dot(normal.Cross(r2));
-
     JV = -lComp1 - aComp1 + lComp2 + aComp2;
+
+    Vector3 result = lVel2 + aVel2.Cross(r2) - lVel1 - aVel1.Cross(r1);
+    JV = result.Dot(normal);
 
     return JV;
 
@@ -100,8 +102,12 @@ void ConstraintSolverSeqImpulse::PreStep(std::vector<Manifold>& manifolds, float
                 localBTangentMulInvTensor2.Dot(localBTangent));
 
             //Bias
+            contact->bias = -0.2f / dt * std::max(0.0f, contact->depth - 0.1f);
             JV = CalcJV(contact->normal, contact->localPositionA, vel1, aVel1, contact->localPositionB, vel2, aVel2);
-            contact->bias = -0.2f / dt * std::max(0.0f, contact->depth - 0.1f) + minRest * JV;
+            if (JV < -1.0f) {
+                contact->bias += -minRest * JV;
+            }
+            
             contact->friction = friction;
 
             if (manifolds[i].m_isPersistent)

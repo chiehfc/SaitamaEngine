@@ -402,7 +402,7 @@ void PhysicsSystem::VSyncVisibleScene()
                     m.Translation(it->second->getTransform().getPosition());
                     pTransformComponent->SetTransform(m);
                     shared_ptr<EvtData_Move_GameObject> pEvent(new EvtData_Move_GameObject(id, m));
-                    IEventManager::Get()->VQueueEvent(pEvent);
+                    IEventManager::Get()->VTriggerEvent(pEvent);
                 }
             }
         }

@@ -424,13 +424,13 @@ bool D3DRenderer11::InitializeScene()
     //grid->SetRotation(pTransformComponent->GetRotation());
     m_gameObjects.insert(std::make_pair(grid->GetId(), grid));
 
-    auto sphere = m_factory.CreateGameObject("sphere.xml", nullptr, nullptr, 0);
+    auto box = m_factory.CreateGameObject("box.xml", nullptr, nullptr, 0);
 
-    m_gameObjects.insert(std::make_pair(sphere->GetId(), sphere));
+    m_gameObjects.insert(std::make_pair(box->GetId(), box));
 
-    auto sphere2 = m_factory.CreateGameObject("sphere2.xml", nullptr, nullptr, 0);
+    auto box2 = m_factory.CreateGameObject("box2.xml", nullptr, nullptr, 0);
 
-    m_gameObjects.insert(std::make_pair(sphere2->GetId(), sphere2));
+    m_gameObjects.insert(std::make_pair(box2->GetId(), box2));
 
     m_light = m_factory.CreateGameObject("light.xml", nullptr, nullptr, 0);
     std::shared_ptr<TransformComponent> pLightTransform = MakeStrongPtr<TransformComponent>(m_light->GetComponent<TransformComponent>(TransformComponent::g_Name));

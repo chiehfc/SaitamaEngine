@@ -533,6 +533,7 @@ HRESULT GameModelNode::VRender(Scene *pScene)
     m_vertexShader.SetupRender(pScene, this);
     m_pixelShader.SetupRender(pScene, this);    
     auto scene = pScene->GetTopMatrix();
+    auto tx = m_Props.ToWorld();
 
     m_model.Draw(scene, pScene->GetCamera()->GetView() * pScene->GetCamera()->GetProjection());
 
@@ -799,6 +800,47 @@ HRESULT SphereNode::VRender(Scene *pScene)
     auto scene = pScene->GetTopMatrix();
 
     m_sphere->Draw(scene, pScene->GetCamera()->GetView(), pScene->GetCamera()->GetProjection());
+
+    return S_OK;
+}
+
+
+BoxNode::BoxNode(const GameObjectId gameObjectId,
+    WeakBaseRenderComponentPtr renderComponent,
+    RenderPass renderPass,
+    const Matrix *t)
+    : SceneNode(gameObjectId, renderComponent, renderPass, t)
+{
+    D3D11_INPUT_ELEMENT_DESC layout[] =
+    {
+        { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        { "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+    };
+    UINT numElements = ARRAYSIZE(layout);
+
+    //m_vertexShader.Initialize(D3DRenderer11::GetInstance()->GetDevice(), L"..\\x64\\Debug\\vertexshader.cso", layout, numElements);
+
+    //m_pixelShader.Initialize(D3DRenderer11::GetInstance()->GetDevice(), L"..\\x64\\Debug\\pixelshader.cso");
+
+    m_box = DirectX::GeometricPrimitive::CreateBox(D3DRenderer11::GetInstance()->GetDeviceContext(), Vector3(1, 1, 1));
+
+    //m_model.Initialize(filePath, D3DRenderer11::GetInstance()->GetDevice(), D3DRenderer11::GetInstance()->GetDeviceContext(), m_constantBuffer);
+    //SetPosition(Vector3::Zero);
+    VSetTransform(&m_Props.ToWorld());
+}
+
+HRESULT BoxNode::VOnRestore(Scene *pScene)
+{
+    return S_OK;
+}
+
+HRESULT BoxNode::VRender(Scene *pScene)
+{
+    //m_vertexShader.SetupRender(pScene, this);
+    //m_pixelShader.SetupRender(pScene, this);
+    auto scene = pScene->GetTopMatrix();
+    m_box->Draw(scene, pScene->GetCamera()->GetView(), pScene->GetCamera()->GetProjection());
 
     return S_OK;
 }

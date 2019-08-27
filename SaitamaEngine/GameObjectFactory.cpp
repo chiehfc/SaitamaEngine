@@ -28,6 +28,7 @@ GameObjectFactory::GameObjectFactory(void)
     m_componentFactory.Register<LightRenderComponent>(GameObjectComponent::GetIdFromName(LightRenderComponent::g_Name));
     m_componentFactory.Register<GridRenderComponent>(GameObjectComponent::GetIdFromName(GridRenderComponent::g_Name));
     m_componentFactory.Register<SphereRenderComponent>(GameObjectComponent::GetIdFromName(SphereRenderComponent::g_Name));
+    m_componentFactory.Register<BoxRenderComponent>(GameObjectComponent::GetIdFromName(BoxRenderComponent::g_Name));
     m_componentFactory.Register<SkyRenderComponent>(GameObjectComponent::GetIdFromName(SkyRenderComponent::g_Name));
     m_componentFactory.Register<PhysicsComponent>(GameObjectComponent::GetIdFromName(PhysicsComponent::g_Name));
     /*
